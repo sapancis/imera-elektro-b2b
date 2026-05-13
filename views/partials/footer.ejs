@@ -1,0 +1,72 @@
+<footer class="site-footer" id="preisliste">
+  <div class="footer-cta">
+    <div class="container">
+      <h2>Jetzt Preisliste anfordern</h2>
+      <p>Erhalten Sie unsere komplette Preisliste mit allen Artikeln und Staffelpreisen kostenlos per E-Mail</p>
+      <form class="price-list-form" id="priceListForm">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="price-list-input">
+          <input type="email" name="email" id="priceEmail" placeholder="Ihre E-Mail-Adresse" required>
+          <button type="submit" class="btn-white">Senden</button>
+        </div>
+        <p class="footer-cta-note">Kein Spam. Sie können sich jederzeit abmelden.</p>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-main">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">IMERA ELEKTRO</div>
+          <p style="font-size:13px;color:#9CA3AF;margin-top:0.5rem;line-height:1.6">Ihr Partner für CE-zertifizierte Elektrokomponenten zum besten Preis.</p>
+        </div>
+        <div>
+          <h4>Kontakt</h4>
+          <div class="footer-links">
+            <div>📞 +43 660 8514467</div>
+            <div>📧 info@imeragroup.com</div>
+            <div>🌐 www.imeragroup.com</div>
+          </div>
+        </div>
+        <div>
+          <h4>Shop</h4>
+          <div class="footer-links">
+            <a href="/shop?kategorie=kabelbinder">Kabelbinder</a>
+            <a href="/shop?kategorie=kabelverschraubungen">Kabelverschraubungen</a>
+            <a href="/shop?kategorie=reihenklemmen">Reihenklemmen</a>
+            <a href="/shop?kategorie=din-schienen">DIN-Schienen</a>
+          </div>
+        </div>
+        <div>
+          <h4>Unternehmen</h4>
+          <div class="footer-links">
+            <a href="/ueber-uns">Über uns</a>
+            <a href="/faq">FAQ</a>
+            <a href="/kontakt">Kontakt</a>
+          </div>
+        </div>
+        <div>
+          <h4>Rechtliches</h4>
+          <div class="footer-links">
+            <a href="/impressum">Impressum</a>
+            <a href="/agb">AGB</a>
+            <a href="/datenschutz">Datenschutz</a>
+            <a href="/widerruf">Widerrufsrecht</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Imera Elektro | Alle Preise netto exkl. MwSt. | Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div id="cartToast" class="cart-toast" style="display:none">
+  <span id="cartToastMsg"></span>
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

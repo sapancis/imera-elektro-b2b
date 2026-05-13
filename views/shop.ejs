@@ -1,0 +1,109 @@
+<%- include('partials/header') %>
+
+<main>
+  <div class="container shop-layout">
+
+    <!-- Sidebar Filter -->
+    <aside class="shop-sidebar">
+      <div class="filter-box">
+        <h3>Filter</h3>
+        <form action="/shop" method="GET" id="filterForm">
+          <div class="filter-group">
+            <div class="filter-label">Kategorie</div>
+            <label class="filter-option">
+              <input type="radio" name="kategorie" value="" <%= !filters.kategorie ? 'checked' : '' %> onchange="this.form.submit()">
+              Alle (<%= pagination.total %>)
+            </label>
+            <% for (const cat of categories) { %>
+            <label class="filter-option">
+              <input type="radio" name="kategorie" value="<%= cat.slug %>" <%= filters.kategorie === cat.slug ? 'checked' : '' %> onchange="this.form.submit()">
+              <%= cat.name %> (<%= cat.cnt %>)
+            </label>
+            <% } %>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Preis</div>
+            <% const preisList = Array.isArray(filters.preis) ? filters.preis : (filters.preis ? [filters.preis] : []); %>
+            <label class="filter-option"><input type="checkbox" name="preis" value="under010" <%= preisList.includes('under010') ? 'checked' : '' %> onchange="this.form.submit()"> Unter 0,10€</label>
+            <label class="filter-option"><input type="checkbox" name="preis" value="010to050" <%= preisList.includes('010to050') ? 'checked' : '' %> onchange="this.form.submit()"> 0,10€ – 0,50€</label>
+            <label class="filter-option"><input type="checkbox" name="preis" value="050to100" <%= preisList.includes('050to100') ? 'checked' : '' %> onchange="this.form.submit()"> 0,50€ – 1,00€</label>
+            <label class="filter-option"><input type="checkbox" name="preis" value="over100" <%= preisList.includes('over100') ? 'checked' : '' %> onchange="this.form.submit()"> Über 1,00€</label>
+          </div>
+
+          <input type="hidden" name="sort" value="<%= filters.sort %>">
+          <a href="/shop" class="btn-reset">Filter zurücksetzen</a>
+        </form>
+      </div>
+    </aside>
+
+    <!-- Product Grid -->
+    <div class="shop-content">
+      <div class="shop-toolbar">
+        <div class="shop-count"><%= pagination.total %> Produkte gefunden</div>
+        <select onchange="location.href='/shop?'+new URLSearchParams({...Object.fromEntries(new URLSearchParams(location.search)),sort:this.value})" class="sort-select">
+          <option value="popular" <%= filters.sort==='popular' ? 'selected' : '' %>>Sortieren nach Beliebtheit</option>
+          <option value="price_asc" <%= filters.sort==='price_asc' ? 'selected' : '' %>>Preis aufsteigend</option>
+          <option value="price_desc" <%= filters.sort==='price_desc' ? 'selected' : '' %>>Preis absteigend</option>
+          <option value="name_az" <%= filters.sort==='name_az' ? 'selected' : '' %>>Name A–Z</option>
+        </select>
+      </div>
+
+      <div class="product-grid">
+        <% for (const p of products) { %>
+        <div class="product-card <%= p.stock === 0 ? 'product-card--sold-out' : '' %>">
+          <a href="/shop/produkt/<%= p.slug %>" class="product-card-image">
+            <% if (p.badge) { %><div class="product-badge <%= p.badge === 'BESTSELLER' ? 'badge-green' : 'badge-blue' %>"><%= p.badge %></div><% } %>
+            <% if (p.stock === 0) { %><div class="product-badge badge-red">Nicht verfügbar</div><% } %>
+            <% if (p.image) { %>
+              <img src="<%= p.image %>" alt="<%= p.name %>" loading="lazy">
+            <% } else { %>
+              <div class="product-placeholder"><%= p.cat_name === 'Kabelbinder & Zubehör' ? '🔗' : p.cat_name === 'Kabelverschraubungen' ? '🔧' : p.cat_name === 'Reihenklemmen' ? '⚡' : '📦' %></div>
+            <% } %>
+          </a>
+          <div class="product-card-body">
+            <% if (p.badge === 'BESTSELLER') { %><div class="product-tag">BESTSELLER</div><% } %>
+            <h3 class="product-name"><a href="/shop/produkt/<%= p.slug %>"><%= p.name %></a></h3>
+            <% if (p.sku) { %><p class="product-sku">Art.-Nr.: <%= p.sku %></p><% } %>
+
+            <div class="tier-table">
+              <div class="tier-table-label">Staffelpreise</div>
+              <div class="tier-table-row">
+                <% for (const t of p.tiers) { %>
+                <div>
+                  <div class="tier-qty"><%= t.min_qty %>–<%= t.max_qty ? t.max_qty : '∞' %> Stk</div>
+                  <div class="tier-price <%= p.tiers.indexOf(t) > 0 ? 'tier-price--green' : '' %>"><%= formatPrice(t.price) %></div>
+                </div>
+                <% } %>
+              </div>
+            </div>
+
+            <div class="product-order-row">
+              <input type="number" class="qty-input" value="1" min="1" id="qty-<%= p.id %>">
+              <% if (p.stock > 0) { %>
+              <button class="btn-add-cart" data-product-id="<%= p.id %>" data-qty-id="qty-<%= p.id %>" data-csrf="<%= csrfToken %>">In den Warenkorb</button>
+              <% } else { %>
+              <button class="btn-add-cart btn-disabled" disabled>Ausverkauft</button>
+              <% } %>
+            </div>
+
+            <div class="product-stock <%= p.stock > 0 ? 'stock-in' : 'stock-out' %>">
+              <%= p.stock > 0 ? '✓ ' + p.stock + ' Stück auf Lager' : '⚠ Nicht auf Lager' %>
+            </div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+      <% if (pagination.totalPages > 1) { %>
+      <div class="pagination">
+        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+        <a href="/shop?page=<%= i %>&kategorie=<%= filters.kategorie||'' %>&sort=<%= filters.sort %>" class="page-btn <%= i === pagination.page ? 'page-btn--active' : '' %>"><%= i %></a>
+        <% } %>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,30 @@
+<%- include('../partials/header') %>
+<main>
+  <div class="container page-content">
+    <h1>Häufig gestellte Fragen (FAQ)</h1>
+    <div class="faq-list">
+      <% const faqs = [
+        ['Sind die Produkte CE-zertifiziert?', 'Ja, alle unsere Produkte sind CE-zertifiziert und RoHS-konform. Sie entsprechen allen geltenden EU-Normen und Richtlinien. Auf Wunsch können wir Ihnen die entsprechenden Zertifikate und Konformitätserklärungen zusenden.'],
+        ['Wie lange dauert die Lieferung?', 'Da wir ein Lager in Österreich betreiben, liefern wir in der Regel innerhalb von 2-5 Werktagen aus. Bei sehr großen Bestellmengen oder Sonderartikeln kann die Lieferzeit etwas länger sein.'],
+        ['Gibt es Mindestbestellmengen?', 'Nein! Bei uns können Sie bereits ab 1 Stück bestellen. Natürlich werden die Preise mit steigender Bestellmenge deutlich günstiger – unsere Staffelpreise sind transparent auf jeder Produktseite angegeben.'],
+        ['Kann ich auf Rechnung zahlen?', 'Für neue Kunden bieten wir zunächst Vorauszahlung per Überweisung an. Für Stammkunden mit gutem Zahlungsverhalten bieten wir auch Zahlungsziele auf Rechnung an – bitte nehmen Sie dazu Kontakt mit uns auf.'],
+        ['Liefern Sie auch nach Deutschland oder in die Schweiz?', 'Ja, wir liefern in alle EU-Länder sowie in die Schweiz. Die Versandkosten variieren je nach Zielland und Gewicht. Bitte nehmen Sie für genaue Informationen Kontakt auf.'],
+        ['Warum sind Ihre Preise so viel günstiger?', 'Wir importieren direkt vom Hersteller aus der Türkei, ohne Zwischenhändler. Dadurch sparen wir die üblichen Handelsstufenaufschläge ein und geben diese Ersparnis 1:1 an unsere Kunden weiter. Qualitätsabstriche gibt es dabei nicht – alle Produkte sind CE-zertifiziert.'],
+        ['Welche Zahlungsmethoden akzeptieren Sie?', 'Aktuell akzeptieren wir Vorauszahlung per Überweisung sowie Zahlung auf Rechnung (für Stammkunden). Wir arbeiten daran, weitere Zahlungsmethoden anzubieten.'],
+        ['Kann ich einen Warenkorb speichern und teilen?', 'Ja! Im Warenkorb gibt es die Funktion "Warenkorb speichern & teilen". Sie erhalten einen Link, den Sie z.B. an Ihren Vorgesetzten zur Genehmigung schicken können.'],
+      ]; %>
+      <% for (const [q, a] of faqs) { %>
+      <div class="faq-item">
+        <button class="faq-question" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none'?'block':'none'; this.classList.toggle('open')">
+          <span><%= q %></span><span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer" style="display:none"><p><%= a %></p></div>
+      </div>
+      <% } %>
+    </div>
+    <div class="faq-contact">
+      <p>Noch Fragen? <a href="/kontakt">Kontaktieren Sie uns!</a></p>
+    </div>
+  </div>
+</main>
+<%- include('../partials/footer') %>

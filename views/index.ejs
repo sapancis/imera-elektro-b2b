@@ -1,0 +1,135 @@
+<%- include('partials/header') %>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">✓ CE-ZERTIFIZIERT &nbsp;|&nbsp; DIREKTIMPORT TÜRKEI &nbsp;|&nbsp; AB 1 STÜCK</div>
+      <h1>Elektrokomponenten 40-60%<br>unter österreichischem Marktpreis</h1>
+      <p class="hero-sub">Kabelbinder, Kabelverschraubungen, Reihenklemmen & mehr – gleiche Qualität, direkt vom Hersteller, ohne Zwischenhändler</p>
+      <div class="hero-btns">
+        <a href="/shop" class="btn-green btn-lg">Zum Shop</a>
+        <a href="/ueber-uns" class="btn-outline btn-lg">Mehr erfahren</a>
+      </div>
+      <div class="hero-trust">
+        <span>✓ CE-zertifiziert</span>
+        <span>✓ 2-5 Tage Lieferung</span>
+        <span>✓ Keine MwSt.</span>
+        <span>✓ Ab 1 Stück</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Preisvergleich -->
+  <section class="section section-white">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">PREISVERGLEICH</div>
+        <h2>Bis zu 72% günstiger als der Markt</h2>
+        <p>Vergleichen Sie selbst – gleiche Qualität, deutlich niedrigere Preise</p>
+      </div>
+      <div class="comparison-grid">
+        <% for (const p of featured) { %>
+        <div class="comparison-card <%= p.badge === 'BESTSELLER' ? 'comparison-card--featured' : '' %>">
+          <% if (p.badge) { %><div class="card-badge card-badge--<%= p.badge === 'BESTSELLER' ? 'green' : 'blue' %>"><%= p.badge %></div><% } %>
+          <div class="text-center">
+            <p class="product-cat-label"><%= p.cat_name %></p>
+            <h3 class="comparison-product-name"><%= p.name %></h3>
+            <div class="price-compare">
+              <div class="price-ours">
+                <div class="price-label">Bei uns</div>
+                <div class="price-value price-green"><%= formatPrice(p.tiers[0]?.price) %></div>
+              </div>
+              <div class="price-arrow">→</div>
+              <div class="price-market">
+                <div class="price-label">Markt AT</div>
+                <div class="price-value price-red price-strikethrough"><%= formatPrice(p.market_price_min) %>–<%= formatPrice(p.market_price_max) %></div>
+              </div>
+            </div>
+            <div class="savings-badge">Sie sparen bis zu <%= savings(p.tiers[0]?.price, p.market_price_max) %>%</div>
+            <% if (p.tiers.length > 1) { %>
+            <div class="tier-hint">
+              <div class="tier-hint-label">Staffelpreise verfügbar</div>
+              <% for (const t of p.tiers.slice(1,2)) { %><div>Ab <%= t.min_qty %> Stk: <%= formatPrice(t.price) %></div><% } %>
+            </div>
+            <% } %>
+            <a href="/shop/produkt/<%= p.slug %>" class="btn-blue btn-sm mt-1" style="display:block">Zum Produkt</a>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kategorien -->
+  <section class="section section-gray">
+    <div class="container">
+      <div class="section-header">
+        <h2>Unser Sortiment</h2>
+        <p>Hochwertige Elektrokomponenten für Profis</p>
+      </div>
+      <div class="categories-grid">
+        <% for (const cat of categories) { %>
+        <a href="/shop?kategorie=<%= cat.slug %>" class="category-card">
+          <div class="category-icon"><%= cat.icon %></div>
+          <h3><%= cat.name %></h3>
+          <p><%= cat.description %></p>
+          <div class="category-footer">
+            <span class="cat-link">Produkte ansehen →</span>
+          </div>
+        </a>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Für wen? -->
+  <section class="section section-white">
+    <div class="container">
+      <div class="section-header">
+        <h2>Für wen ist Imera Elektro?</h2>
+        <p>Wir beliefern Profis aller Branchen</p>
+      </div>
+      <div class="target-grid">
+        <div class="target-card"><div class="target-icon">⚡</div><h3>Elektriker</h3><p>Klein- und Mittelbetriebe, die regelmäßig Elektrokomponenten benötigen</p></div>
+        <div class="target-card"><div class="target-icon">🏭</div><h3>Schaltschrankbauer</h3><p>Profis, die auf zuverlässige Reihenklemmen, DIN-Schienen und Kabelmanagement angewiesen sind</p></div>
+        <div class="target-card"><div class="target-icon">🔧</div><h3>Industrie</h3><p>Wartungsabteilungen und Facility Management mit laufendem Bedarf</p></div>
+        <div class="target-card"><div class="target-icon">🏪</div><h3>Händler</h3><p>Kleinere Elektrogroßhändler, die ihr Sortiment ergänzen möchten</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vorteile -->
+  <section class="section section-gray">
+    <div class="container">
+      <div class="section-header">
+        <h2>Warum Imera Elektro?</h2>
+        <p>Ihre Vorteile auf einen Blick</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon feature-icon--blue">✓</div>
+          <h3>CE-zertifiziert</h3>
+          <p>Alle Produkte sind EU-konform und entsprechen höchsten Qualitätsstandards</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon feature-icon--green">🚚</div>
+          <h3>Schnelle Lieferung</h3>
+          <p>Lager in Österreich für kurze Lieferzeiten innerhalb von 2-5 Werktagen</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon feature-icon--yellow">💰</div>
+          <h3>Staffelpreise</h3>
+          <p>Bereits ab 1 Stück bestellbar – je mehr Sie kaufen, desto günstiger wird es</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon feature-icon--purple">📋</div>
+          <h3>Keine MwSt.</h3>
+          <p>Als Kleinunternehmer geben wir die Steuerersparnis direkt an Sie weiter</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

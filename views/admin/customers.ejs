@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kunden – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar"><div class="admin-page-title">Kunden (<%= customers.length %>)</div></div>
+  <div class="admin-content">
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead><tr><th>Name</th><th>E-Mail</th><th>Unternehmen</th><th>Bestellungen</th><th>Umsatz</th><th>Registriert</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <% for (const c of customers) { %>
+          <tr class="<%= !c.active ? 'row-inactive' : '' %>">
+            <td><strong><%= c.name || '–' %></strong></td>
+            <td><a href="mailto:<%= c.email %>"><%= c.email %></a></td>
+            <td><%= c.company || '–' %></td>
+            <td><%= c.order_count %></td>
+            <td><%= formatEuro(c.total_spent) %></td>
+            <td><%= formatDate(c.created_at) %></td>
+            <td><span class="badge-small <%= c.active ? 'badge-green' : 'badge-gray' %>"><%= c.active ? 'Aktiv' : 'Gesperrt' %></span></td>
+            <td>
+              <form action="/admin/kunden/<%= c.id %>/sperren" method="POST" style="display:inline" onsubmit="return confirm('<%= c.active ? 'Kunde wirklich sperren?' : 'Kunde freischalten?' %>')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn-sm <%= c.active ? 'btn-danger' : 'btn-outline' %>"><%= c.active ? 'Sperren' : 'Freischalten' %></button>
+              </form>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+</body></html>

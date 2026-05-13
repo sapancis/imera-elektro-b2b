@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bestellung – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar">
+    <div class="admin-page-title"><%= order.order_number %></div>
+    <a href="/admin/bestellungen" class="btn-outline btn-sm">← Zurück</a>
+  </div>
+  <div class="admin-content">
+    <div class="admin-form-grid">
+      <div>
+        <div class="admin-card">
+          <h3>Bestelldetails</h3>
+          <div class="detail-row"><span>Datum</span><span><%= formatDate(order.created_at) %></span></div>
+          <div class="detail-row"><span>Zahlung</span><span><%= order.payment_method === 'transfer' ? 'Überweisung' : 'Auf Rechnung' %></span></div>
+          <div class="detail-row"><span>Status</span><span class="status-badge status-<%= orderStatusClass(order.status) %>"><%= orderStatusLabel(order.status) %></span></div>
+          <% if (order.notes) { %><div class="detail-row"><span>Anmerkungen</span><span><%= order.notes %></span></div><% } %>
+        </div>
+
+        <div class="admin-card">
+          <h3>Kundendaten</h3>
+          <% if (customer) { %>
+          <div class="detail-row"><span>Name</span><span><%= customer.name %></span></div>
+          <div class="detail-row"><span>E-Mail</span><span><a href="mailto:<%= customer.email %>"><%= customer.email %></a></span></div>
+          <% if (customer.company) { %><div class="detail-row"><span>Unternehmen</span><span><%= customer.company %></span></div><% } %>
+          <% } else { %>
+          <div class="detail-row"><span>Name</span><span><%= order.guest_name %></span></div>
+          <div class="detail-row"><span>E-Mail</span><span><%= order.guest_email %></span></div>
+          <% if (order.guest_company) { %><div class="detail-row"><span>Unternehmen</span><span><%= order.guest_company %></span></div><% } %>
+          <% } %>
+          <% if (order.shipping_address) { %><div class="detail-row"><span>Adresse</span><span style="white-space:pre-line"><%= order.shipping_address %></span></div><% } %>
+        </div>
+      </div>
+
+      <div>
+        <div class="admin-card">
+          <h3>Status ändern</h3>
+          <form action="/admin/bestellungen/<%= order.id %>/status" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <select name="status" class="admin-select">
+              <% for (const s of ['pending','processing','shipped','delivered','cancelled']) { %>
+              <option value="<%= s %>" <%= order.status===s ? 'selected' : '' %>><%= orderStatusLabel(s) %></option>
+              <% } %>
+            </select>
+            <button type="submit" class="btn-blue btn-sm" style="margin-top:0.5rem">Status aktualisieren</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h3>Bestellpositionen</h3>
+          <table class="admin-table">
+            <thead><tr><th>Produkt</th><th>Menge</th><th>Preis/Stk</th><th>Gesamt</th></tr></thead>
+            <tbody>
+              <% for (const item of items) { %>
+              <tr>
+                <td><strong><%= item.product_name %></strong><br><small><%= item.product_sku %></small></td>
+                <td><%= item.quantity %></td>
+                <td><%= formatPrice(item.unit_price) %></td>
+                <td><%= formatEuro(item.total_price) %></td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+          <div class="order-totals">
+            <div class="summary-row"><span>Zwischensumme</span><span><%= formatEuro(order.subtotal) %></span></div>
+            <div class="summary-row"><span>Versand</span><span><%= order.shipping > 0 ? formatEuro(order.shipping) : 'Kostenlos' %></span></div>
+            <div class="summary-total"><span>Gesamt</span><span><%= formatEuro(order.total) %></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+</body></html>

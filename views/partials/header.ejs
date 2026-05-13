@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> – Imera Elektro</title>
+  <meta name="description" content="CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt. Direktimport Türkei.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+</head>
+<body>
+
+<% if (locals.flash) { %>
+<div class="flash flash-<%= flash.type %>">
+  <span><%= flash.message %></span>
+  <button onclick="this.parentElement.remove()">×</button>
+</div>
+<% } %>
+
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="/" class="logo">IMERA ELEKTRO</a>
+        <nav class="main-nav" id="mainNav">
+          <a href="/shop" class="<%= currentPath.startsWith('/shop') ? 'active' : '' %>">Shop</a>
+          <a href="/shop" class="<%= currentPath.startsWith('/shop') ? 'active' : '' %>">Produkte</a>
+          <a href="/ueber-uns" class="<%= currentPath === '/ueber-uns' ? 'active' : '' %>">Über uns</a>
+          <a href="/kontakt" class="<%= currentPath === '/kontakt' ? 'active' : '' %>">Kontakt</a>
+          <a href="/faq" class="<%= currentPath === '/faq' ? 'active' : '' %>">FAQ</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <span class="header-phone">📞 +43 660 8514467</span>
+        <% if (locals.user) { %>
+          <a href="/konto" class="btn-header-link">👤 <%= user.name || user.email.split('@')[0] %></a>
+          <% if (user.role === 'admin') { %><a href="/admin" class="btn-header-link">Admin</a><% } %>
+        <% } else { %>
+          <a href="/konto/login" class="btn-header-link">Anmelden</a>
+        <% } %>
+        <a href="/warenkorb" class="btn-cart">
+          🛒 Warenkorb <% if (cartCount > 0) { %><span class="cart-badge"><%= cartCount %></span><% } %>
+        </a>
+        <a href="#preisliste" class="btn-primary btn-sm">Preisliste anfordern</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menü öffnen">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>

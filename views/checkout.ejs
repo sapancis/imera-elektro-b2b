@@ -1,0 +1,105 @@
+<%- include('partials/header') %>
+
+<main>
+  <div class="container">
+    <h1 class="page-title">Kasse</h1>
+    <div class="checkout-layout">
+      <form action="/kasse/bestellung" method="POST" class="checkout-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="form-section">
+          <h2>Kontaktdaten</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Name *</label>
+              <input type="text" name="name" value="<%= user?.name || '' %>" required placeholder="Vor- und Nachname">
+            </div>
+            <div class="form-group">
+              <label>E-Mail *</label>
+              <input type="email" name="email" value="<%= user?.email || '' %>" required placeholder="ihre@email.at">
+            </div>
+            <div class="form-group">
+              <label>Unternehmen</label>
+              <input type="text" name="company" value="<%= user?.company || '' %>" placeholder="Firma GmbH">
+            </div>
+            <div class="form-group">
+              <label>Telefon</label>
+              <input type="tel" name="phone" value="<%= user?.phone || '' %>" placeholder="+43 ...">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2>Lieferadresse *</h2>
+          <div class="form-group">
+            <textarea name="address" required rows="3" placeholder="Straße, Hausnummer&#10;PLZ Ort&#10;Land"><%= user?.address || '' %></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2>Zahlungsmethode</h2>
+          <div class="payment-options">
+            <label class="payment-option selected" id="pay-transfer">
+              <input type="radio" name="payment_method" value="transfer" checked>
+              <div>
+                <strong>💳 Überweisung</strong>
+                <p>IBAN wird nach Bestellbestätigung mitgeteilt</p>
+              </div>
+            </label>
+            <label class="payment-option" id="pay-invoice">
+              <input type="radio" name="payment_method" value="invoice">
+              <div>
+                <strong>📄 Auf Rechnung</strong>
+                <p>Nur für Stammkunden nach Prüfung</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2>Anmerkungen</h2>
+          <div class="form-group">
+            <textarea name="notes" rows="2" placeholder="Lieferhinweise, Bestellnummer Ihres Unternehmens, etc."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section form-agb">
+          <label class="checkbox-label">
+            <input type="checkbox" required>
+            Ich habe die <a href="/agb" target="_blank">AGB</a> und die <a href="/datenschutz" target="_blank">Datenschutzerklärung</a> gelesen und akzeptiere diese.
+          </label>
+        </div>
+
+        <button type="submit" class="btn-green btn-full btn-lg">Bestellung kostenpflichtig aufgeben →</button>
+        <p style="font-size:12px;color:#6B7280;text-align:center;margin-top:8px">Alle Preise netto exkl. MwSt. | Kleinunternehmer gem. § 6 Abs. 1 Z 27 UStG</p>
+      </form>
+
+      <!-- Order Summary -->
+      <div class="checkout-summary">
+        <h3>Ihre Bestellung</h3>
+        <% for (const item of items) { %>
+        <div class="checkout-item">
+          <div class="checkout-item-name"><%= item.product.name %></div>
+          <div class="checkout-item-qty"><%= item.qty %> × <%= formatPrice(item.unitPrice) %></div>
+          <div class="checkout-item-total"><%= formatEuro(item.lineTotal) %></div>
+        </div>
+        <% } %>
+        <hr>
+        <div class="summary-row"><span>Zwischensumme</span><span><%= formatEuro(subtotal) %></span></div>
+        <div class="summary-row"><span>Versand</span><span><%= shipping > 0 ? formatEuro(shipping) : 'Kostenlos' %></span></div>
+        <div class="summary-total"><span>Gesamt (netto)</span><span><%= formatEuro(total) %></span></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+document.querySelectorAll('input[name="payment_method"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+    r.parentElement.classList.add('selected');
+  });
+});
+</script>
+
+<%- include('partials/footer') %>

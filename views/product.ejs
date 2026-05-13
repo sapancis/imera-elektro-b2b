@@ -1,0 +1,258 @@
+<%- include('partials/header') %>
+
+<main>
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="/">Startseite</a> › <a href="/shop">Shop</a> › <a href="/shop?kategorie=<%= product.cat_slug %>"><%= product.cat_name %></a> › <%= product.name %>
+    </nav>
+
+    <div class="product-detail-grid">
+      <!-- Image Gallery -->
+      <div class="product-gallery">
+        <div class="gallery-main">
+          <% if (product.image) { %>
+            <img src="<%= product.image %>" alt="<%= product.name %>" id="mainImage">
+          <% } else { %>
+            <div class="gallery-placeholder"><%= product.cat_name === 'Kabelbinder & Zubehör' ? '🔗' : product.cat_name === 'Kabelverschraubungen' ? '🔧' : product.cat_name === 'Reihenklemmen' ? '⚡' : '📦' %></div>
+          <% } %>
+        </div>
+        <div class="gallery-thumbs">
+          <% if (product.image) { %>
+          <div class="gallery-thumb active" onclick="document.getElementById('mainImage').src='<%= product.image %>';document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active')">
+            <img src="<%= product.image %>" alt="">
+          </div>
+          <% } %>
+          <% for (const img of product.imagesArr) { %>
+          <div class="gallery-thumb" onclick="document.getElementById('mainImage').src='<%= img %>';document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active')">
+            <img src="<%= img %>" alt="">
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        <% if (product.badge) { %><div class="product-badge-detail badge-green"><%= product.badge %></div><% } %>
+        <h1 class="product-detail-title"><%= product.name %></h1>
+        <p class="product-detail-meta">
+          <% if (product.sku) { %>Art.-Nr.: <strong><%= product.sku %></strong> | <% } %>
+          Lagerbestand: <strong class="<%= product.stock > 0 ? 'text-green' : 'text-red' %>"><%= product.stock > 0 ? product.stock + ' Stück verfügbar' : 'Nicht auf Lager' %></strong>
+        </p>
+
+        <% if (product.market_price_min && product.market_price_max) { %>
+        <div class="market-price-box">
+          <div class="market-price-label">Marktpreis in Österreich</div>
+          <div class="market-price-row">
+            <span class="price-red price-strikethrough"><%= formatPrice(product.market_price_min) %> – <%= formatPrice(product.market_price_max) %></span>
+            <span class="savings-text">Sie sparen bis zu <%= savings(product.tiers[0]?.price, product.market_price_max) %>%</span>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Tier Price Box -->
+        <div class="tier-box">
+          <h3>Staffelpreise – Je mehr, desto günstiger</h3>
+          <div class="tier-options" id="tierOptions">
+            <% for (let i = 0; i < product.tiers.length; i++) { %>
+            <label class="tier-option-row <%= i === 0 ? 'selected' : '' %>" data-tier-idx="<%= i %>">
+              <input type="radio" name="tier" value="<%= i %>" <%= i === 0 ? 'checked' : '' %> style="margin-right:10px">
+              <div class="tier-option-info">
+                <div class="tier-option-range"><%= product.tiers[i].label || product.tiers[i].min_qty + '–' + (product.tiers[i].max_qty || '∞') + ' Stück' %></div>
+                <div class="tier-option-sub"><%= i === 0 ? 'Ideal für Kleinbedarf' : i === 1 ? 'Beliebteste Option' : 'Bester Preis für Großabnehmer' %></div>
+              </div>
+              <div class="tier-option-price">
+                <span class="tier-price-val" style="color:<%= i === 0 ? '#1E3A8A' : '#10B981' %>"><%= formatPrice(product.tiers[i].price) %></span>
+                <small>pro Stück</small>
+              </div>
+            </label>
+            <% } %>
+          </div>
+
+          <div class="qty-section">
+            <div class="qty-label">Bestellmenge eingeben</div>
+            <div class="qty-row">
+              <input type="number" id="detailQty" value="1" min="1" class="qty-input-lg">
+              <button onclick="adjustQty(10)" class="btn-qty-adj">+10</button>
+              <button onclick="adjustQty(100)" class="btn-qty-adj">+100</button>
+            </div>
+
+            <div class="price-summary" id="priceSummary">
+              <div class="price-summary-row">
+                <span>Gesamtpreis</span>
+                <span class="price-total-big" id="totalPrice"><%= formatPrice(product.tiers[0]?.price) %></span>
+              </div>
+              <div class="price-summary-note" id="priceNote">1 Stück × <%= formatPrice(product.tiers[0]?.price) %></div>
+            </div>
+
+            <div class="tip-box" id="tipBox" style="display:none"></div>
+
+            <% if (product.stock > 0) { %>
+            <button class="btn-add-cart-lg btn-blue-full" id="addToCartBtn" data-product-id="<%= product.id %>" data-csrf="<%= csrfToken %>">In den Warenkorb legen</button>
+            <a href="/warenkorb" class="btn-add-cart-lg btn-outline-full" style="text-align:center;display:block;margin-top:8px;padding:14px;border:2px solid #1E3A8A;border-radius:8px;color:#1E3A8A;text-decoration:none;font-weight:500">Sofort kaufen (zum Warenkorb)</a>
+            <% } else { %>
+            <button class="btn-add-cart-lg btn-disabled" disabled>Nicht auf Lager</button>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="trust-row">
+          <div class="trust-item"><span>✓</span><small>CE-zertifiziert</small></div>
+          <div class="trust-item"><span>🚚</span><small>2-5 Tage Lieferzeit</small></div>
+          <div class="trust-item"><span>↩</span><small>14 Tage Rückgabe</small></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="product-tabs">
+      <div class="tab-nav">
+        <button class="tab-btn tab-active" onclick="showTab('details', this)">Produktdetails</button>
+        <button class="tab-btn" onclick="showTab('specs', this)">Technische Daten</button>
+        <button class="tab-btn" onclick="showTab('why', this)">Warum bei uns?</button>
+      </div>
+
+      <div class="tab-content tab-active" id="tab-details">
+        <div class="tab-grid">
+          <div>
+            <h2>Produktbeschreibung</h2>
+            <p class="product-description"><%= product.description %></p>
+
+            <% if (product.appsArr.length) { %>
+            <h3>Anwendungsbereiche</h3>
+            <ul class="app-list">
+              <% for (const app of product.appsArr) { %><li><%= app %></li><% } %>
+            </ul>
+            <% } %>
+          </div>
+          <div>
+            <div class="why-box">
+              <h3>Warum bei uns kaufen?</h3>
+              <ul class="why-list">
+                <li>✓ Direktimport vom Hersteller</li>
+                <li>✓ 40-72% günstiger als Markt</li>
+                <li>✓ CE-zertifizierte Qualität</li>
+                <li>✓ Schnelle Lieferung aus AT</li>
+                <li>✓ Persönlicher Support</li>
+              </ul>
+            </div>
+            <div class="contact-box">
+              <h3>Haben Sie Fragen?</h3>
+              <p>Unser Team berät Sie gerne bei der Auswahl.</p>
+              <a href="tel:+436608514467" class="btn-outline-sm">📞 Jetzt anrufen</a>
+              <a href="/kontakt" class="btn-outline-sm">📧 E-Mail senden</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-specs" style="display:none">
+        <% if (product.specsArr.length) { %>
+        <table class="specs-table">
+          <% for (const [key, val] of product.specsArr) { %>
+          <tr><td><%= key %></td><td><%= val %></td></tr>
+          <% } %>
+        </table>
+        <% } %>
+      </div>
+
+      <div class="tab-content" id="tab-why" style="display:none">
+        <div class="why-content">
+          <h2>Direktimport = Ihr Vorteil</h2>
+          <p>Durch unseren direkten Import von CE-zertifizierten türkischen Herstellern (ONKA, TORK) sparen wir Zwischenhändlermargen ein und geben die Ersparnis vollständig an Sie weiter. Gleiche Qualität, deutlich bessere Preise.</p>
+          <div class="comparison-logos">
+            <div><strong>Statt bei:</strong> Schrack, Würth, Sonepar, Rexel</div>
+            <div><strong>Kaufen Sie direkt:</strong> 40–72% günstiger</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <% if (related.length > 0) { %>
+    <section class="related-products">
+      <h2>Ähnliche Produkte</h2>
+      <div class="product-grid product-grid-sm">
+        <% for (const rp of related) { %>
+        <div class="product-card">
+          <a href="/shop/produkt/<%= rp.slug %>" class="product-card-image">
+            <div class="product-placeholder">📦</div>
+          </a>
+          <div class="product-card-body">
+            <h3 class="product-name"><a href="/shop/produkt/<%= rp.slug %>"><%= rp.name %></a></h3>
+            <div class="tier-hint"><span class="price-green"><%= formatPrice(rp.tiers[0]?.price) %></span> / Stück</div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </section>
+    <% } %>
+  </div>
+</main>
+
+<script>
+const productId = '<%= product.id %>';
+const tiers = <%- JSON.stringify(product.tiers) %>;
+
+function adjustQty(n) {
+  const inp = document.getElementById('detailQty');
+  inp.value = Math.max(1, parseInt(inp.value || 0) + n);
+  updatePrice();
+}
+
+document.getElementById('detailQty')?.addEventListener('input', updatePrice);
+
+function updatePrice() {
+  const qty = parseInt(document.getElementById('detailQty').value) || 1;
+  fetch(`/shop/api/preis/${productId}?qty=${qty}`)
+    .then(r => r.json()).then(data => {
+      if (!data.ok) return;
+      document.getElementById('totalPrice').textContent = data.total.toString().replace('.', ',') + '€';
+      document.getElementById('priceNote').textContent = qty + ' Stück × ' + data.unitPrice.toString().replace('.', ',') + '€';
+      const tip = document.getElementById('tipBox');
+      if (data.nextTier) {
+        tip.style.display = 'block';
+        const diff = data.nextTier.min_qty - qty;
+        tip.textContent = `💡 Tipp: Bestellen Sie ${diff} weitere Stück und sparen Sie zusätzlich – dann nur ${data.nextTier.price.toFixed(3).replace('.',',')}€/Stk`;
+      } else { tip.style.display = 'none'; }
+      highlightTier(qty);
+    });
+}
+
+function highlightTier(qty) {
+  document.querySelectorAll('.tier-option-row').forEach((row, i) => {
+    const t = tiers[i];
+    const inRange = qty >= t.min_qty && (t.max_qty === null || qty <= t.max_qty);
+    row.classList.toggle('selected', inRange);
+    if (inRange) row.querySelector('input').checked = true;
+  });
+}
+
+document.getElementById('addToCartBtn')?.addEventListener('click', function() {
+  const qty = parseInt(document.getElementById('detailQty').value) || 1;
+  const csrf = this.dataset.csrf;
+  fetch('/warenkorb/hinzufuegen', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `product_id=${productId}&qty=${qty}&_csrf=${encodeURIComponent(csrf)}`
+  }).then(r => r.json()).then(d => {
+    if (d.ok) {
+      document.querySelectorAll('.cart-badge').forEach(b => b.textContent = d.cartCount);
+      const toast = document.getElementById('cartToast');
+      document.getElementById('cartToastMsg').textContent = d.message;
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 3000);
+    }
+  });
+});
+
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; t.classList.remove('tab-active'); });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('tab-active'));
+  document.getElementById('tab-' + id).style.display = 'block';
+  btn.classList.add('tab-active');
+}
+
+updatePrice();
+</script>
+
+<%- include('partials/footer') %>

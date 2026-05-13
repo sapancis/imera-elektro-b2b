@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pandoc \"C:\\\\Users\\\\alisa\\\\Downloads\\\\Imera_Elektro_Website_Briefing \\(1\\).docx\" -o \"C:\\\\Users\\\\alisa\\\\Downloads\\\\briefing_output.md\")",
+      "Read(//c/Users/alisa/Downloads/**)",
+      "Bash(python -c ' *)",
+      "Bash(npm install *)",
+      "Bash(node database/seed.js)",
+      "Bash(timeout 8 node server.js)",
+      "Bash(node server.js)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/shop)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/shop/produkt/kabelbinder-200x45-schwarz-uv)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/admin)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/konto/login)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/warenkorb)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/ueber-uns)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/kontakt)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/faq)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/agb)",
+      "Bash(taskkill /F /IM node.exe)",
+      "PowerShell(Stop-Process -Name node -Force -ErrorAction SilentlyContinue)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "WebFetch(domain:alisalihsapanci.com)",
+      "WebSearch",
+      "WebFetch(domain:commons.wikimedia.org)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\alisa\\\\OneDrive\\\\Masaüstü\\\\b2b\\\\public\\\\uploads\" | Select-Object Name, @{n='KB';e={[math]::Round\\($_.Length/1KB,1\\)}})",
+      "Bash(node scripts/update-images.js)",
+      "Bash(node -e ' *)",
+      "Bash(gh auth *)"
+    ]
+  }
+}

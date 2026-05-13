@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – Imera Elektro Admin</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar">
+    <div class="admin-page-title">Dashboard</div>
+    <div class="admin-topbar-right"><span>👤 <%= locals.user?.name || 'Admin' %></span></div>
+  </div>
+  <div class="admin-content">
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-info"><div class="stat-value"><%= stats.products %></div><div class="stat-label">Aktive Produkte</div></div></div>
+      <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-info"><div class="stat-value"><%= stats.orders %></div><div class="stat-label">Bestellungen gesamt</div></div></div>
+      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-info"><div class="stat-value"><%= stats.customers %></div><div class="stat-label">Kunden</div></div></div>
+      <div class="stat-card stat-card--green"><div class="stat-icon">💰</div><div class="stat-info"><div class="stat-value"><%= formatEuro(stats.revenue) %></div><div class="stat-label">Gesamtumsatz</div></div></div>
+    </div>
+
+    <div class="alert-row">
+      <% if (stats.pendingOrders > 0) { %><div class="admin-alert admin-alert--warning">⚠ <%= stats.pendingOrders %> offene Bestellungen – <a href="/admin/bestellungen?status=pending">Jetzt bearbeiten</a></div><% } %>
+      <% if (stats.unreadMessages > 0) { %><div class="admin-alert admin-alert--info">✉ <%= stats.unreadMessages %> ungelesene Nachrichten – <a href="/admin/nachrichten">Ansehen</a></div><% } %>
+      <% if (stats.priceRequests > 0) { %><div class="admin-alert admin-alert--info">📋 <%= stats.priceRequests %> neue Preislisten-Anfragen – <a href="/admin/nachrichten">Ansehen</a></div><% } %>
+      <% if (stats.stock0 > 0) { %><div class="admin-alert admin-alert--danger">📉 <%= stats.stock0 %> Produkte nicht auf Lager – <a href="/admin/produkte">Überprüfen</a></div><% } %>
+    </div>
+
+    <div class="admin-two-col">
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>Letzte Bestellungen</h3><a href="/admin/bestellungen" class="btn-sm btn-outline">Alle ansehen</a></div>
+        <table class="admin-table">
+          <thead><tr><th>Bestellnr.</th><th>Datum</th><th>Betrag</th><th>Status</th></tr></thead>
+          <tbody>
+            <% for (const o of recentOrders) { %>
+            <tr>
+              <td><a href="/admin/bestellungen/<%= o.id %>"><%= o.order_number %></a></td>
+              <td><%= formatDate(o.created_at) %></td>
+              <td><%= formatEuro(o.total) %></td>
+              <td><span class="status-badge status-<%= orderStatusClass(o.status) %>"><%= orderStatusLabel(o.status) %></span></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>Letzte Nachrichten</h3><a href="/admin/nachrichten" class="btn-sm btn-outline">Alle ansehen</a></div>
+        <% for (const m of recentMessages) { %>
+        <div class="message-preview <%= !m.read_at ? 'message-unread' : '' %>">
+          <div class="message-from"><strong><%= m.name %></strong> – <%= m.email %></div>
+          <div class="message-subject"><%= m.subject || '(kein Betreff)' %></div>
+          <div class="message-date"><%= formatDate(m.created_at) %></div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <h3>Schnellzugriff</h3>
+      <div class="quick-action-grid">
+        <a href="/admin/produkte/neu" class="quick-action-btn">➕ Neues Produkt</a>
+        <a href="/admin/bestellungen?status=pending" class="quick-action-btn">📋 Offene Bestellungen</a>
+        <a href="/admin/nachrichten" class="quick-action-btn">✉ Nachrichten</a>
+        <a href="/admin/einstellungen" class="quick-action-btn">⚙ Einstellungen</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+</body>
+</html>

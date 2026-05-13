@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Einstellungen – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar"><div class="admin-page-title">Einstellungen</div></div>
+  <div class="admin-content">
+    <form action="/admin/einstellungen" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="admin-form-grid">
+        <div class="admin-card">
+          <h3>Website-Informationen</h3>
+          <div class="form-group"><label>Website-Name</label><input type="text" name="site_name" value="<%= settings.site_name || '' %>"></div>
+          <div class="form-group"><label>Tagline</label><input type="text" name="site_tagline" value="<%= settings.site_tagline || '' %>"></div>
+          <div class="form-group"><label>Meta-Beschreibung (SEO)</label><textarea name="meta_description" rows="3"><%= settings.meta_description || '' %></textarea></div>
+        </div>
+        <div class="admin-card">
+          <h3>Kontaktdaten</h3>
+          <div class="form-group"><label>Telefon</label><input type="text" name="contact_phone" value="<%= settings.contact_phone || '' %>"></div>
+          <div class="form-group"><label>E-Mail</label><input type="email" name="contact_email" value="<%= settings.contact_email || '' %>"></div>
+          <div class="form-group"><label>Website</label><input type="text" name="contact_website" value="<%= settings.contact_website || '' %>"></div>
+        </div>
+        <div class="admin-card">
+          <h3>Shop-Einstellungen</h3>
+          <div class="form-group"><label>Lieferzeit-Angabe</label><input type="text" name="shipping_info" value="<%= settings.shipping_info || '2-5 Werktage' %>"></div>
+          <div class="form-group"><label>Kostenloser Versand ab (€)</label><input type="number" name="free_shipping_threshold" value="<%= settings.free_shipping_threshold || '200' %>"></div>
+          <div class="form-group"><label>Rechtlicher Hinweis (Footer)</label><input type="text" name="company_legal" value="<%= settings.company_legal || '' %>"></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-blue btn-lg">Einstellungen speichern</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+</body></html>

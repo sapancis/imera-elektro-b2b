@@ -1,0 +1,106 @@
+<%- include('partials/header') %>
+
+<main>
+  <div class="container">
+    <h1 class="page-title">Warenkorb</h1>
+
+    <% if (!items || items.length === 0) { %>
+    <div class="empty-state">
+      <div class="empty-icon">🛒</div>
+      <h2>Ihr Warenkorb ist leer</h2>
+      <p>Entdecken Sie unser Sortiment an hochwertigen Elektrokomponenten.</p>
+      <a href="/shop" class="btn-blue">Zum Shop</a>
+    </div>
+    <% } else { %>
+    <div class="cart-layout">
+      <div class="cart-items">
+        <table class="cart-table">
+          <thead>
+            <tr><th>Produkt</th><th>Preis/Stk</th><th>Menge</th><th>Gesamt</th><th></th></tr>
+          </thead>
+          <tbody>
+            <% for (const item of items) { %>
+            <tr>
+              <td>
+                <div class="cart-product">
+                  <a href="/shop/produkt/<%= item.product.slug %>" class="cart-product-name"><%= item.product.name %></a>
+                  <% if (item.product.sku) { %><small>Art.-Nr.: <%= item.product.sku %></small><% } %>
+                  <div class="tier-hint-sm">
+                    <% for (const t of item.tiers) { %>
+                    <span class="<%= item.qty >= t.min_qty && (!t.max_qty || item.qty <= t.max_qty) ? 'tier-active' : '' %>"><%= t.min_qty %>–<%= t.max_qty||'∞' %> Stk: <%= formatPrice(t.price) %></span>
+                    <% } %>
+                  </div>
+                </div>
+              </td>
+              <td class="price-green"><strong><%= formatPrice(item.unitPrice) %></strong></td>
+              <td>
+                <form action="/warenkorb/aktualisieren" method="POST" class="qty-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="product_id" value="<%= item.product.id %>">
+                  <input type="number" name="qty" value="<%= item.qty %>" min="0" class="qty-input" onchange="this.form.submit()">
+                </form>
+              </td>
+              <td><strong><%= formatEuro(item.lineTotal) %></strong></td>
+              <td>
+                <form action="/warenkorb/entfernen" method="POST">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <input type="hidden" name="product_id" value="<%= item.product.id %>">
+                  <button type="submit" class="btn-remove" title="Entfernen">×</button>
+                </form>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+
+        <div class="cart-actions">
+          <button class="btn-outline" id="saveCartBtn" data-csrf="<%= csrfToken %>">💾 Warenkorb speichern & teilen</button>
+          <a href="/shop" class="btn-outline">← Weiter einkaufen</a>
+        </div>
+        <div id="savedCartLink" class="saved-cart-link" style="display:none">
+          <strong>Link zum Teilen:</strong> <input type="text" id="savedLink" readonly class="link-input">
+          <button onclick="navigator.clipboard.writeText(document.getElementById('savedLink').value)" class="btn-sm btn-blue">Kopieren</button>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <h3>Zusammenfassung</h3>
+        <div class="summary-row"><span>Zwischensumme</span><span><%= formatEuro(subtotal) %></span></div>
+        <div class="summary-row">
+          <span>Versand</span>
+          <span><%= shipping > 0 ? formatEuro(shipping) : 'Kostenlos' %></span>
+        </div>
+        <% if (shipping > 0) { %>
+        <div class="shipping-hint">
+          Noch <%= formatEuro(freeShippingThreshold - subtotal) %> bis zum kostenlosen Versand
+          <div class="shipping-bar"><div class="shipping-bar-fill" style="width:<%= Math.min(100, subtotal/freeShippingThreshold*100) %>%"></div></div>
+        </div>
+        <% } %>
+        <div class="summary-total"><span>Gesamt</span><span><%= formatEuro(total) %></span></div>
+        <div class="summary-vat">Alle Preise netto exkl. MwSt. (Kleinunternehmer)</div>
+        <a href="/kasse" class="btn-green btn-full">Zur Kasse →</a>
+        <div class="payment-icons">
+          <span>💳 Überweisung</span><span>📄 Auf Rechnung</span>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</main>
+
+<script>
+document.getElementById('saveCartBtn')?.addEventListener('click', function() {
+  fetch('/warenkorb/speichern', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: '_csrf=' + encodeURIComponent(this.dataset.csrf)
+  }).then(r => r.json()).then(d => {
+    if (d.ok) {
+      document.getElementById('savedCartLink').style.display = 'flex';
+      document.getElementById('savedLink').value = d.link;
+    }
+  });
+});
+</script>
+
+<%- include('partials/footer') %>

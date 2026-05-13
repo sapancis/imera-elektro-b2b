@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+
+<main>
+  <div class="container">
+    <div class="confirmation-box">
+      <div class="confirmation-icon">✓</div>
+      <h1>Bestellung erfolgreich!</h1>
+      <p class="confirmation-number">Bestellnummer: <strong><%= order?.order_number %></strong></p>
+      <p>Vielen Dank für Ihre Bestellung. Wir werden uns in Kürze mit Ihnen in Verbindung setzen.</p>
+
+      <% if (order?.payment_method === 'transfer') { %>
+      <div class="bank-info">
+        <h3>Zahlungsinformationen (Überweisung)</h3>
+        <p>Bitte überweisen Sie den Betrag auf folgendes Konto:</p>
+        <div class="bank-details">
+          <div><strong>Empfänger:</strong> Imera Elektro</div>
+          <div><strong>Betrag:</strong> <%= formatEuro(order.total) %></div>
+          <div><strong>Verwendungszweck:</strong> <%= order.order_number %></div>
+          <div><strong>IBAN:</strong> Wird per E-Mail mitgeteilt</div>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="order-summary-confirm">
+        <h3>Bestellübersicht</h3>
+        <% for (const item of items) { %>
+        <div class="confirm-item">
+          <span><%= item.product_name %> × <%= item.quantity %></span>
+          <span><%= formatEuro(item.total_price) %></span>
+        </div>
+        <% } %>
+        <div class="confirm-total"><strong>Gesamt:</strong> <strong><%= formatEuro(order?.total) %></strong></div>
+      </div>
+
+      <div class="confirmation-actions">
+        <a href="/shop" class="btn-blue">Weiter einkaufen</a>
+        <% if (locals.user) { %><a href="/konto/bestellungen" class="btn-outline">Meine Bestellungen</a><% } %>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

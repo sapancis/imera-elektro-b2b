@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+<main>
+  <div class="container page-content">
+    <h1>Kontakt</h1>
+    <div class="contact-layout">
+      <div>
+        <div class="contact-info-card">
+          <h2>So erreichen Sie uns</h2>
+          <div class="contact-info-item"><div class="contact-info-icon">📞</div><div><strong>Telefon</strong><br><a href="tel:+436608514467">+43 660 8514467</a></div></div>
+          <div class="contact-info-item"><div class="contact-info-icon">📧</div><div><strong>E-Mail</strong><br><a href="mailto:info@imeragroup.com">info@imeragroup.com</a></div></div>
+          <div class="contact-info-item"><div class="contact-info-icon">🌐</div><div><strong>Website</strong><br>www.imeragroup.com</div></div>
+          <div class="contact-info-item"><div class="contact-info-icon">⏰</div><div><strong>Erreichbarkeit</strong><br>Mo–Fr: 8:00–18:00 Uhr</div></div>
+        </div>
+      </div>
+      <div>
+        <h2>Nachricht senden</h2>
+        <form action="/kontakt" method="POST" class="contact-form">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-grid">
+            <div class="form-group"><label>Name *</label><input type="text" name="name" required placeholder="Ihr Name"></div>
+            <div class="form-group"><label>E-Mail *</label><input type="email" name="email" required placeholder="ihre@email.at"></div>
+          </div>
+          <div class="form-group"><label>Telefon</label><input type="tel" name="phone" placeholder="+43 ..."></div>
+          <div class="form-group"><label>Betreff</label><input type="text" name="subject" placeholder="Worum geht es?"></div>
+          <div class="form-group"><label>Nachricht *</label><textarea name="message" required rows="5" placeholder="Ihre Nachricht..."></textarea></div>
+          <button type="submit" class="btn-blue btn-lg">Nachricht senden</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+<%- include('../partials/footer') %>

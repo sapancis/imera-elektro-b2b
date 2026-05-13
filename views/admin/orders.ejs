@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bestellungen – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar"><div class="admin-page-title">Bestellungen</div></div>
+  <div class="admin-content">
+    <div class="status-filter-tabs">
+      <a href="/admin/bestellungen" class="<%= !filterStatus ? 'active' : '' %>">Alle</a>
+      <a href="/admin/bestellungen?status=pending" class="<%= filterStatus==='pending' ? 'active' : '' %>">Offen</a>
+      <a href="/admin/bestellungen?status=processing" class="<%= filterStatus==='processing' ? 'active' : '' %>">In Bearbeitung</a>
+      <a href="/admin/bestellungen?status=shipped" class="<%= filterStatus==='shipped' ? 'active' : '' %>">Versandt</a>
+      <a href="/admin/bestellungen?status=delivered" class="<%= filterStatus==='delivered' ? 'active' : '' %>">Geliefert</a>
+      <a href="/admin/bestellungen?status=cancelled" class="<%= filterStatus==='cancelled' ? 'active' : '' %>">Storniert</a>
+    </div>
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead><tr><th>Bestellnr.</th><th>Datum</th><th>Kunde</th><th>Betrag</th><th>Zahlung</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <% for (const o of orders) { %>
+          <tr>
+            <td><a href="/admin/bestellungen/<%= o.id %>"><strong><%= o.order_number %></strong></a></td>
+            <td><%= formatDate(o.created_at) %></td>
+            <td><%= o.guest_name || o.guest_email || ('Kunde #' + o.user_id) %></td>
+            <td><strong><%= formatEuro(o.total) %></strong></td>
+            <td><%= o.payment_method === 'transfer' ? 'Überweisung' : 'Rechnung' %></td>
+            <td><span class="status-badge status-<%= orderStatusClass(o.status) %>"><%= orderStatusLabel(o.status) %></span></td>
+            <td><a href="/admin/bestellungen/<%= o.id %>" class="btn-sm btn-outline">Details</a></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+</body></html>

@@ -1,0 +1,67 @@
+<%- include('../partials/header') %>
+
+<main>
+  <div class="container">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <a href="/konto/login" class="auth-tab <%= mode === 'login' ? 'active' : '' %>">Anmelden</a>
+        <a href="/konto/registrieren" class="auth-tab <%= mode === 'register' ? 'active' : '' %>">Registrieren</a>
+      </div>
+
+      <% if (mode === 'login') { %>
+      <h1>Willkommen zurück</h1>
+      <form action="/konto/login" method="POST" class="auth-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label>E-Mail-Adresse</label>
+          <input type="email" name="email" required autofocus placeholder="ihre@email.at">
+        </div>
+        <div class="form-group">
+          <label>Passwort</label>
+          <input type="password" name="password" required placeholder="Ihr Passwort">
+        </div>
+        <button type="submit" class="btn-blue btn-full btn-lg">Anmelden</button>
+        <p class="auth-switch">Noch kein Konto? <a href="/konto/registrieren">Jetzt registrieren</a></p>
+      </form>
+
+      <% } else { %>
+      <h1>Konto erstellen</h1>
+      <form action="/konto/registrieren" method="POST" class="auth-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Vor- und Nachname">
+          </div>
+          <div class="form-group">
+            <label>Unternehmen</label>
+            <input type="text" name="company" placeholder="Firma GmbH">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>E-Mail-Adresse *</label>
+          <input type="email" name="email" required autofocus placeholder="ihre@email.at">
+        </div>
+        <div class="form-group">
+          <label>Telefon</label>
+          <input type="tel" name="phone" placeholder="+43 ...">
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Passwort * <small>(min. 8 Zeichen)</small></label>
+            <input type="password" name="password" required minlength="8" placeholder="Passwort">
+          </div>
+          <div class="form-group">
+            <label>Passwort wiederholen *</label>
+            <input type="password" name="password2" required placeholder="Passwort wiederholen">
+          </div>
+        </div>
+        <button type="submit" class="btn-blue btn-full btn-lg">Konto erstellen</button>
+        <p class="auth-switch">Bereits registriert? <a href="/konto/login">Jetzt anmelden</a></p>
+      </form>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>

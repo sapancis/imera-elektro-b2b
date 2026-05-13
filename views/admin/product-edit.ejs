@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><%= title %> – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar">
+    <div class="admin-page-title"><%= product ? 'Produkt bearbeiten' : 'Neues Produkt' %></div>
+    <a href="/admin/produkte" class="btn-outline btn-sm">← Zurück</a>
+  </div>
+  <div class="admin-content">
+    <form action="/admin/produkte/<%= product ? product.id + '/bearbeiten' : 'neu' %>" method="POST" enctype="multipart/form-data" class="admin-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="admin-form-grid">
+        <div class="admin-card">
+          <h3>Grundinformationen</h3>
+          <div class="form-group"><label>Produktname *</label><input type="text" name="name" value="<%= product?.name || '' %>" required></div>
+          <div class="form-grid-2">
+            <div class="form-group"><label>URL-Slug</label><input type="text" name="slug" value="<%= product?.slug || '' %>" placeholder="automatisch generiert"></div>
+            <div class="form-group"><label>Art.-Nr. (SKU)</label><input type="text" name="sku" value="<%= product?.sku || '' %>"></div>
+          </div>
+          <div class="form-group">
+            <label>Kategorie</label>
+            <select name="category_id">
+              <option value="">– Keine –</option>
+              <% for (const cat of categories) { %><option value="<%= cat.id %>" <%= product?.category_id===cat.id ? 'selected' : '' %>><%= cat.name %></option><% } %>
+            </select>
+          </div>
+          <div class="form-group"><label>Beschreibung</label><textarea name="description" rows="5"><%= product?.description || '' %></textarea></div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Lagerbestand</label>
+              <input type="number" name="stock" value="<%= product?.stock || 0 %>" min="0">
+            </div>
+            <div class="form-group">
+              <label>Badge (z.B. BESTSELLER)</label>
+              <input type="text" name="badge" value="<%= product?.badge || '' %>">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Marktpreis min (€)</label>
+              <input type="number" step="0.001" name="market_price_min" value="<%= product?.market_price_min || '' %>">
+            </div>
+            <div class="form-group">
+              <label>Marktpreis max (€)</label>
+              <input type="number" step="0.001" name="market_price_max" value="<%= product?.market_price_max || '' %>">
+            </div>
+          </div>
+
+          <div class="form-checks">
+            <label class="checkbox-label"><input type="checkbox" name="featured" value="1" <%= product?.featured ? 'checked' : '' %>> Featured (Startseite)</label>
+            <label class="checkbox-label"><input type="checkbox" name="active" value="1" <%= (!product || product?.active) ? 'checked' : '' %>> Aktiv (sichtbar im Shop)</label>
+          </div>
+        </div>
+
+        <div>
+          <div class="admin-card">
+            <h3>Produktbild</h3>
+            <% if (product?.image) { %><div class="current-image"><img src="<%= product.image %>" style="max-width:150px;border-radius:8px"></div><% } %>
+            <input type="file" name="image" accept="image/*" class="file-input">
+            <small class="text-gray">Max. 5MB. JPG, PNG, WEBP, GIF</small>
+          </div>
+
+          <div class="admin-card">
+            <h3>Technische Daten</h3>
+            <p class="form-hint">Format: Eigenschaft | Wert (eine pro Zeile)</p>
+            <textarea name="specs_raw" rows="8" class="mono-input"><% if (product?.specsArr) { for (const [k,v] of product.specsArr) { %><%= k %> | <%= v %>
+<% } } %></textarea>
+          </div>
+
+          <div class="admin-card">
+            <h3>Anwendungsbereiche</h3>
+            <p class="form-hint">Ein Anwendungsbereich pro Zeile</p>
+            <textarea name="apps_raw" rows="5" class="mono-input"><%= product?.appsArr ? product.appsArr.join('\n') : '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h3>Staffelpreise</h3>
+        <div id="tierRows">
+          <div class="tier-header-row">
+            <span>Min. Menge</span><span>Max. Menge</span><span>Preis (€)</span><span>Bezeichnung</span><span></span>
+          </div>
+          <% const existingTiers = tiers.length > 0 ? tiers : [{min_qty:1, max_qty:99, price:'', label:'1–99 Stück'},{min_qty:100, max_qty:999, price:'', label:'100–999 Stück'},{min_qty:1000, max_qty:null, price:'', label:'Ab 1.000 Stück'}]; %>
+          <% for (let i = 0; i < existingTiers.length; i++) { %>
+          <div class="tier-row" id="tier-<%= i %>">
+            <input type="number" name="tier_min" value="<%= existingTiers[i].min_qty %>" min="1" placeholder="Min. Menge" required>
+            <input type="number" name="tier_max" value="<%= existingTiers[i].max_qty || '' %>" min="1" placeholder="Leer = unbegrenzt">
+            <input type="number" name="tier_price" value="<%= existingTiers[i].price %>" step="0.0001" min="0" placeholder="0.000" required>
+            <input type="text" name="tier_label" value="<%= existingTiers[i].label || '' %>" placeholder="z.B. 1–99 Stück">
+            <button type="button" onclick="this.parentElement.remove()" class="btn-danger btn-sm">×</button>
+          </div>
+          <% } %>
+        </div>
+        <button type="button" onclick="addTierRow()" class="btn-outline btn-sm" style="margin-top:0.5rem">+ Staffel hinzufügen</button>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-blue btn-lg">Speichern</button>
+        <a href="/admin/produkte" class="btn-outline">Abbrechen</a>
+        <% if (product) { %><a href="/shop/produkt/<%= product.slug %>" target="_blank" class="btn-outline">Im Shop ansehen</a><% } %>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+function addTierRow() {
+  const cont = document.getElementById('tierRows');
+  const div = document.createElement('div');
+  div.className = 'tier-row';
+  div.innerHTML = '<input type="number" name="tier_min" min="1" placeholder="Min. Menge" required><input type="number" name="tier_max" min="1" placeholder="Leer = unbegrenzt"><input type="number" name="tier_price" step="0.0001" min="0" placeholder="0.000" required><input type="text" name="tier_label" placeholder="z.B. Ab 1.000 Stück"><button type="button" onclick="this.parentElement.remove()" class="btn-danger btn-sm">×</button>';
+  cont.appendChild(div);
+}
+
+document.querySelector('input[name="name"]')?.addEventListener('input', function() {
+  const slugEl = document.querySelector('input[name="slug"]');
+  if (!slugEl.dataset.manual) {
+    slugEl.value = this.value.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  }
+});
+document.querySelector('input[name="slug"]')?.addEventListener('input', function() { this.dataset.manual = '1'; });
+</script>
+<script src="/js/admin.js"></script>
+</body></html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nachrichten – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar"><div class="admin-page-title">Nachrichten</div></div>
+  <div class="admin-content">
+    <div class="admin-two-col">
+      <div>
+        <div class="admin-card">
+          <h3>Kontaktnachrichten (<%= messages.length %>)</h3>
+          <% for (const m of messages) { %>
+          <div class="message-item <%= !m.read_at ? 'message-unread' : '' %>">
+            <div class="message-header">
+              <div>
+                <strong><%= m.name %></strong> · <a href="mailto:<%= m.email %>"><%= m.email %></a>
+                <% if (m.phone) { %> · <%= m.phone %><% } %>
+              </div>
+              <div class="message-date"><%= formatDate(m.created_at) %></div>
+            </div>
+            <% if (m.subject) { %><div class="message-subject"><%= m.subject %></div><% } %>
+            <div class="message-body"><%= m.message %></div>
+            <div class="message-actions">
+              <% if (!m.read_at) { %>
+              <form action="/admin/nachrichten/<%= m.id %>/gelesen" method="POST" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn-sm btn-outline">Als gelesen markieren</button>
+              </form>
+              <% } %>
+              <a href="mailto:<%= m.email %>?subject=Re: <%= m.subject || 'Ihre Anfrage' %>" class="btn-sm btn-blue">Antworten</a>
+              <form action="/admin/nachrichten/<%= m.id %>/loeschen" method="POST" style="display:inline" onsubmit="return confirm('Nachricht löschen?')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn-sm btn-danger">Löschen</button>
+              </form>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <div>
+        <div class="admin-card">
+          <h3>Preislisten-Anfragen (<%= requests.length %>)</h3>
+          <table class="admin-table">
+            <thead><tr><th>E-Mail</th><th>Datum</th><th>Status</th></tr></thead>
+            <tbody>
+              <% for (const r of requests) { %>
+              <tr>
+                <td><a href="mailto:<%= r.email %>"><%= r.email %></a></td>
+                <td><%= formatDate(r.created_at) %></td>
+                <td><span class="badge-small <%= r.sent ? 'badge-green' : 'badge-gray' %>"><%= r.sent ? 'Gesendet' : 'Ausstehend' %></span></td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+</body></html>
