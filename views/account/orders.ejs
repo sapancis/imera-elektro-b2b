@@ -23,7 +23,13 @@
         </div>
         <div class="order-card-footer">
           <strong>Gesamt: <%= formatEuro(o.total) %></strong>
-          <a href="/konto/bestellungen/<%= o.order_number %>" class="btn-sm btn-outline">Details anzeigen</a>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+            <a href="/konto/bestellungen/<%= o.order_number %>" class="btn-sm btn-outline">Details anzeigen</a>
+            <form action="/konto/bestellungen/<%= o.order_number %>/erneut" method="POST" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="btn-sm btn-green">🔄 Erneut bestellen</button>
+            </form>
+          </div>
         </div>
       </div>
       <% } %>

@@ -109,6 +109,90 @@
       <% } %>
     </div>
   </div>
+
+  <!-- Schnell-Bestellformular -->
+  <div class="schnell-section">
+    <div class="schnell-header">
+      <h2>⚡ Schnellbestellung</h2>
+      <p>Artikelnummer bekannt? Direkt bestellen.</p>
+    </div>
+    <div class="schnell-body">
+      <div id="schnellLines">
+        <div class="schnell-line">
+          <input type="text" class="schnell-sku" placeholder="Artikelnummer (z.B. TRK-200-45B)" autocomplete="off">
+          <input type="number" class="schnell-qty" value="100" min="1" placeholder="Menge">
+          <button type="button" class="schnell-remove" title="Entfernen">✕</button>
+        </div>
+      </div>
+      <div class="schnell-actions">
+        <button type="button" id="schnellAddLine" class="btn-outline btn-sm">+ Zeile hinzufügen</button>
+        <button type="button" id="schnellSubmit" class="btn-green">In den Warenkorb</button>
+      </div>
+      <div id="schnellMsg" class="schnell-msg" style="display:none"></div>
+    </div>
+  </div>
 </main>
+
+<script>
+// Schnell-Bestellformular
+(function() {
+  const linesEl   = document.getElementById('schnellLines');
+  const addBtn    = document.getElementById('schnellAddLine');
+  const submitBtn = document.getElementById('schnellSubmit');
+  const msgEl     = document.getElementById('schnellMsg');
+
+  function removeLine(btn) {
+    const lines = linesEl.querySelectorAll('.schnell-line');
+    if (lines.length > 1) btn.closest('.schnell-line').remove();
+  }
+
+  function addLine() {
+    const div = document.createElement('div');
+    div.className = 'schnell-line';
+    div.innerHTML = `<input type="text" class="schnell-sku" placeholder="Artikelnummer" autocomplete="off">
+      <input type="number" class="schnell-qty" value="100" min="1" placeholder="Menge">
+      <button type="button" class="schnell-remove" title="Entfernen">✕</button>`;
+    div.querySelector('.schnell-remove').addEventListener('click', function(){ removeLine(this); });
+    linesEl.appendChild(div);
+    div.querySelector('.schnell-sku').focus();
+  }
+
+  linesEl.querySelector('.schnell-remove').addEventListener('click', function(){ removeLine(this); });
+  addBtn.addEventListener('click', addLine);
+
+  submitBtn.addEventListener('click', () => {
+    const lines = [];
+    linesEl.querySelectorAll('.schnell-line').forEach(row => {
+      const sku = row.querySelector('.schnell-sku').value.trim();
+      const qty = parseInt(row.querySelector('.schnell-qty').value) || 1;
+      if (sku) lines.push({ sku, qty });
+    });
+    if (!lines.length) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird hinzugefügt…';
+
+    const csrf = '<%= csrfToken %>';
+    fetch('/warenkorb/schnellbestellung', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `lines=${encodeURIComponent(JSON.stringify(lines))}&_csrf=${encodeURIComponent(csrf)}`
+    })
+    .then(r => r.json())
+    .then(data => {
+      msgEl.style.display = 'block';
+      msgEl.className = 'schnell-msg ' + (data.ok ? 'schnell-msg--ok' : 'schnell-msg--err');
+      let html = data.message;
+      if (data.errors && data.errors.length) html += '<ul>' + data.errors.map(e => `<li>${e}</li>`).join('') + '</ul>';
+      msgEl.innerHTML = html;
+      if (data.ok) {
+        document.querySelectorAll('.cart-badge').forEach(b => { b.textContent = data.cartCount; b.style.display = 'flex'; });
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'In den Warenkorb';
+    });
+  });
+})();
+</script>
 
 <%- include('partials/footer') %>

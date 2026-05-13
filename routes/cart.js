@@ -89,4 +89,49 @@ router.get('/laden/:token', (req, res) => {
   res.redirect('/warenkorb');
 });
 
+// Schnell-Bestellformular: SKU/Name suche
+router.get('/schnellsuche', (req, res) => {
+  const q = (req.query.q || '').trim();
+  if (!q) return res.json([]);
+  const results = db.prepare(`
+    SELECT id, name, sku,
+      (SELECT MIN(price) FROM product_tiers WHERE product_id=products.id) as price_min,
+      stock
+    FROM products
+    WHERE active=1 AND (sku LIKE ? OR name LIKE ?)
+    LIMIT 8
+  `).all(`%${q}%`, `%${q}%`);
+  res.json(results);
+});
+
+// Schnell-Bestellung: Mehrere Positionen auf einmal in den Warenkorb
+router.post('/schnellbestellung', (req, res) => {
+  let lines = req.body.lines; // [{sku, qty}]
+  if (typeof lines === 'string') {
+    try { lines = JSON.parse(lines); } catch { lines = []; }
+  }
+  if (!Array.isArray(lines)) lines = [];
+
+  if (!req.session.cart) req.session.cart = {};
+  let added = 0;
+  const errors = [];
+
+  for (const line of lines) {
+    const sku = (line.sku || '').trim().toUpperCase();
+    const qty = Math.max(1, parseInt(line.qty) || 1);
+    if (!sku) continue;
+
+    const product = db.prepare('SELECT id, stock FROM products WHERE active=1 AND UPPER(sku)=?').get(sku);
+    if (!product) { errors.push(`Art.-Nr. "${sku}" nicht gefunden`); continue; }
+
+    const current = req.session.cart[product.id] || 0;
+    req.session.cart[product.id] = current + qty;
+    added++;
+  }
+
+  const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
+  res.json({ ok: added > 0, added, errors, cartCount,
+    message: added > 0 ? `${added} Produkt(e) zum Warenkorb hinzugefügt.` : 'Keine Produkte gefunden.' });
+});
+
 module.exports = router;

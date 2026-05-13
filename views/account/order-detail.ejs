@@ -6,12 +6,19 @@
       <nav><a href="/konto">Übersicht</a><a href="/konto/bestellungen" class="active">Meine Bestellungen</a></nav>
     </aside>
     <div class="account-content">
-      <a href="/konto/bestellungen" class="back-link">← Zurück zu Bestellungen</a>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem">
+        <a href="/konto/bestellungen" class="back-link">← Zurück zu Bestellungen</a>
+        <form action="/konto/bestellungen/<%= order.order_number %>/erneut" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit" class="btn-sm btn-green">🔄 Erneut bestellen</button>
+        </form>
+      </div>
       <h1><%= order.order_number %></h1>
       <div class="order-meta">
         <span>Datum: <%= formatDate(order.created_at) %></span>
         <span class="status-badge status-<%= orderStatusClass(order.status) %>"><%= orderStatusLabel(order.status) %></span>
         <span>Zahlung: <%= order.payment_method === 'transfer' ? 'Überweisung' : 'Rechnung' %></span>
+        <a href="/konto/bestellungen/<%= order.order_number %>/rechnung.pdf" class="btn-sm btn-outline" style="margin-left:auto">📥 PDF Rechnung</a>
       </div>
       <div class="table-scroll">
         <table class="data-table">
