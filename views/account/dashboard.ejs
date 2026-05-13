@@ -28,6 +28,7 @@
           <p class="text-gray">Sie haben noch keine Bestellungen aufgegeben.</p>
           <a href="/shop" class="btn-blue">Jetzt einkaufen</a>
           <% } else { %>
+          <div class="table-scroll">
           <table class="data-table">
             <thead><tr><th>Bestellnummer</th><th>Datum</th><th>Gesamt</th><th>Status</th><th></th></tr></thead>
             <tbody>
@@ -42,6 +43,7 @@
               <% } %>
             </tbody>
           </table>
+          </div>
           <% } %>
         </div>
 

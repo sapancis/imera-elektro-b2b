@@ -1,7 +1,36 @@
 // Hamburger menu
 const hamburger = document.getElementById('hamburger');
 const nav = document.getElementById('mainNav');
-hamburger?.addEventListener('click', () => { nav.classList.toggle('open'); });
+hamburger?.addEventListener('click', () => {
+  nav.classList.toggle('open');
+  hamburger.setAttribute('aria-expanded', nav.classList.contains('open'));
+});
+// Close nav on outside click
+document.addEventListener('click', (e) => {
+  if (nav && nav.classList.contains('open') && !nav.contains(e.target) && !hamburger.contains(e.target)) {
+    nav.classList.remove('open');
+  }
+});
+
+// Shop filter toggle (mobile)
+const filterToggle = document.getElementById('filterToggle');
+const filterBody   = document.getElementById('filterBody');
+if (filterToggle && filterBody) {
+  // On desktop always visible
+  function checkFilterState() {
+    if (window.innerWidth > 768) {
+      filterBody.classList.remove('open');
+      filterBody.style.display = '';
+      filterToggle.classList.remove('open');
+    }
+  }
+  checkFilterState();
+  window.addEventListener('resize', checkFilterState);
+  filterToggle.addEventListener('click', () => {
+    const isOpen = filterBody.classList.toggle('open');
+    filterToggle.classList.toggle('open', isOpen);
+  });
+}
 
 // Add to cart (shop page)
 document.querySelectorAll('.btn-add-cart').forEach(btn => {

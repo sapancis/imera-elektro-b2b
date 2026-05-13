@@ -19,7 +19,14 @@
 
 <div class="admin-main">
   <div class="admin-topbar">
-    <div class="admin-page-title"><%= title %></div>
+    <div style="display:flex;align-items:center;gap:0.75rem">
+      <button id="adminMenuToggle" style="display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:4px" aria-label="Menü">
+        <span style="width:20px;height:2px;background:var(--text);display:block;border-radius:2px"></span>
+        <span style="width:20px;height:2px;background:var(--text);display:block;border-radius:2px"></span>
+        <span style="width:20px;height:2px;background:var(--text);display:block;border-radius:2px"></span>
+      </button>
+      <div class="admin-page-title"><%= title %></div>
+    </div>
     <div class="admin-topbar-right">
       <span>👤 <%= locals.user?.name || 'Admin' %></span>
     </div>
@@ -30,5 +37,23 @@
 </div>
 
 <script src="/js/admin.js"></script>
+<script>
+// Admin mobile sidebar toggle
+const menuBtn = document.getElementById('adminMenuToggle');
+const sidebar = document.querySelector('.admin-sidebar');
+if (menuBtn && sidebar) {
+  function checkAdmin() {
+    menuBtn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+  }
+  checkAdmin();
+  window.addEventListener('resize', checkAdmin);
+  menuBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.addEventListener('click', (e) => {
+    if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+      sidebar.classList.remove('open');
+    }
+  });
+}
+</script>
 </body>
 </html>

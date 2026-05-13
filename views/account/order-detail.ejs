@@ -13,26 +13,28 @@
         <span class="status-badge status-<%= orderStatusClass(order.status) %>"><%= orderStatusLabel(order.status) %></span>
         <span>Zahlung: <%= order.payment_method === 'transfer' ? 'Überweisung' : 'Rechnung' %></span>
       </div>
-      <table class="data-table">
-        <thead><tr><th>Produkt</th><th>Menge</th><th>Preis/Stk</th><th>Gesamt</th></tr></thead>
-        <tbody>
-          <% for (const item of items) { %>
-          <tr>
-            <td><%= item.product_name %><% if (item.product_sku) { %><br><small>Art.-Nr.: <%= item.product_sku %></small><% } %></td>
-            <td><%= item.quantity %></td>
-            <td><%= formatPrice(item.unit_price) %></td>
-            <td><%= formatEuro(item.total_price) %></td>
-          </tr>
-          <% } %>
-        </tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Produkt</th><th>Menge</th><th>Preis/Stk</th><th>Gesamt</th></tr></thead>
+          <tbody>
+            <% for (const item of items) { %>
+            <tr>
+              <td><%= item.product_name %><% if (item.product_sku) { %><br><small>Art.-Nr.: <%= item.product_sku %></small><% } %></td>
+              <td><%= item.quantity %></td>
+              <td><%= formatPrice(item.unit_price) %></td>
+              <td><%= formatEuro(item.total_price) %></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
       <div class="order-totals">
         <div class="summary-row"><span>Zwischensumme</span><span><%= formatEuro(order.subtotal) %></span></div>
         <div class="summary-row"><span>Versand</span><span><%= order.shipping > 0 ? formatEuro(order.shipping) : 'Kostenlos' %></span></div>
         <div class="summary-total"><span>Gesamt</span><span><%= formatEuro(order.total) %></span></div>
       </div>
       <% if (order.shipping_address) { %>
-      <div class="section-card"><h3>Lieferadresse</h3><pre style="font-family:inherit;margin:0"><%= order.shipping_address %></pre></div>
+      <div class="section-card"><h3>Lieferadresse</h3><pre style="font-family:inherit;margin:0;white-space:pre-wrap"><%= order.shipping_address %></pre></div>
       <% } %>
     </div>
   </div>

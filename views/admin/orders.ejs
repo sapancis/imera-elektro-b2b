@@ -15,6 +15,7 @@
       <a href="/admin/bestellungen?status=cancelled" class="<%= filterStatus==='cancelled' ? 'active' : '' %>">Storniert</a>
     </div>
     <div class="admin-card">
+      <div class="admin-table-wrap">
       <table class="admin-table">
         <thead><tr><th>Bestellnr.</th><th>Datum</th><th>Kunde</th><th>Betrag</th><th>Zahlung</th><th>Status</th><th></th></tr></thead>
         <tbody>
@@ -31,6 +32,7 @@
           <% } %>
         </tbody>
       </table>
+      </div>
     </div>
   </div>
 </div>

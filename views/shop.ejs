@@ -6,34 +6,39 @@
     <!-- Sidebar Filter -->
     <aside class="shop-sidebar">
       <div class="filter-box">
-        <h3>Filter</h3>
-        <form action="/shop" method="GET" id="filterForm">
-          <div class="filter-group">
-            <div class="filter-label">Kategorie</div>
-            <label class="filter-option">
-              <input type="radio" name="kategorie" value="" <%= !filters.kategorie ? 'checked' : '' %> onchange="this.form.submit()">
-              Alle (<%= pagination.total %>)
-            </label>
-            <% for (const cat of categories) { %>
-            <label class="filter-option">
-              <input type="radio" name="kategorie" value="<%= cat.slug %>" <%= filters.kategorie === cat.slug ? 'checked' : '' %> onchange="this.form.submit()">
-              <%= cat.name %> (<%= cat.cnt %>)
-            </label>
-            <% } %>
-          </div>
+        <button type="button" class="filter-toggle-btn" id="filterToggle">
+          <span>🔍 Filter</span><span class="ft-arrow">▼</span>
+        </button>
+        <div class="shop-filter-body" id="filterBody">
+          <h3 class="filter-desktop-h">Filter</h3>
+          <form action="/shop" method="GET" id="filterForm">
+            <div class="filter-group">
+              <div class="filter-label">Kategorie</div>
+              <label class="filter-option">
+                <input type="radio" name="kategorie" value="" <%= !filters.kategorie ? 'checked' : '' %> onchange="this.form.submit()">
+                Alle (<%= pagination.total %>)
+              </label>
+              <% for (const cat of categories) { %>
+              <label class="filter-option">
+                <input type="radio" name="kategorie" value="<%= cat.slug %>" <%= filters.kategorie === cat.slug ? 'checked' : '' %> onchange="this.form.submit()">
+                <%= cat.name %> (<%= cat.cnt %>)
+              </label>
+              <% } %>
+            </div>
 
-          <div class="filter-group">
-            <div class="filter-label">Preis</div>
-            <% const preisList = Array.isArray(filters.preis) ? filters.preis : (filters.preis ? [filters.preis] : []); %>
-            <label class="filter-option"><input type="checkbox" name="preis" value="under010" <%= preisList.includes('under010') ? 'checked' : '' %> onchange="this.form.submit()"> Unter 0,10€</label>
-            <label class="filter-option"><input type="checkbox" name="preis" value="010to050" <%= preisList.includes('010to050') ? 'checked' : '' %> onchange="this.form.submit()"> 0,10€ – 0,50€</label>
-            <label class="filter-option"><input type="checkbox" name="preis" value="050to100" <%= preisList.includes('050to100') ? 'checked' : '' %> onchange="this.form.submit()"> 0,50€ – 1,00€</label>
-            <label class="filter-option"><input type="checkbox" name="preis" value="over100" <%= preisList.includes('over100') ? 'checked' : '' %> onchange="this.form.submit()"> Über 1,00€</label>
-          </div>
+            <div class="filter-group">
+              <div class="filter-label">Preis</div>
+              <% const preisList = Array.isArray(filters.preis) ? filters.preis : (filters.preis ? [filters.preis] : []); %>
+              <label class="filter-option"><input type="checkbox" name="preis" value="under010" <%= preisList.includes('under010') ? 'checked' : '' %> onchange="this.form.submit()"> Unter 0,10€</label>
+              <label class="filter-option"><input type="checkbox" name="preis" value="010to050" <%= preisList.includes('010to050') ? 'checked' : '' %> onchange="this.form.submit()"> 0,10€ – 0,50€</label>
+              <label class="filter-option"><input type="checkbox" name="preis" value="050to100" <%= preisList.includes('050to100') ? 'checked' : '' %> onchange="this.form.submit()"> 0,50€ – 1,00€</label>
+              <label class="filter-option"><input type="checkbox" name="preis" value="over100" <%= preisList.includes('over100') ? 'checked' : '' %> onchange="this.form.submit()"> Über 1,00€</label>
+            </div>
 
-          <input type="hidden" name="sort" value="<%= filters.sort %>">
-          <a href="/shop" class="btn-reset">Filter zurücksetzen</a>
-        </form>
+            <input type="hidden" name="sort" value="<%= filters.sort %>">
+            <a href="/shop" class="btn-reset">Filter zurücksetzen</a>
+          </form>
+        </div>
       </div>
     </aside>
 
