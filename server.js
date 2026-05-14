@@ -121,6 +121,24 @@ app.use((err, req, res, next) => {
   }
 })();
 
+// ─── Auto-Seed: Ürün yoksa örnek ürünleri yükle ──────────────────────────────
+(async function autoSeed() {
+  try {
+    const db = require('./database/db');
+    const count = db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get().n;
+    if (count === 0) {
+      console.log('⏳ Keine Produkte gefunden — starte automatisches Seeding...');
+      try {
+        await require('./scripts/seed-products');
+      } catch (e) {
+        console.error('Auto-seed Fehler:', e.message);
+      }
+    }
+  } catch (e) {
+    console.error('Auto-seed check Fehler:', e.message);
+  }
+})();
+
 app.listen(PORT, () => {
   console.log(`\n✓ Imera Elektro läuft auf http://localhost:${PORT}`);
   console.log(`  Admin: http://localhost:${PORT}/admin`);

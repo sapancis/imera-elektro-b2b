@@ -901,4 +901,9 @@ async function main() {
   console.log('═══════════════════════════════════════════════\n');
 }
 
-main().catch(console.error);
+// Doğrudan çalıştırılınca main() çağrılır; require ile import edilince sadece export edilir
+if (require.main === module) {
+  main().catch(console.error);
+} else {
+  module.exports = main;
+}

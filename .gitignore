@@ -1,11 +1,13 @@
 node_modules/
 .env
-database/imera.db
 database/imera.db-shm
 database/imera.db-wal
 database/sessions/
 public/uploads/*
 !public/uploads/.gitkeep
+!public/uploads/prod-*.jpg
+!public/uploads/prod-*.png
+!public/uploads/prod-*.webp
 *.log
 .DS_Store
 Thumbs.db
