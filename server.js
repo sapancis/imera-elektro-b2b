@@ -10,6 +10,9 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ─── Trust Proxy (Hostinger / reverse proxy arkasında çalışmak için) ──────
+app.set('trust proxy', 1);
+
 // ─── Security Headers ─────────────────────────────────────────────────────
 app.use(helmet({
   contentSecurityPolicy: {
@@ -82,13 +85,18 @@ app.use('/', require('./routes/pages'));
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
+  res.locals.currentPath = res.locals.currentPath || req.path;
   res.status(404).render('error', { title: 'Seite nicht gefunden', message: 'Die gesuchte Seite wurde nicht gefunden.', code: 404 });
 });
 
 // ─── Error Handler ────────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).render('error', { title: 'Serverfehler', message: 'Ein interner Fehler ist aufgetreten.', code: 500 });
+  console.error(err.stack || err);
+  res.locals.currentPath = res.locals.currentPath || req.path;
+  res.locals.cartCount   = res.locals.cartCount   || 0;
+  res.locals.csrfToken   = res.locals.csrfToken   || '';
+  const status = err.status || err.statusCode || 500;
+  res.status(status).render('error', { title: 'Fehler', message: 'Ein interner Fehler ist aufgetreten.', code: status });
 });
 
 app.listen(PORT, () => {

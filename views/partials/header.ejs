@@ -24,11 +24,11 @@
       <div class="header-left">
         <a href="/" class="logo">IMERA ELEKTRO</a>
         <nav class="main-nav" id="mainNav">
-          <a href="/shop" class="<%= currentPath.startsWith('/shop') ? 'active' : '' %>">Shop</a>
-          <a href="/shop" class="<%= currentPath.startsWith('/shop') ? 'active' : '' %>">Produkte</a>
-          <a href="/ueber-uns" class="<%= currentPath === '/ueber-uns' ? 'active' : '' %>">Über uns</a>
-          <a href="/kontakt" class="<%= currentPath === '/kontakt' ? 'active' : '' %>">Kontakt</a>
-          <a href="/faq" class="<%= currentPath === '/faq' ? 'active' : '' %>">FAQ</a>
+          <a href="/shop" class="<%= (locals.currentPath || '').startsWith('/shop') ? 'active' : '' %>">Shop</a>
+          <a href="/shop" class="<%= (locals.currentPath || '').startsWith('/shop') ? 'active' : '' %>">Produkte</a>
+          <a href="/ueber-uns" class="<%= (locals.currentPath || '') === '/ueber-uns' ? 'active' : '' %>">Über uns</a>
+          <a href="/kontakt" class="<%= (locals.currentPath || '') === '/kontakt' ? 'active' : '' %>">Kontakt</a>
+          <a href="/faq" class="<%= (locals.currentPath || '') === '/faq' ? 'active' : '' %>">FAQ</a>
         </nav>
       </div>
       <div class="header-right">
