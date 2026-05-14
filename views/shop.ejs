@@ -92,6 +92,11 @@
               <% } %>
             </div>
 
+            <div class="product-actions-row">
+              <button class="btn-merken" data-product-id="<%= p.id %>" data-csrf="<%= csrfToken %>" title="Merken">♥ Merken</button>
+              <button class="btn-vergleichen" data-product-id="<%= p.id %>" data-csrf="<%= csrfToken %>" title="Vergleichen">⚖ Vergleichen</button>
+            </div>
+
             <div class="product-stock <%= p.stock > 0 ? 'stock-in' : 'stock-out' %>">
               <%= p.stock > 0 ? '✓ ' + p.stock + ' Stück auf Lager' : '⚠ Nicht auf Lager' %>
             </div>

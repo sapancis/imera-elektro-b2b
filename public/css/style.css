@@ -625,4 +625,204 @@ img { max-width: 100%; display: block; }
   /* Schnell-Bestellung */
   .schnell-section { padding: 1.5rem 1.25rem; }
   .schnell-line { grid-template-columns: 1fr 90px 36px; }
+
+  /* Merkliste / Vergleich */
+  .vergleich-grid { grid-template-columns: 140px 1fr !important; overflow-x: auto; }
+  .merkliste-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ─── Merken & Vergleichen Buttons ─────────────────────────────────────────── */
+.product-actions-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.btn-merken, .btn-vergleichen {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1.5px solid;
+  background: transparent;
+}
+.btn-merken {
+  color: #EF4444;
+  border-color: #EF4444;
+}
+.btn-merken:hover, .btn-merken.active {
+  background: #EF4444;
+  color: #fff;
+}
+.btn-vergleichen {
+  color: #3B82F6;
+  border-color: #3B82F6;
+}
+.btn-vergleichen:hover, .btn-vergleichen.active {
+  background: #3B82F6;
+  color: #fff;
+}
+
+/* ─── Merkliste Header Badge ─────────────────────────────────────────────── */
+.merkliste-badge {
+  background: #EF4444 !important;
+}
+
+/* ─── Merkliste Page ──────────────────────────────────────────────────────── */
+.merkliste-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.merkliste-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #E5E7EB;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.merkliste-card-img {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F9FAFB;
+  overflow: hidden;
+}
+.merkliste-card-img img {
+  max-height: 100%;
+  object-fit: contain;
+}
+.merkliste-card-body {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.merkliste-card-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1D1D1F;
+}
+.merkliste-card-price {
+  font-size: 13px;
+  color: #34C759;
+  font-weight: 600;
+}
+.merkliste-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+.merkliste-card-actions a {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  background: #1D1D1F;
+  color: #fff;
+  text-decoration: none;
+}
+.merkliste-card-actions form button {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  border: 1.5px solid #EF4444;
+  color: #EF4444;
+  cursor: pointer;
+}
+
+/* ─── Vergleich Grid ──────────────────────────────────────────────────────── */
+.vergleich-grid {
+  display: grid;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+.vergleich-label {
+  background: #F9FAFB;
+  padding: 14px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B7280;
+  border-bottom: 1px solid #E5E7EB;
+  border-right: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+}
+.vergleich-cell {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #1D1D1F;
+  border-bottom: 1px solid #E5E7EB;
+  border-right: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+}
+.vergleich-product-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid #E5E7EB;
+  border-right: 1px solid #E5E7EB;
+  text-align: center;
+}
+.vergleich-product-header img {
+  max-height: 100px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 8px;
+}
+.vergleich-product-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.vergleich-product-header h3 a {
+  color: #1D1D1F;
+  text-decoration: none;
+}
+.vergleich-sku {
+  font-size: 12px;
+  color: #6B7280;
+  margin-top: 4px;
+}
+.vergleich-img-placeholder {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+.text-green { color: #34C759; font-weight: 600; }
+.text-red { color: #EF4444; font-weight: 600; }
+
+/* ─── Coupon Box (Checkout) ───────────────────────────────────────────────── */
+.coupon-box {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #E5E7EB;
+}
+.coupon-row {
+  display: flex;
+  gap: 8px;
+}
+.coupon-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+.coupon-input:focus {
+  outline: none;
+  border-color: #34C759;
 }

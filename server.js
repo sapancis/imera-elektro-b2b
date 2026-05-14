@@ -81,6 +81,8 @@ app.use('/kasse', require('./routes/checkout'));
 app.use('/konto', require('./routes/auth'));
 app.use('/konto', require('./routes/account'));
 app.use('/admin', require('./routes/admin'));
+app.use('/merkliste', require('./routes/merkliste'));
+app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────

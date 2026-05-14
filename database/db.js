@@ -132,11 +132,36 @@ db.exec(`
     created_at TEXT DEFAULT (datetime('now')),
     expires_at TEXT
   );
+
+  CREATE TABLE IF NOT EXISTS coupons (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT UNIQUE NOT NULL,
+    type TEXT NOT NULL DEFAULT 'percent',
+    value REAL NOT NULL,
+    min_order REAL DEFAULT 0,
+    max_uses INTEGER DEFAULT 1,
+    used_count INTEGER DEFAULT 0,
+    user_id INTEGER REFERENCES users(id),
+    expires_at TEXT,
+    active INTEGER DEFAULT 1,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS merkliste (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    created_at TEXT DEFAULT (datetime('now')),
+    UNIQUE(user_id, product_id)
+  );
 `);
 
 const defaultSettings = [
   ['site_name', 'Imera Elektro'],
   ['site_tagline', 'Elektrokomponenten 40-60% unter Marktpreis'],
+  ['tawkto_property_id', ''],
+  ['welcome_discount_percent', '10'],
+  ['stripe_publishable_key', ''],
   ['contact_phone', '+43 660 8514467'],
   ['contact_email', 'info@imeragroup.com'],
   ['contact_website', 'www.imeragroup.com'],

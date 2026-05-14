@@ -100,3 +100,77 @@ document.getElementById('priceListForm')?.addEventListener('submit', function(e)
 
 // Flash auto-dismiss
 setTimeout(() => { document.querySelector('.flash')?.remove(); }, 5000);
+
+// ─── Merken (Wishlist) ────────────────────────────────────────────────────
+document.querySelectorAll('.btn-merken').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const productId = this.dataset.productId;
+    const csrf = this.dataset.csrf;
+    fetch('/merkliste/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `product_id=${productId}&_csrf=${encodeURIComponent(csrf)}`
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        const isAdded = d.action === 'added';
+        this.classList.toggle('active', isAdded);
+        this.textContent = isAdded ? '♥ Gemerkt' : '♥ Merken';
+        // Update merkliste badge
+        document.querySelectorAll('.merkliste-badge').forEach(b => {
+          b.textContent = d.count;
+          b.style.display = d.count > 0 ? 'flex' : 'none';
+        });
+        // If no badge exists but count > 0, add it
+        if (d.count > 0 && !document.querySelector('.merkliste-badge')) {
+          const link = document.querySelector('a[href="/merkliste"]');
+          if (link) {
+            const span = document.createElement('span');
+            span.className = 'cart-badge merkliste-badge';
+            span.textContent = d.count;
+            link.appendChild(span);
+          }
+        }
+        showToast(d.message || (isAdded ? 'Zur Merkliste hinzugefügt.' : 'Von Merkliste entfernt.'));
+      } else {
+        showToast(d.message || 'Fehler aufgetreten.');
+      }
+    });
+  });
+});
+
+// ─── Vergleichen (Comparison) ─────────────────────────────────────────────
+const vergleichBar = document.getElementById('vergleichBar');
+const vergleichCount = document.getElementById('vergleichCount');
+
+document.querySelectorAll('.btn-vergleichen').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const productId = this.dataset.productId;
+    const csrf = this.dataset.csrf;
+    fetch('/vergleich/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `product_id=${productId}&_csrf=${encodeURIComponent(csrf)}`
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        const isAdded = d.action === 'added';
+        this.classList.toggle('active', isAdded);
+        this.textContent = isAdded ? '⚖ Verglichen' : '⚖ Vergleichen';
+        if (vergleichBar && vergleichCount) {
+          if (d.count > 0) {
+            vergleichBar.style.display = 'flex';
+            vergleichCount.textContent = d.count + ' Produkt(e) zum Vergleich ausgewählt';
+          } else {
+            vergleichBar.style.display = 'none';
+          }
+        }
+        showToast(isAdded ? 'Zum Vergleich hinzugefügt.' : 'Aus dem Vergleich entfernt.');
+      } else {
+        showToast(d.message || 'Fehler aufgetreten.');
+      }
+    });
+  });
+});

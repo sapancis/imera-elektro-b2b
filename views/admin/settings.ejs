@@ -26,6 +26,15 @@
           <div class="form-group"><label>Lieferzeit-Angabe</label><input type="text" name="shipping_info" value="<%= settings.shipping_info || '2-5 Werktage' %>"></div>
           <div class="form-group"><label>Kostenloser Versand ab (€)</label><input type="number" name="free_shipping_threshold" value="<%= settings.free_shipping_threshold || '200' %>"></div>
           <div class="form-group"><label>Rechtlicher Hinweis (Footer)</label><input type="text" name="company_legal" value="<%= settings.company_legal || '' %>"></div>
+          <div class="form-group"><label>Willkommensrabatt für Neukunden (%)</label><input type="number" name="welcome_discount_percent" value="<%= settings.welcome_discount_percent || '10' %>" min="0" max="100"><small style="color:#6B7280">0 = deaktiviert. Wird als Gutschein bei Registrierung vergeben.</small></div>
+        </div>
+        <div class="admin-card">
+          <h3>Zahlungs-Integrationen</h3>
+          <div class="form-group"><label>Stripe Publishable Key</label><input type="text" name="stripe_publishable_key" value="<%= settings.stripe_publishable_key || '' %>" placeholder="pk_live_..."><small style="color:#6B7280">Den Secret Key als Umgebungsvariable STRIPE_SECRET_KEY setzen.</small></div>
+        </div>
+        <div class="admin-card">
+          <h3>Live-Chat (Tawk.to)</h3>
+          <div class="form-group"><label>Tawk.to Property ID</label><input type="text" name="tawkto_property_id" value="<%= settings.tawkto_property_id || '' %>" placeholder="z.B. 64abc123def456789..."><small style="color:#6B7280">Finden Sie die ID unter tawk.to → Administration → Chat Widget. Leer lassen = deaktiviert.</small></div>
         </div>
       </div>
       <div class="form-actions">

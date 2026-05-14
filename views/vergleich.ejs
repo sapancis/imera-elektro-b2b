@@ -1,0 +1,96 @@
+<%- include('partials/header') %>
+<main>
+<div class="container" style="padding-top:2rem;padding-bottom:3rem">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+    <h1 class="page-title" style="margin:0">⚖ Produktvergleich</h1>
+    <% if (products.length > 0) { %>
+    <form action="/vergleich/leeren" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="btn-outline btn-sm">Liste leeren</button>
+    </form>
+    <% } %>
+  </div>
+
+  <% if (products.length === 0) { %>
+  <div class="empty-state">
+    <div class="empty-icon">⚖</div>
+    <h2>Kein Produkt zum Vergleichen</h2>
+    <p>Klicken Sie auf "Vergleichen" bei einem Produkt. Bis zu 3 Produkte möglich.</p>
+    <a href="/shop" class="btn-blue">Zum Shop</a>
+  </div>
+  <% } else { %>
+
+  <div class="vergleich-grid" style="grid-template-columns: 200px repeat(<%= products.length %>, 1fr)">
+    <!-- Header Row -->
+    <div class="vergleich-label"></div>
+    <% for (const p of products) { %>
+    <div class="vergleich-product-header">
+      <% if (p.image) { %><img src="<%= p.image %>" alt="<%= p.name %>"><% } else { %><div class="vergleich-img-placeholder">📦</div><% } %>
+      <h3><a href="/shop/produkt/<%= p.slug %>"><%= p.name %></a></h3>
+      <% if (p.sku) { %><div class="vergleich-sku">Art.-Nr.: <%= p.sku %></div><% } %>
+    </div>
+    <% } %>
+
+    <!-- Preis -->
+    <div class="vergleich-label">Preis ab</div>
+    <% for (const p of products) { %>
+    <div class="vergleich-cell"><span class="price-green" style="font-size:18px;font-weight:700"><%= formatPrice(p.price_min) %></span><small style="color:#6B7280"> / Stk</small></div>
+    <% } %>
+
+    <!-- Kategorie -->
+    <div class="vergleich-label">Kategorie</div>
+    <% for (const p of products) { %><div class="vergleich-cell"><%= p.cat_name || '–' %></div><% } %>
+
+    <!-- Lager -->
+    <div class="vergleich-label">Lagerbestand</div>
+    <% for (const p of products) { %>
+    <div class="vergleich-cell <%= p.stock > 0 ? 'text-green' : 'text-red' %>"><%= p.stock > 0 ? p.stock + ' Stk verfügbar' : 'Nicht auf Lager' %></div>
+    <% } %>
+
+    <!-- Staffelpreise -->
+    <div class="vergleich-label">Staffelpreise</div>
+    <% for (const p of products) { %>
+    <div class="vergleich-cell">
+      <% for (const t of p.tiers) { %>
+      <div style="font-size:12px;color:#6B7280"><%= t.label || (t.min_qty + '+') %>: <strong><%= formatPrice(t.price) %></strong></div>
+      <% } %>
+    </div>
+    <% } %>
+
+    <!-- Technische Daten -->
+    <% const allSpecs = [...new Set(products.flatMap(p => p.specsArr.map(s => s[0])))]; %>
+    <% for (const specKey of allSpecs) { %>
+    <div class="vergleich-label"><%= specKey %></div>
+    <% for (const p of products) { %>
+    <% const spec = p.specsArr.find(s => s[0] === specKey); %>
+    <div class="vergleich-cell"><%= spec ? spec[1] : '–' %></div>
+    <% } %>
+    <% } %>
+
+    <!-- In Warenkorb -->
+    <div class="vergleich-label"></div>
+    <% for (const p of products) { %>
+    <div class="vergleich-cell" style="padding:1rem">
+      <% if (p.stock > 0) { %>
+      <button class="btn-add-cart" data-product-id="<%= p.id %>" data-qty-id="vqty-<%= p.id %>" data-csrf="<%= csrfToken %>" style="width:100%">In den Warenkorb</button>
+      <input type="number" id="vqty-<%= p.id %>" value="1" min="1" class="qty-input" style="width:100%;margin-top:4px">
+      <% } else { %>
+      <button disabled class="btn-add-cart btn-disabled" style="width:100%">Ausverkauft</button>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+
+  <% } %>
+</div>
+</main>
+
+<!-- Floating Vergleich Bar -->
+<div id="vergleichBar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--black);color:white;padding:12px 24px;z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+  <span id="vergleichCount" style="font-size:14px;font-weight:500"></span>
+  <a href="/vergleich" class="btn-green btn-sm">Jetzt vergleichen →</a>
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

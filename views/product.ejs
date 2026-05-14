@@ -95,6 +95,11 @@
           </div>
         </div>
 
+        <div class="product-actions-row" style="margin-top:12px">
+          <button class="btn-merken" id="merkenBtn" data-product-id="<%= product.id %>" data-csrf="<%= csrfToken %>">♥ Merken</button>
+          <button class="btn-vergleichen" id="vergleichenBtn" data-product-id="<%= product.id %>" data-csrf="<%= csrfToken %>">⚖ Vergleichen</button>
+        </div>
+
         <div class="trust-row">
           <div class="trust-item"><span>✓</span><small>CE-zertifiziert</small></div>
           <div class="trust-item"><span>🚚</span><small>2-5 Tage Lieferzeit</small></div>

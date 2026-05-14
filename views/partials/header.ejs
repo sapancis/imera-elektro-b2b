@@ -39,6 +39,10 @@
         <% } else { %>
           <a href="/konto/login" class="btn-header-link">Anmelden</a>
         <% } %>
+        <a href="/merkliste" class="btn-header-link" title="Merkliste">
+          ♥<% if ((locals.merklisteCount || 0) > 0) { %><span class="cart-badge merkliste-badge"><%= locals.merklisteCount %></span><% } %>
+        </a>
+        <a href="/vergleich" class="btn-header-link" title="Vergleichsliste">⚖</a>
         <a href="/warenkorb" class="btn-cart">
           🛒 Warenkorb <% if ((locals.cartCount || 0) > 0) { %><span class="cart-badge"><%= locals.cartCount %></span><% } %>
         </a>

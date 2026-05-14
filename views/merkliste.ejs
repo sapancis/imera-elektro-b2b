@@ -1,0 +1,46 @@
+<%- include('partials/header') %>
+<main>
+<div class="container" style="padding-top:2rem;padding-bottom:3rem">
+  <h1 class="page-title">♥ Merkliste</h1>
+
+  <% if (products.length === 0) { %>
+  <div class="empty-state">
+    <div class="empty-icon">♥</div>
+    <h2>Ihre Merkliste ist leer</h2>
+    <p>Klicken Sie auf das Herz-Symbol bei einem Produkt, um es zu speichern.</p>
+    <a href="/shop" class="btn-blue">Zum Shop</a>
+  </div>
+  <% } else { %>
+  <div class="product-grid">
+    <% for (const p of products) { %>
+    <div class="product-card">
+      <a href="/shop/produkt/<%= p.slug %>" class="product-card-image">
+        <% if (p.image) { %>
+          <img src="<%= p.image %>" alt="<%= p.name %>" loading="lazy">
+        <% } else { %>
+          <div class="product-placeholder">📦</div>
+        <% } %>
+      </a>
+      <div class="product-card-body">
+        <% if (p.cat_name) { %><div class="product-category"><%= p.cat_name %></div><% } %>
+        <h3 class="product-name"><a href="/shop/produkt/<%= p.slug %>"><%= p.name %></a></h3>
+        <% if (p.sku) { %><div class="product-sku">Art.-Nr.: <%= p.sku %></div><% } %>
+        <div class="tier-hint">
+          ab <span class="price-green"><%= formatPrice(p.price_min) %></span> / Stück
+        </div>
+        <div class="product-order-row" style="margin-top:0.75rem">
+          <a href="/shop/produkt/<%= p.slug %>" class="btn-add-cart">Zum Produkt</a>
+          <form action="/merkliste/loeschen" method="POST" style="display:inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="product_id" value="<%= p.id %>">
+            <button type="submit" class="btn-merken active" title="Entfernen">♥</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+</div>
+</main>
+<%- include('partials/footer') %>

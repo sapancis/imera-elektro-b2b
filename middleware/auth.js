@@ -25,6 +25,19 @@ function setLocals(req, res, next) {
   res.locals.flash = req.session.flash || null;
   delete req.session.flash;
 
+  // Tawk.to & Merkliste count
+  try {
+    const db = require('../database/db');
+    const tawkId = db.prepare("SELECT value FROM settings WHERE key='tawkto_property_id'").get();
+    res.locals.tawktoId = tawkId?.value || '';
+    if (req.session.userId) {
+      const mc = db.prepare('SELECT COUNT(*) as c FROM merkliste WHERE user_id=?').get(req.session.userId);
+      res.locals.merklisteCount = mc?.c || 0;
+    } else {
+      res.locals.merklisteCount = (req.session.merkliste || []).length;
+    }
+  } catch { res.locals.tawktoId = ''; res.locals.merklisteCount = 0; }
+
   next();
 }
 

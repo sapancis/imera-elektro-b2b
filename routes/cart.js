@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
 const crypto = require('crypto');
+const multer = require('multer');
+const csvUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 1024 * 1024 } });
 
 function getCart(req) { return req.session.cart || {}; }
 
@@ -132,6 +134,27 @@ router.post('/schnellbestellung', (req, res) => {
   const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
   res.json({ ok: added > 0, added, errors, cartCount,
     message: added > 0 ? `${added} Produkt(e) zum Warenkorb hinzugefügt.` : 'Keine Produkte gefunden.' });
+});
+
+// CSV Upload: SKU;Menge oder SKU,Menge
+router.post('/csv-upload', csvUpload.single('csv'), (req, res) => {
+  if (!req.file) return res.json({ ok: false, message: 'Keine Datei hochgeladen.' });
+  const text = req.file.buffer.toString('utf-8');
+  const lines = text.split(/\r?\n/).filter(l => l.trim() && !l.startsWith('SKU') && !l.startsWith('Artikelnummer'));
+  if (!req.session.cart) req.session.cart = {};
+  let added = 0; const errors = [];
+  for (const line of lines) {
+    const parts = line.split(/[;,\t]/);
+    const sku = (parts[0] || '').trim().toUpperCase();
+    const qty = Math.max(1, parseInt(parts[1]) || 1);
+    if (!sku) continue;
+    const product = db.prepare('SELECT id FROM products WHERE active=1 AND UPPER(sku)=?').get(sku);
+    if (!product) { errors.push(`"${sku}" nicht gefunden`); continue; }
+    req.session.cart[product.id] = (req.session.cart[product.id] || 0) + qty;
+    added++;
+  }
+  const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
+  res.json({ ok: added > 0, added, errors, cartCount, message: added > 0 ? `${added} Produkt(e) importiert.` : 'Keine Produkte importiert.' });
 });
 
 module.exports = router;

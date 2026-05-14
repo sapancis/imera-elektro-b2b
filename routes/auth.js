@@ -81,7 +81,22 @@ router.post('/registrieren', (req, res) => {
   req.session.userEmail = email;
   req.session.userRole = 'customer';
 
-  flash(req, 'success', 'Willkommen bei Imera Elektro! Ihr Konto wurde erfolgreich erstellt.');
+  // Willkommensrabatt-Coupon generieren
+  try {
+    const discountSetting = db.prepare("SELECT value FROM settings WHERE key='welcome_discount_percent'").get();
+    const discountPercent = parseFloat(discountSetting?.value || '10');
+    if (discountPercent > 0) {
+      const code = 'WELCOME-' + Math.random().toString(36).substring(2,8).toUpperCase();
+      const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 19);
+      db.prepare('INSERT INTO coupons (code, type, value, max_uses, user_id, expires_at) VALUES (?,?,?,?,?,?)')
+        .run(code, 'percent', discountPercent, 1, r.lastInsertRowid, expires);
+      flash(req, 'success', `Willkommen! Ihr ${discountPercent}% Willkommensrabatt-Code: ${code} (gültig 30 Tage)`);
+    } else {
+      flash(req, 'success', 'Willkommen bei Imera Elektro! Ihr Konto wurde erfolgreich erstellt.');
+    }
+  } catch {
+    flash(req, 'success', 'Willkommen bei Imera Elektro! Ihr Konto wurde erfolgreich erstellt.');
+  }
   res.redirect('/konto');
 });
 
