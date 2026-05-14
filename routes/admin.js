@@ -18,15 +18,13 @@ const storage = multer.diskStorage({
     cb(null, `product-${Date.now()}${ext}`);
   },
 });
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
-    if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
-    else cb(new Error('Nur Bilder erlaubt (jpg, png, webp, gif)'));
-  },
-});
+const fileFilter = (req, file, cb) => {
+  const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+  if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
+  else cb(new Error('Nur Bilder erlaubt (jpg, png, webp, gif)'));
+};
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter });
+const uploadMulti = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter });
 
 router.use(requireAdmin);
 
@@ -69,21 +67,22 @@ router.get('/produkte/neu', (req, res) => {
   res.render('admin/product-edit', { title: 'Neues Produkt', product: null, tiers: [], categories });
 });
 
-router.post('/produkte/neu', upload.single('image'), (req, res) => {
+router.post('/produkte/neu', uploadMulti.fields([{name:'image',maxCount:1},{name:'images',maxCount:5}]), (req, res) => {
   const { name, slug, sku, category_id, description, specs_raw, apps_raw, market_price_min, market_price_max, stock, featured, badge, active } = req.body;
-  const image = req.file ? '/uploads/' + req.file.filename : null;
+  const image = req.files?.image?.[0] ? '/uploads/' + req.files.image[0].filename : null;
+  const extraImages = (req.files?.images || []).map(f => '/uploads/' + f.filename);
 
   const specsArr = parseTableInput(specs_raw);
   const appsArr = parseListInput(apps_raw);
 
   try {
     const r = db.prepare(`
-      INSERT INTO products (name, slug, sku, category_id, description, specs, applications, market_price_min, market_price_max, stock, image, featured, badge, active)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+      INSERT INTO products (name, slug, sku, category_id, description, specs, applications, market_price_min, market_price_max, stock, image, images, featured, badge, active)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `).run(name, slug || slugify(name), sku || null, category_id || null, description || null,
       JSON.stringify(specsArr), JSON.stringify(appsArr),
       parseFloat(market_price_min) || null, parseFloat(market_price_max) || null,
-      parseInt(stock) || 0, image, featured ? 1 : 0, badge || null, active ? 1 : 0);
+      parseInt(stock) || 0, image, JSON.stringify(extraImages), featured ? 1 : 0, badge || null, active ? 1 : 0);
 
     saveTiers(r.lastInsertRowid, req.body);
     flash(req, 'success', 'Produkt wurde erstellt.');
@@ -104,23 +103,26 @@ router.get('/produkte/:id/bearbeiten', (req, res) => {
   res.render('admin/product-edit', { title: 'Produkt bearbeiten', product, tiers, categories });
 });
 
-router.post('/produkte/:id/bearbeiten', upload.single('image'), (req, res) => {
+router.post('/produkte/:id/bearbeiten', uploadMulti.fields([{name:'image',maxCount:1},{name:'images',maxCount:5}]), (req, res) => {
   const { name, slug, sku, category_id, description, specs_raw, apps_raw, market_price_min, market_price_max, stock, featured, badge, active } = req.body;
   const product = db.prepare('SELECT * FROM products WHERE id=?').get(req.params.id);
   if (!product) return res.redirect('/admin/produkte');
 
-  const image = req.file ? '/uploads/' + req.file.filename : product.image;
+  const image = req.files?.image?.[0] ? '/uploads/' + req.files.image[0].filename : product.image;
+  const existingImages = product.images ? JSON.parse(product.images) : [];
+  const newImages = (req.files?.images || []).map(f => '/uploads/' + f.filename);
+  const extraImages = [...existingImages, ...newImages];
   const specsArr = parseTableInput(specs_raw);
   const appsArr = parseListInput(apps_raw);
 
   db.prepare(`
     UPDATE products SET name=?, slug=?, sku=?, category_id=?, description=?, specs=?, applications=?,
-    market_price_min=?, market_price_max=?, stock=?, image=?, featured=?, badge=?, active=?, updated_at=datetime('now')
+    market_price_min=?, market_price_max=?, stock=?, image=?, images=?, featured=?, badge=?, active=?, updated_at=datetime('now')
     WHERE id=?
   `).run(name, slug || slugify(name), sku || null, category_id || null, description || null,
     JSON.stringify(specsArr), JSON.stringify(appsArr),
     parseFloat(market_price_min) || null, parseFloat(market_price_max) || null,
-    parseInt(stock) || 0, image, featured ? 1 : 0, badge || null, active ? 1 : 0, req.params.id);
+    parseInt(stock) || 0, image, JSON.stringify(extraImages), featured ? 1 : 0, badge || null, active ? 1 : 0, req.params.id);
 
   saveTiers(req.params.id, req.body);
   flash(req, 'success', 'Produkt wurde aktualisiert.');
