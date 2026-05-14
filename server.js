@@ -99,6 +99,25 @@ app.use((err, req, res, next) => {
   res.status(status).render('error', { title: 'Fehler', message: 'Ein interner Fehler ist aufgetreten.', code: status });
 });
 
+// ─── Auto-Setup: Admin kullanıcısı yoksa oluştur ──────────────────────────
+(function autoSetup() {
+  try {
+    const db = require('./database/db');
+    const bcrypt = require('bcryptjs');
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@imeraelektro.at';
+    const adminPass  = process.env.ADMIN_PASSWORD || 'admin123';
+    const existing   = db.prepare('SELECT id FROM users WHERE role=?').get('admin');
+    if (!existing) {
+      const hash = bcrypt.hashSync(adminPass, 12);
+      db.prepare('INSERT INTO users (email, password_hash, name, company, role) VALUES (?,?,?,?,?)')
+        .run(adminEmail, hash, 'Administrator', 'Imera Elektro', 'admin');
+      console.log(`✓ Admin kullanıcısı oluşturuldu: ${adminEmail}`);
+    }
+  } catch (e) {
+    console.error('Auto-setup hatası:', e.message);
+  }
+})();
+
 app.listen(PORT, () => {
   console.log(`\n✓ Imera Elektro läuft auf http://localhost:${PORT}`);
   console.log(`  Admin: http://localhost:${PORT}/admin`);
