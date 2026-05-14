@@ -130,23 +130,33 @@
 
   <!-- Schnell-Bestellformular -->
   <div class="schnell-section">
-    <div class="schnell-header">
-      <h2>⚡ Schnellbestellung</h2>
-      <p>Artikelnummer bekannt? Direkt bestellen.</p>
-    </div>
-    <div class="schnell-body">
-      <div id="schnellLines">
-        <div class="schnell-line">
-          <input type="text" class="schnell-sku" placeholder="Artikelnummer (z.B. TRK-200-45B)" autocomplete="off">
-          <input type="number" class="schnell-qty" value="100" min="1" placeholder="Menge">
-          <button type="button" class="schnell-remove" title="Entfernen">✕</button>
+    <div class="schnell-inner">
+      <div class="schnell-header">
+        <div class="schnell-icon">⚡</div>
+        <div>
+          <h2>Schnellbestellung</h2>
+          <p>Artikelnummer bekannt? Direkt in den Warenkorb — ohne Suche.</p>
         </div>
       </div>
-      <div class="schnell-actions">
-        <button type="button" id="schnellAddLine" class="btn-outline btn-sm">+ Zeile hinzufügen</button>
-        <button type="button" id="schnellSubmit" class="btn-green">In den Warenkorb</button>
+      <div class="schnell-body">
+        <div class="schnell-col-labels">
+          <span>Artikelnummer (SKU)</span>
+          <span>Menge</span>
+          <span></span>
+        </div>
+        <div id="schnellLines">
+          <div class="schnell-line">
+            <input type="text" class="schnell-sku" placeholder="z.B. TRK-200-45B" autocomplete="off">
+            <input type="number" class="schnell-qty" value="100" min="1" placeholder="100">
+            <button type="button" class="schnell-remove" title="Zeile entfernen">✕</button>
+          </div>
+        </div>
+        <div class="schnell-actions">
+          <button type="button" id="schnellAddLine" class="schnell-add-btn">+ Zeile hinzufügen</button>
+          <button type="button" id="schnellSubmit" class="schnell-submit-btn">In den Warenkorb</button>
+        </div>
+        <div id="schnellMsg" class="schnell-msg" style="display:none"></div>
       </div>
-      <div id="schnellMsg" class="schnell-msg" style="display:none"></div>
     </div>
   </div>
 </main>
