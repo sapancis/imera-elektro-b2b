@@ -36,6 +36,10 @@
           <h3>Live-Chat (Tawk.to)</h3>
           <div class="form-group"><label>Tawk.to Property ID</label><input type="text" name="tawkto_property_id" value="<%= settings.tawkto_property_id || '' %>" placeholder="z.B. 64abc123def456789..."><small style="color:#6B7280">Finden Sie die ID unter tawk.to → Administration → Chat Widget. Leer lassen = deaktiviert.</small></div>
         </div>
+        <div class="admin-card">
+          <h3>Google Analytics</h3>
+          <div class="form-group"><label>Google Analytics Measurement ID</label><input type="text" name="google_analytics_id" value="<%= settings.google_analytics_id || '' %>" placeholder="G-XXXXXXXXXX"><small style="color:#6B7280">Format: G-XXXXXXXXXX (Google Analytics 4). Leer lassen = deaktiviert. Wird automatisch im Header eingebunden.</small></div>
+        </div>
       </div>
       <div class="form-actions">
         <button type="submit" class="btn-blue btn-lg">Einstellungen speichern</button>

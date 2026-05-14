@@ -162,6 +162,7 @@ const defaultSettings = [
   ['tawkto_property_id', ''],
   ['welcome_discount_percent', '10'],
   ['stripe_publishable_key', ''],
+  ['google_analytics_id', ''],
   ['contact_phone', '+43 660 8514467'],
   ['contact_email', 'info@imeragroup.com'],
   ['contact_website', 'www.imeragroup.com'],

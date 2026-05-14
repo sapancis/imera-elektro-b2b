@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../database/db');
 
 router.get('/', (req, res) => {
-  const { kategorie, preis, sort = 'popular', page = 1 } = req.query;
+  const { kategorie, preis, sort = 'popular', page = 1, verfuegbar } = req.query;
   const perPage = 12;
   const offset = (parseInt(page) - 1) * perPage;
 
@@ -13,6 +13,10 @@ router.get('/', (req, res) => {
   if (kategorie) {
     where.push('c.slug=?');
     params.push(kategorie);
+  }
+
+  if (verfuegbar === '1') {
+    where.push('p.stock > 0');
   }
 
   if (preis) {
@@ -63,7 +67,7 @@ router.get('/', (req, res) => {
     title: 'Shop',
     products,
     categories,
-    filters: { kategorie, preis, sort },
+    filters: { kategorie, preis, sort, verfuegbar },
     pagination: { page: parseInt(page), totalPages, total },
   });
 });

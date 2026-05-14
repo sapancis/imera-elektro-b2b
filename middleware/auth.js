@@ -30,6 +30,8 @@ function setLocals(req, res, next) {
     const db = require('../database/db');
     const tawkId = db.prepare("SELECT value FROM settings WHERE key='tawkto_property_id'").get();
     res.locals.tawktoId = tawkId?.value || '';
+    const gaRow = db.prepare("SELECT value FROM settings WHERE key='google_analytics_id'").get();
+    res.locals.gaId = gaRow?.value || '';
     if (req.session.userId) {
       const mc = db.prepare('SELECT COUNT(*) as c FROM merkliste WHERE user_id=?').get(req.session.userId);
       res.locals.merklisteCount = mc?.c || 0;
