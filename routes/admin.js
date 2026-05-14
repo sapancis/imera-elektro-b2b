@@ -35,8 +35,8 @@ router.get('/', (req, res) => {
   const stats = {
     products: db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get().n,
     orders: db.prepare('SELECT COUNT(*) as n FROM orders').get().n,
-    customers: db.prepare('SELECT COUNT(*) as n FROM users WHERE role="customer"').get().n,
-    revenue: db.prepare('SELECT COALESCE(SUM(total),0) as n FROM orders WHERE status!="cancelled"').get().n,
+    customers: db.prepare("SELECT COUNT(*) as n FROM users WHERE role='customer'").get().n,
+    revenue: db.prepare("SELECT COALESCE(SUM(total),0) as n FROM orders WHERE status!='cancelled'").get().n,
     pendingOrders: db.prepare("SELECT COUNT(*) as n FROM orders WHERE status='pending'").get().n,
     unreadMessages: db.prepare('SELECT COUNT(*) as n FROM contact_messages WHERE read_at IS NULL').get().n,
     priceRequests: db.prepare('SELECT COUNT(*) as n FROM price_list_requests WHERE sent=0').get().n,
@@ -193,7 +193,7 @@ router.get('/kunden', (req, res) => {
 });
 
 router.post('/kunden/:id/sperren', (req, res) => {
-  const user = db.prepare('SELECT * FROM users WHERE id=? AND role="customer"').get(req.params.id);
+  const user = db.prepare("SELECT * FROM users WHERE id=? AND role='customer'").get(req.params.id);
   if (!user) return res.redirect('/admin/kunden');
   db.prepare('UPDATE users SET active=? WHERE id=?').run(user.active ? 0 : 1, req.params.id);
   flash(req, 'success', user.active ? 'Kunde gesperrt.' : 'Kunde freigeschaltet.');
