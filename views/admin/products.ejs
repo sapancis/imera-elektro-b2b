@@ -5,46 +5,92 @@
 <%- include('../partials/admin-nav') %>
 <div class="admin-main">
   <div class="admin-topbar">
-    <div class="admin-page-title">Produkte</div>
-    <a href="/admin/produkte/neu" class="btn-blue">+ Neues Produkt</a>
+    <div class="admin-page-title">📦 Produkte (<%= products.length %>)</div>
+    <div class="admin-topbar-right">
+      <a href="/admin/kategorien" class="btn-outline btn-sm">Kategorien</a>
+      <a href="/admin/produkte/neu" class="btn-blue btn-sm">+ Neues Produkt</a>
+    </div>
   </div>
   <div class="admin-content">
     <form class="admin-filters" action="/admin/produkte" method="GET">
-      <input type="text" name="q" value="<%= q || '' %>" placeholder="Suche nach Name oder Art.-Nr." class="admin-search">
-      <select name="kat" onchange="this.form.submit()">
+      <input type="text" name="q" value="<%= q || '' %>" placeholder="🔍 Name oder Art.-Nr. suchen…" class="admin-search">
+      <select name="kat" onchange="this.form.submit()" style="padding:8px 12px;border:1px solid #E5E7EB;border-radius:8px;font-size:13px;background:#fff">
         <option value="">Alle Kategorien</option>
         <% for (const cat of categories) { %><option value="<%= cat.slug %>" <%= kat===cat.slug ? 'selected' : '' %>><%= cat.name %></option><% } %>
       </select>
       <button type="submit" class="btn-blue btn-sm">Suchen</button>
+      <% if (q || kat) { %><a href="/admin/produkte" class="btn-outline btn-sm">Zurücksetzen</a><% } %>
     </form>
+
+    <!-- Stock summary -->
+    <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
+      <div style="background:#E8F8EE;border:1px solid #A7F3D0;border-radius:10px;padding:8px 16px;font-size:13px;color:#065F46">
+        ✓ <strong><%= products.filter(p=>p.stock>10).length %></strong> gut auf Lager
+      </div>
+      <div style="background:#FEF9E7;border:1px solid #FDE68A;border-radius:10px;padding:8px 16px;font-size:13px;color:#7D5A00">
+        ⚡ <strong><%= products.filter(p=>p.stock>0&&p.stock<=10).length %></strong> niedriger Bestand (≤10)
+      </div>
+      <div style="background:#FFF0EE;border:1px solid #FECACA;border-radius:10px;padding:8px 16px;font-size:13px;color:#C0392B">
+        ✕ <strong><%= products.filter(p=>p.stock===0).length %></strong> nicht auf Lager
+      </div>
+    </div>
 
     <div class="admin-card">
       <div class="admin-table-wrap">
       <table class="admin-table">
-        <thead><tr><th>Bild</th><th>Name / Art.-Nr.</th><th>Kategorie</th><th>Preis ab</th><th>Lager</th><th>Status</th><th>Aktionen</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Bild</th>
+            <th>Name / Art.-Nr.</th>
+            <th>Kategorie</th>
+            <th>Preis ab</th>
+            <th>Lager</th>
+            <th>Status</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
         <tbody>
           <% for (const p of products) { %>
           <tr class="<%= !p.active ? 'row-inactive' : '' %>">
-            <td><div class="product-thumb"><%= p.image ? `<img src="${p.image}" style="width:40px;height:40px;object-fit:cover;border-radius:4px">` : '📦' %></div></td>
             <td>
-              <div class="product-name-cell"><a href="/admin/produkte/<%= p.id %>/bearbeiten"><strong><%= p.name %></strong></a></div>
+              <% if (p.image) { %>
+                <img src="<%= p.image %>" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #E5E7EB">
+              <% } else { %>
+                <div style="width:40px;height:40px;background:#F3F4F6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px">📦</div>
+              <% } %>
+            </td>
+            <td>
+              <div><a href="/admin/produkte/<%= p.id %>/bearbeiten" style="font-weight:600;font-size:13px"><%= p.name %></a></div>
               <small class="text-gray"><%= p.sku || '–' %></small>
             </td>
-            <td><%= p.cat_name || '–' %></td>
-            <td class="text-green"><%= p.price_min ? formatPrice(p.price_min) : '–' %></td>
-            <td class="<%= p.stock === 0 ? 'text-red' : '' %>"><%= p.stock %></td>
+            <td style="font-size:13px"><%= p.cat_name || '–' %></td>
+            <td class="text-green" style="font-weight:600"><%= p.price_min ? formatPrice(p.price_min) : '–' %></td>
             <td>
-              <% if (p.featured) { %><span class="badge-small badge-green">Featured</span><% } %>
-              <span class="badge-small <%= p.active ? 'badge-green' : 'badge-gray' %>"><%= p.active ? 'Aktiv' : 'Inaktiv' %></span>
+              <div class="inline-stock-edit" data-id="<%= p.id %>">
+                <input type="number" value="<%= p.stock %>" min="0" class="stock-inp" style="width:65px;padding:4px 8px;border:1px solid <% if(p.stock===0){%>#FECACA<%}else if(p.stock<=10){%>#FDE68A<%}else{%>#E5E7EB<%}%>;border-radius:6px;font-size:12px;font-weight:600;color:<% if(p.stock===0){%>#EF4444<%}else if(p.stock<=10){%>#D97706<%}else{%>#1D1D1F<%}%>">
+                <button onclick="updateStockInline(<%= p.id %>, this, '<%= csrfToken %>')" class="btn-blue btn-sm">✓</button>
+              </div>
             </td>
             <td>
-              <a href="/admin/produkte/<%= p.id %>/bearbeiten" class="btn-sm btn-outline">Bearbeiten</a>
-              <form action="/admin/produkte/<%= p.id %>/loeschen" method="POST" style="display:inline" onsubmit="return confirm('Produkt deaktivieren?')">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <button type="submit" class="btn-sm btn-danger">Deaktivieren</button>
-              </form>
+              <div style="display:flex;gap:4px;flex-wrap:wrap">
+                <% if (p.featured) { %><span class="badge-small badge-green">⭐</span><% } %>
+                <span class="badge-small <%= p.active ? 'badge-green' : 'badge-gray' %>"><%= p.active ? 'Aktiv' : 'Inaktiv' %></span>
+              </div>
+            </td>
+            <td>
+              <div style="display:flex;gap:4px">
+                <a href="/admin/produkte/<%= p.id %>/bearbeiten" class="btn-sm btn-outline">✏ Bearbeiten</a>
+                <a href="/shop/produkt/<%= p.slug %>" target="_blank" class="btn-sm btn-outline" title="Im Shop ansehen">↗</a>
+                <form action="/admin/produkte/<%= p.id %>/loeschen" method="POST" style="display:inline" onsubmit="return confirm('Produkt deaktivieren?')">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn-sm btn-danger">✕</button>
+                </form>
+              </div>
             </td>
           </tr>
+          <% } %>
+          <% if (!products.length) { %>
+          <tr><td colspan="7" style="text-align:center;color:#9CA3AF;padding:3rem">Keine Produkte gefunden. <a href="/admin/produkte/neu">Jetzt erstellen →</a></td></tr>
           <% } %>
         </tbody>
       </table>
@@ -53,4 +99,26 @@
   </div>
 </div>
 <script src="/js/admin.js"></script>
+<script>
+function updateStockInline(productId, btn, csrf) {
+  const row = btn.closest('.inline-stock-edit');
+  const inp = row.querySelector('.stock-inp');
+  const stock = parseInt(inp.value) || 0;
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = '…';
+  fetch(`/admin/produkte/${productId}/stok`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `stock=${stock}&_csrf=${encodeURIComponent(csrf)}`
+  }).then(r=>r.json()).then(d=>{
+    if (d.ok) {
+      btn.textContent = '✓';
+      btn.style.background = '#34C759';
+      inp.style.borderColor = stock === 0 ? '#FECACA' : stock <= 10 ? '#FDE68A' : '#A7F3D0';
+      inp.style.color = stock === 0 ? '#EF4444' : stock <= 10 ? '#D97706' : '#065F46';
+      setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.disabled = false; }, 2000);
+    }
+  });
+}
+</script>
 </body></html>

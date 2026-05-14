@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kuponlar – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar">
+    <div class="admin-page-title">🎟 Kuponlar</div>
+    <div class="admin-topbar-right">
+      <button class="btn-blue btn-sm" onclick="document.getElementById('newCouponForm').style.display=document.getElementById('newCouponForm').style.display==='none'?'block':'none'">+ Neuer Kupon</button>
+    </div>
+  </div>
+  <div class="admin-content">
+
+    <!-- New coupon form -->
+    <div class="admin-card" id="newCouponForm" style="display:none;margin-bottom:1.5rem">
+      <h3>Neuen Kupon erstellen</h3>
+      <form action="/admin/kuponlar/neu" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label>Kupon-Code *</label>
+            <input type="text" name="code" placeholder="SOMMER20" required style="text-transform:uppercase">
+          </div>
+          <div class="form-group">
+            <label>Typ *</label>
+            <select name="type" class="admin-select">
+              <option value="percent">Prozent (%)</option>
+              <option value="fixed">Fixer Betrag (€)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Wert *</label>
+            <input type="number" name="value" placeholder="10" min="0.01" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>Mindestbestellwert (€)</label>
+            <input type="number" name="min_order" placeholder="0" min="0" step="0.01" value="0">
+          </div>
+          <div class="form-group">
+            <label>Max. Verwendungen</label>
+            <input type="number" name="max_uses" placeholder="1" min="1" value="1">
+          </div>
+          <div class="form-group">
+            <label>Ablaufdatum</label>
+            <input type="datetime-local" name="expires_at">
+          </div>
+        </div>
+        <div class="form-group" style="max-width:320px">
+          <label>Nur für Kunde (Benutzer-ID, optional)</label>
+          <input type="number" name="user_id" placeholder="leer = für alle">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-blue">Kupon erstellen</button>
+          <button type="button" class="btn-outline" onclick="this.closest('#newCouponForm').style.display='none'">Abbrechen</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Coupon list -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3>Alle Kuponlar (<%= coupons.length %>)</h3>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Typ</th>
+              <th>Wert</th>
+              <th>Min. Bestellung</th>
+              <th>Verwendet</th>
+              <th>Max.</th>
+              <th>Ablauf</th>
+              <th>Nutzer</th>
+              <th>Status</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!coupons.length) { %>
+            <tr><td colspan="10" style="text-align:center;color:#9CA3AF;padding:2rem">Noch keine Kuponlar vorhanden.</td></tr>
+            <% } %>
+            <% for (const c of coupons) { %>
+            <tr class="<%= !c.active ? 'row-inactive' : '' %>">
+              <td><code style="background:#F3F4F6;padding:3px 8px;border-radius:6px;font-size:13px;font-weight:600"><%= c.code %></code></td>
+              <td><span class="badge-small <%= c.type==='percent' ? 'badge-blue' : 'badge-green' %>"><%= c.type==='percent' ? '%' : '€' %> <%= c.type==='percent' ? 'Prozent' : 'Fix' %></span></td>
+              <td><strong><%= c.type==='percent' ? c.value+'%' : c.value.toFixed(2)+'€' %></strong></td>
+              <td><%= c.min_order > 0 ? c.min_order.toFixed(2)+'€' : '–' %></td>
+              <td><%= c.used_count %></td>
+              <td><%= c.max_uses %></td>
+              <td><%= c.expires_at ? new Date(c.expires_at).toLocaleDateString('de-AT') : '∞' %></td>
+              <td><%= c.user_email ? '<small>'+c.user_email+'</small>' : '–' %></td>
+              <td>
+                <% if (!c.active) { %>
+                  <span class="status-badge status-danger">Inaktiv</span>
+                <% } else if (c.used_count >= c.max_uses) { %>
+                  <span class="status-badge status-secondary">Verbraucht</span>
+                <% } else if (c.expires_at && new Date(c.expires_at) < new Date()) { %>
+                  <span class="status-badge status-warning">Abgelaufen</span>
+                <% } else { %>
+                  <span class="status-badge status-success">Aktiv</span>
+                <% } %>
+              </td>
+              <td>
+                <div style="display:flex;gap:4px">
+                  <form action="/admin/kuponlar/<%= c.id %>/toggle" method="POST" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-outline btn-sm"><%= c.active ? 'Deaktivieren' : 'Aktivieren' %></button>
+                  </form>
+                  <form action="/admin/kuponlar/<%= c.id %>/loeschen" method="POST" style="display:inline" onsubmit="return confirm('Kupon löschen?')">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-danger btn-sm">Löschen</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="admin-two-col">
+      <div class="admin-card">
+        <h3>Nutzungsstatistik</h3>
+        <div class="detail-row"><span>Gesamt Kuponlar</span><strong><%= coupons.length %></strong></div>
+        <div class="detail-row"><span>Aktive Kuponlar</span><strong><%= coupons.filter(c=>c.active && c.used_count<c.max_uses && (!c.expires_at || new Date(c.expires_at)>new Date())).length %></strong></div>
+        <div class="detail-row"><span>Gesamt eingelöst</span><strong><%= coupons.reduce((s,c)=>s+c.used_count,0) %> mal</strong></div>
+      </div>
+      <div class="admin-card">
+        <h3>Schnell-Generator</h3>
+        <p style="font-size:13px;color:#6B7280;margin-bottom:1rem">Zufälligen Coupon-Code generieren:</p>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input type="text" id="genCode" class="admin-search" readonly placeholder="Hier erscheint der Code" style="font-family:monospace;font-weight:600;letter-spacing:1px">
+          <button class="btn-blue btn-sm" onclick="generateCode()">Generieren</button>
+          <button class="btn-outline btn-sm" onclick="copyCode()">Kopieren</button>
+        </div>
+        <p style="font-size:12px;color:#9CA3AF">Dann oben "Neuer Kupon" klicken und einfügen.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+<script>
+function generateCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  document.getElementById('genCode').value = 'IE-' + code;
+}
+function copyCode() {
+  const el = document.getElementById('genCode');
+  if (!el.value) return;
+  navigator.clipboard.writeText(el.value).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Kopiert!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+</script>
+</body>
+</html>

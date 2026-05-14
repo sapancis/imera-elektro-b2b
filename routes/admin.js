@@ -36,13 +36,31 @@ router.get('/', (req, res) => {
     customers: db.prepare("SELECT COUNT(*) as n FROM users WHERE role='customer'").get().n,
     revenue: db.prepare("SELECT COALESCE(SUM(total),0) as n FROM orders WHERE status!='cancelled'").get().n,
     pendingOrders: db.prepare("SELECT COUNT(*) as n FROM orders WHERE status='pending'").get().n,
+    processingOrders: db.prepare("SELECT COUNT(*) as n FROM orders WHERE status='processing'").get().n,
     unreadMessages: db.prepare('SELECT COUNT(*) as n FROM contact_messages WHERE read_at IS NULL').get().n,
     priceRequests: db.prepare('SELECT COUNT(*) as n FROM price_list_requests WHERE sent=0').get().n,
     stock0: db.prepare('SELECT COUNT(*) as n FROM products WHERE stock=0 AND active=1').get().n,
+    stockLow: db.prepare('SELECT COUNT(*) as n FROM products WHERE stock>0 AND stock<=10 AND active=1').get().n,
+    revenueMonth: db.prepare("SELECT COALESCE(SUM(total),0) as n FROM orders WHERE status!='cancelled' AND created_at>=date('now','start of month')").get().n,
+    ordersToday: db.prepare("SELECT COUNT(*) as n FROM orders WHERE created_at>=date('now')").get().n,
+    activeCoupons: db.prepare("SELECT COUNT(*) as n FROM coupons WHERE active=1").get().n,
   };
   const recentOrders = db.prepare('SELECT * FROM orders ORDER BY created_at DESC LIMIT 8').all();
   const recentMessages = db.prepare('SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 5').all();
-  res.render('admin/dashboard', { title: 'Dashboard', stats, recentOrders, recentMessages });
+  const lowStockProducts = db.prepare('SELECT id, name, sku, stock FROM products WHERE stock<=10 AND active=1 ORDER BY stock ASC LIMIT 8').all();
+  const topProducts = db.prepare(`
+    SELECT p.id, p.name, p.sku, COALESCE(SUM(oi.quantity),0) as sold_qty, COALESCE(SUM(oi.total_price),0) as sold_total
+    FROM products p LEFT JOIN order_items oi ON oi.product_id=p.id
+    GROUP BY p.id ORDER BY sold_qty DESC LIMIT 5
+  `).all();
+  const recentPriceRequests = db.prepare('SELECT * FROM price_list_requests ORDER BY created_at DESC LIMIT 6').all();
+  // Revenue last 7 days
+  const revenueDays = db.prepare(`
+    SELECT date(created_at) as day, COALESCE(SUM(total),0) as rev, COUNT(*) as cnt
+    FROM orders WHERE status!='cancelled' AND created_at>=date('now','-6 days')
+    GROUP BY day ORDER BY day
+  `).all();
+  res.render('admin/dashboard', { title: 'Dashboard', stats, recentOrders, recentMessages, lowStockProducts, topProducts, recentPriceRequests, revenueDays });
 });
 
 // ─── PRODUCTS ───────────────────────────────────────────────────────────────
@@ -218,6 +236,79 @@ router.post('/nachrichten/:id/loeschen', (req, res) => {
   db.prepare('DELETE FROM contact_messages WHERE id=?').run(req.params.id);
   flash(req, 'success', 'Nachricht gelöscht.');
   res.redirect('/admin/nachrichten');
+});
+
+// ─── COUPONS ────────────────────────────────────────────────────────────────
+router.get('/kuponlar', (req, res) => {
+  const coupons = db.prepare(`
+    SELECT c.*, u.email as user_email
+    FROM coupons c LEFT JOIN users u ON u.id=c.user_id
+    ORDER BY c.created_at DESC
+  `).all();
+  res.render('admin/coupons', { title: 'Kuponlar', coupons });
+});
+
+router.post('/kuponlar/neu', (req, res) => {
+  const { code, type, value, min_order, max_uses, expires_at, user_id } = req.body;
+  if (!code || !type || !value) {
+    flash(req, 'error', 'Code, Typ und Wert sind Pflichtfelder.');
+    return res.redirect('/admin/kuponlar');
+  }
+  try {
+    db.prepare(`
+      INSERT INTO coupons (code, type, value, min_order, max_uses, user_id, expires_at)
+      VALUES (UPPER(?),?,?,?,?,?,?)
+    `).run(
+      code.trim(),
+      type,
+      parseFloat(value),
+      parseFloat(min_order) || 0,
+      parseInt(max_uses) || 1,
+      user_id ? parseInt(user_id) : null,
+      expires_at || null
+    );
+    flash(req, 'success', `Kupon "${code.toUpperCase()}" erstellt.`);
+  } catch (e) {
+    flash(req, 'error', 'Fehler: Code existiert bereits.');
+  }
+  res.redirect('/admin/kuponlar');
+});
+
+router.post('/kuponlar/:id/loeschen', (req, res) => {
+  db.prepare('DELETE FROM coupons WHERE id=?').run(req.params.id);
+  flash(req, 'success', 'Kupon gelöscht.');
+  res.redirect('/admin/kuponlar');
+});
+
+router.post('/kuponlar/:id/toggle', (req, res) => {
+  const c = db.prepare('SELECT active FROM coupons WHERE id=?').get(req.params.id);
+  if (!c) return res.redirect('/admin/kuponlar');
+  db.prepare('UPDATE coupons SET active=? WHERE id=?').run(c.active ? 0 : 1, req.params.id);
+  flash(req, 'success', c.active ? 'Kupon deaktiviert.' : 'Kupon aktiviert.');
+  res.redirect('/admin/kuponlar');
+});
+
+// ─── STOCK QUICK UPDATE ──────────────────────────────────────────────────────
+router.post('/produkte/:id/stok', (req, res) => {
+  const { stock } = req.body;
+  db.prepare('UPDATE products SET stock=? WHERE id=?').run(parseInt(stock) || 0, req.params.id);
+  res.json({ ok: true, stock: parseInt(stock) || 0 });
+});
+
+// ─── CUSTOMER DETAIL ─────────────────────────────────────────────────────────
+router.get('/kunden/:id', (req, res) => {
+  const customer = db.prepare("SELECT * FROM users WHERE id=? AND role='customer'").get(req.params.id);
+  if (!customer) return res.redirect('/admin/kunden');
+  const orders = db.prepare('SELECT * FROM orders WHERE user_id=? ORDER BY created_at DESC').all(req.params.id);
+  const totalSpent = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + o.total, 0);
+  const coupons = db.prepare('SELECT * FROM coupons WHERE user_id=? ORDER BY created_at DESC').all(req.params.id);
+  res.render('admin/customer-detail', { title: `Kunde: ${customer.name || customer.email}`, customer, orders, totalSpent, coupons });
+});
+
+// ─── PRICE LIST REQUESTS ─────────────────────────────────────────────────────
+router.post('/preisanfragen/:id/erledigt', (req, res) => {
+  db.prepare('UPDATE price_list_requests SET sent=1 WHERE id=?').run(req.params.id);
+  res.json({ ok: true });
 });
 
 // ─── SETTINGS ───────────────────────────────────────────────────────────────

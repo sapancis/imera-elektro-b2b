@@ -49,10 +49,22 @@ document.querySelectorAll('[data-confirm]').forEach(el => {
     btn.setAttribute('aria-expanded', open);
   });
 
+  // Overlay click closes sidebar
+  const overlay = document.getElementById('sidebarOverlay');
+  if (overlay) {
+    btn.addEventListener('click', () => overlay.classList.toggle('open'));
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  }
+
   // Close on outside click
   document.addEventListener('click', e => {
     if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !btn.contains(e.target)) {
       sidebar.classList.remove('open');
+      if (overlay) overlay.classList.remove('open');
       btn.setAttribute('aria-expanded', 'false');
     }
   });

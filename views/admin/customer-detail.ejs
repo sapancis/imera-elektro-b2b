@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><%= title %> – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="/admin/kunden" class="btn-outline btn-sm">← Zurück</a>
+      <div class="admin-page-title">👤 <%= customer.name || customer.email %></div>
+    </div>
+    <div class="admin-topbar-right">
+      <form action="/admin/kunden/<%= customer.id %>/sperren" method="POST" style="display:inline" onsubmit="return confirm('<%= customer.active ? 'Kunden sperren?' : 'Kunden freischalten?' %>')">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="<%= customer.active ? 'btn-danger' : 'btn-outline' %> btn-sm">
+          <%= customer.active ? '🔒 Sperren' : '🔓 Freischalten' %>
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="admin-content">
+
+    <!-- Customer Info -->
+    <div class="admin-two-col" style="margin-bottom:1.25rem">
+      <div class="admin-card">
+        <h3>Kundendaten</h3>
+        <div class="detail-row"><span>Name</span><strong><%= customer.name || '–' %></strong></div>
+        <div class="detail-row"><span>E-Mail</span><strong><%= customer.email %></strong></div>
+        <div class="detail-row"><span>Unternehmen</span><strong><%= customer.company || '–' %></strong></div>
+        <div class="detail-row"><span>Telefon</span><strong><%= customer.phone || '–' %></strong></div>
+        <div class="detail-row"><span>Registriert</span><strong><%= formatDate(customer.created_at) %></strong></div>
+        <div class="detail-row"><span>Letzter Login</span><strong><%= customer.last_login ? formatDate(customer.last_login) : 'Noch nie' %></strong></div>
+        <div class="detail-row"><span>Status</span>
+          <span class="status-badge <%= customer.active ? 'status-success' : 'status-danger' %>"><%= customer.active ? 'Aktiv' : 'Gesperrt' %></span>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h3>Bestellstatistik</h3>
+        <div class="stat-card" style="margin-bottom:0.75rem;padding:1rem">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-info"><div class="stat-value"><%= orders.length %></div><div class="stat-label">Bestellungen gesamt</div></div>
+        </div>
+        <div class="stat-card stat-card--green" style="margin-bottom:0.75rem;padding:1rem">
+          <div class="stat-icon">💰</div>
+          <div class="stat-info"><div class="stat-value"><%= formatEuro(totalSpent) %></div><div class="stat-label">Gesamtumsatz</div></div>
+        </div>
+        <% const avgOrder = orders.length > 0 ? totalSpent / orders.filter(o=>o.status!=='cancelled').length : 0; %>
+        <div class="detail-row"><span>Ø Bestellwert</span><strong><%= formatEuro(avgOrder || 0) %></strong></div>
+        <div class="detail-row"><span>Stornierte Bestellungen</span><strong><%= orders.filter(o=>o.status==='cancelled').length %></strong></div>
+      </div>
+    </div>
+
+    <!-- Order History -->
+    <div class="admin-card" style="margin-bottom:1.25rem">
+      <div class="admin-card-header">
+        <h3>Bestellverlauf</h3>
+        <span style="font-size:13px;color:#6B7280"><%= orders.length %> Bestellungen</span>
+      </div>
+      <% if (!orders.length) { %>
+        <p style="color:#9CA3AF;text-align:center;padding:2rem">Noch keine Bestellungen.</p>
+      <% } else { %>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Bestellnr.</th><th>Datum</th><th>Artikel</th><th>Betrag</th><th>Zahlung</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            <% for (const o of orders) { %>
+            <tr>
+              <td><strong><%= o.order_number %></strong></td>
+              <td><%= formatDate(o.created_at) %></td>
+              <td style="font-size:12px;color:#6B7280"><%= o.notes ? o.notes.substring(0,40) : '–' %></td>
+              <td><strong><%= formatEuro(o.total) %></strong></td>
+              <td style="font-size:12px"><%= o.payment_method === 'transfer' ? 'Überweisung' : o.payment_method === 'invoice' ? 'Rechnung' : o.payment_method %></td>
+              <td><span class="status-badge status-<%= orderStatusClass(o.status) %>"><%= orderStatusLabel(o.status) %></span></td>
+              <td><a href="/admin/bestellungen/<%= o.id %>" class="btn-outline btn-sm">Ansehen</a></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Coupons -->
+    <% if (coupons.length > 0) { %>
+    <div class="admin-card">
+      <h3>Persönliche Kuponlar (<%= coupons.length %>)</h3>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Code</th><th>Typ</th><th>Wert</th><th>Verwendet</th><th>Ablauf</th><th>Status</th></tr></thead>
+          <tbody>
+            <% for (const c of coupons) { %>
+            <tr>
+              <td><code style="background:#F3F4F6;padding:2px 8px;border-radius:4px"><%= c.code %></code></td>
+              <td><%= c.type === 'percent' ? 'Prozent' : 'Fixbetrag' %></td>
+              <td><strong><%= c.type==='percent' ? c.value+'%' : c.value.toFixed(2)+'€' %></strong></td>
+              <td><%= c.used_count %> / <%= c.max_uses %></td>
+              <td><%= c.expires_at ? new Date(c.expires_at).toLocaleDateString('de-AT') : '∞' %></td>
+              <td><span class="status-badge <%= c.active && c.used_count < c.max_uses ? 'status-success' : 'status-secondary' %>"><%= c.active && c.used_count < c.max_uses ? 'Aktiv' : 'Inaktiv' %></span></td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+</body>
+</html>

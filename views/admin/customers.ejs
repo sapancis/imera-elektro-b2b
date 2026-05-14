@@ -4,35 +4,59 @@
 <% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
 <%- include('../partials/admin-nav') %>
 <div class="admin-main">
-  <div class="admin-topbar"><div class="admin-page-title">Kunden (<%= customers.length %>)</div></div>
+  <div class="admin-topbar">
+    <div class="admin-page-title">👥 Kunden (<%= customers.length %>)</div>
+    <div class="admin-topbar-right">
+      <span style="font-size:12px;color:#9CA3AF">Gesamtumsatz: <strong><%= formatEuro(customers.reduce((s,c)=>s+c.total_spent,0)) %></strong></span>
+    </div>
+  </div>
   <div class="admin-content">
     <div class="admin-card">
+      <div class="admin-filters">
+        <input type="text" id="customerSearch" class="admin-search" placeholder="🔍 Nach Name, E-Mail oder Firma suchen…" oninput="filterCustomers(this.value)">
+      </div>
       <div class="admin-table-wrap">
-      <table class="admin-table">
-        <thead><tr><th>Name</th><th>E-Mail</th><th>Unternehmen</th><th>Bestellungen</th><th>Umsatz</th><th>Registriert</th><th>Status</th><th></th></tr></thead>
+      <table class="admin-table" id="customerTable">
+        <thead><tr><th>Name</th><th>E-Mail</th><th>Unternehmen</th><th>Bestellungen</th><th>Umsatz</th><th>Letzter Login</th><th>Status</th><th>Aktionen</th></tr></thead>
         <tbody>
           <% for (const c of customers) { %>
-          <tr class="<%= !c.active ? 'row-inactive' : '' %>">
-            <td><strong><%= c.name || '–' %></strong></td>
-            <td><a href="mailto:<%= c.email %>"><%= c.email %></a></td>
-            <td><%= c.company || '–' %></td>
-            <td><%= c.order_count %></td>
-            <td><%= formatEuro(c.total_spent) %></td>
-            <td><%= formatDate(c.created_at) %></td>
+          <tr class="<%= !c.active ? 'row-inactive' : '' %>" data-search="<%= (c.name||'').toLowerCase() %> <%= c.email.toLowerCase() %> <%= (c.company||'').toLowerCase() %>">
+            <td>
+              <a href="/admin/kunden/<%= c.id %>" style="font-weight:600"><%= c.name || '(kein Name)' %></a>
+            </td>
+            <td><a href="mailto:<%= c.email %>" style="color:#3B82F6;font-size:13px"><%= c.email %></a></td>
+            <td style="font-size:13px"><%= c.company || '–' %></td>
+            <td><strong><%= c.order_count %></strong></td>
+            <td style="color:var(--accent-dark)"><strong><%= formatEuro(c.total_spent) %></strong></td>
+            <td style="font-size:12px;color:#9CA3AF"><%= c.last_login ? formatDate(c.last_login) : 'Nie' %></td>
             <td><span class="badge-small <%= c.active ? 'badge-green' : 'badge-gray' %>"><%= c.active ? 'Aktiv' : 'Gesperrt' %></span></td>
             <td>
-              <form action="/admin/kunden/<%= c.id %>/sperren" method="POST" style="display:inline" onsubmit="return confirm('<%= c.active ? 'Kunde wirklich sperren?' : 'Kunde freischalten?' %>')">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <button type="submit" class="btn-sm <%= c.active ? 'btn-danger' : 'btn-outline' %>"><%= c.active ? 'Sperren' : 'Freischalten' %></button>
-              </form>
+              <div style="display:flex;gap:4px">
+                <a href="/admin/kunden/<%= c.id %>" class="btn-outline btn-sm">Detail</a>
+                <form action="/admin/kunden/<%= c.id %>/sperren" method="POST" style="display:inline" onsubmit="return confirm('<%= c.active ? 'Kunde wirklich sperren?' : 'Kunde freischalten?' %>')">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn-sm <%= c.active ? 'btn-danger' : 'btn-outline' %>"><%= c.active ? '🔒' : '🔓' %></button>
+                </form>
+              </div>
             </td>
           </tr>
+          <% } %>
+          <% if (!customers.length) { %>
+          <tr><td colspan="8" style="text-align:center;color:#9CA3AF;padding:2rem">Noch keine Kunden registriert.</td></tr>
           <% } %>
         </tbody>
       </table>
       </div>
     </div>
   </div>
+  <script>
+  function filterCustomers(q) {
+    q = q.toLowerCase();
+    document.querySelectorAll('#customerTable tbody tr[data-search]').forEach(tr => {
+      tr.style.display = tr.dataset.search.includes(q) ? '' : 'none';
+    });
+  }
+  </script>
 </div>
 <script src="/js/admin.js"></script>
 </body></html>

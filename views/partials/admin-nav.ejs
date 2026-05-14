@@ -1,21 +1,52 @@
-<aside class="admin-sidebar">
+<aside class="admin-sidebar" id="adminSidebar">
   <div class="admin-brand">
     <a href="/" style="color:white;text-decoration:none">IMERA ELEKTRO</a>
     <small>Admin Panel</small>
   </div>
   <nav class="admin-nav">
     <a href="/admin" class="<%= currentPath === '/admin' ? 'active' : '' %>">📊 Dashboard</a>
-    <a href="/admin/produkte" class="<%= currentPath.includes('/admin/produkte') || currentPath.includes('/admin/kategorien') ? 'active' : '' %>">📦 Produkte</a>
-    <a href="/admin/kategorien" class="<%= currentPath.includes('/admin/kategorien') ? 'active' : '' %>" style="padding-left:2.5rem;font-size:13px">└ Kategorien</a>
-    <a href="/admin/bestellungen" class="<%= currentPath.includes('/admin/bestellungen') ? 'active' : '' %>">🛒 Bestellungen</a>
-    <a href="/admin/kunden" class="<%= currentPath.includes('/admin/kunden') ? 'active' : '' %>">👥 Kunden</a>
-    <a href="/admin/nachrichten" class="<%= currentPath.includes('/admin/nachrichten') ? 'active' : '' %>">✉️ Nachrichten</a>
-    <a href="/admin/einstellungen" class="<%= currentPath.includes('/admin/einstellungen') ? 'active' : '' %>">⚙️ Einstellungen</a>
-    <hr style="border-color:#374151;margin:1rem 0">
-    <a href="/shop" target="_blank">🌐 Website ansehen</a>
+
+    <div class="admin-nav-group">Katalog</div>
+    <a href="/admin/produkte" class="<%= currentPath.startsWith('/admin/produkte') ? 'active' : '' %>">📦 Produkte</a>
+    <a href="/admin/kategorien" class="<%= currentPath.startsWith('/admin/kategorien') ? 'active' : '' %>" style="padding-left:2.25rem;font-size:13px">└ Kategorien</a>
+
+    <div class="admin-nav-group">Verkauf</div>
+    <a href="/admin/bestellungen" class="<%= currentPath.startsWith('/admin/bestellungen') ? 'active' : '' %>">
+      🛒 Bestellungen
+      <%
+        try {
+          const db = require('../database/db');
+          const pCount = db.prepare("SELECT COUNT(*) as n FROM orders WHERE status='pending'").get().n;
+          if (pCount > 0) { %><span class="nav-badge"><%= pCount %></span><% }
+        } catch(e) {}
+      %>
+    </a>
+    <a href="/admin/kuponlar" class="<%= currentPath.startsWith('/admin/kuponlar') ? 'active' : '' %>">🎟 Kuponlar</a>
+
+    <div class="admin-nav-group">Kunden</div>
+    <a href="/admin/kunden" class="<%= currentPath.startsWith('/admin/kunden') ? 'active' : '' %>">👥 Kunden</a>
+    <a href="/admin/nachrichten" class="<%= currentPath.startsWith('/admin/nachrichten') ? 'active' : '' %>">
+      ✉️ Nachrichten
+      <%
+        try {
+          const db = require('../database/db');
+          const mCount = db.prepare('SELECT COUNT(*) as n FROM contact_messages WHERE read_at IS NULL').get().n;
+          const rCount = db.prepare('SELECT COUNT(*) as n FROM price_list_requests WHERE sent=0').get().n;
+          const total = mCount + rCount;
+          if (total > 0) { %><span class="nav-badge"><%= total %></span><% }
+        } catch(e) {}
+      %>
+    </a>
+
+    <div class="admin-nav-group">System</div>
+    <a href="/admin/einstellungen" class="<%= currentPath.startsWith('/admin/einstellungen') ? 'active' : '' %>">⚙️ Einstellungen</a>
+
+    <hr style="border-color:rgba(255,255,255,0.07);margin:0.75rem 0">
+    <a href="/shop" target="_blank" style="font-size:13px;color:rgba(255,255,255,0.35)">🌐 Website ansehen ↗</a>
     <form action="/konto/abmelden" method="POST" style="display:inline">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <button type="submit" style="background:none;border:none;color:#9CA3AF;cursor:pointer;padding:0.75rem 1.5rem;width:100%;text-align:left;font-size:14px">🚪 Abmelden</button>
+      <button type="submit" style="background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;padding:0.65rem 1.25rem;width:100%;text-align:left;font-size:13px">🚪 Abmelden</button>
     </form>
   </nav>
 </aside>
+<div class="admin-sidebar-overlay" id="sidebarOverlay"></div>

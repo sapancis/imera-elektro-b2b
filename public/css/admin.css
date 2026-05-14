@@ -171,6 +171,32 @@ a { color: var(--text); text-decoration: none; }
 .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
 .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
 
+/* Nav group labels */
+.admin-nav-group { padding: 1rem 1.25rem 0.25rem; font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1px; }
+
+/* Nav badge */
+.nav-badge { display: inline-block; background: #EF4444; color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 980px; margin-left: auto; }
+
+/* Sidebar overlay (mobile) */
+.admin-sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; }
+.admin-sidebar-overlay.open { display: block; }
+
+/* Revenue Chart */
+.revenue-chart { display: flex; align-items: flex-end; gap: 6px; height: 130px; padding: 0 4px; }
+.rev-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.rev-bar { width: 100%; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s ease; }
+.rev-bar-label { font-size: 10px; color: var(--text-muted); font-weight: 500; }
+.rev-bar-val { font-size: 9px; color: var(--text-light); white-space: nowrap; }
+
+/* Form grid 3 col */
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+
+/* Inline stock edit */
+.inline-stock-edit { display: flex; gap: 4px; align-items: center; }
+
+/* Coupon code */
+code { font-family: "SF Mono","Fira Code","Consolas",monospace; }
+
 /* Responsive */
 @media (max-width: 1024px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -190,6 +216,8 @@ a { color: var(--text); text-decoration: none; }
   .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .admin-filters { flex-direction: column; }
   .admin-search { min-width: unset; width: 100%; }
+  .form-grid-3 { grid-template-columns: 1fr 1fr; }
+  .quick-action-grid { grid-template-columns: repeat(3, 1fr) !important; }
 }
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: 1fr 1fr; }

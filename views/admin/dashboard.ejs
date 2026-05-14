@@ -11,67 +11,260 @@
 <%- include('../partials/admin-nav') %>
 <div class="admin-main">
   <div class="admin-topbar">
-    <div class="admin-page-title">Dashboard</div>
-    <div class="admin-topbar-right"><span>👤 <%= locals.user?.name || 'Admin' %></span></div>
+    <div class="admin-page-title">📊 Dashboard</div>
+    <div class="admin-topbar-right">
+      <span style="font-size:12px;color:#9CA3AF"><%= new Date().toLocaleDateString('de-AT',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}) %></span>
+      <span>👤 <%= locals.user?.name || 'Admin' %></span>
+    </div>
   </div>
   <div class="admin-content">
 
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-info"><div class="stat-value"><%= stats.products %></div><div class="stat-label">Aktive Produkte</div></div></div>
-      <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-info"><div class="stat-value"><%= stats.orders %></div><div class="stat-label">Bestellungen gesamt</div></div></div>
-      <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-info"><div class="stat-value"><%= stats.customers %></div><div class="stat-label">Kunden</div></div></div>
-      <div class="stat-card stat-card--green"><div class="stat-icon">💰</div><div class="stat-info"><div class="stat-value"><%= formatEuro(stats.revenue) %></div><div class="stat-label">Gesamtumsatz</div></div></div>
+    <!-- KPI Stats -->
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-card stat-card--green">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <div class="stat-value"><%= formatEuro(stats.revenueMonth) %></div>
+          <div class="stat-label">Umsatz diesen Monat</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Gesamt: <%= formatEuro(stats.revenue) %></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🛒</div>
+        <div class="stat-info">
+          <div class="stat-value"><%= stats.orders %></div>
+          <div class="stat-label">Bestellungen gesamt</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Heute: <%= stats.ordersToday %></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <div class="stat-value"><%= stats.customers %></div>
+          <div class="stat-label">Registrierte Kunden</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+          <div class="stat-value"><%= stats.products %></div>
+          <div class="stat-label">Aktive Produkte</div>
+          <div style="font-size:11px;color:#9CA3AF;margin-top:2px">Kuponlar: <%= stats.activeCoupons %></div>
+        </div>
+      </div>
     </div>
 
+    <!-- Alerts -->
     <div class="alert-row">
-      <% if (stats.pendingOrders > 0) { %><div class="admin-alert admin-alert--warning">⚠ <%= stats.pendingOrders %> offene Bestellungen – <a href="/admin/bestellungen?status=pending">Jetzt bearbeiten</a></div><% } %>
-      <% if (stats.unreadMessages > 0) { %><div class="admin-alert admin-alert--info">✉ <%= stats.unreadMessages %> ungelesene Nachrichten – <a href="/admin/nachrichten">Ansehen</a></div><% } %>
-      <% if (stats.priceRequests > 0) { %><div class="admin-alert admin-alert--info">📋 <%= stats.priceRequests %> neue Preislisten-Anfragen – <a href="/admin/nachrichten">Ansehen</a></div><% } %>
-      <% if (stats.stock0 > 0) { %><div class="admin-alert admin-alert--danger">📉 <%= stats.stock0 %> Produkte nicht auf Lager – <a href="/admin/produkte">Überprüfen</a></div><% } %>
+      <% if (stats.pendingOrders > 0) { %>
+      <div class="admin-alert admin-alert--warning">⚠ <strong><%= stats.pendingOrders %></strong> offene Bestellung<%= stats.pendingOrders > 1 ? 'en' : '' %> warten auf Bearbeitung – <a href="/admin/bestellungen?status=pending">Jetzt bearbeiten →</a></div>
+      <% } %>
+      <% if (stats.processingOrders > 0) { %>
+      <div class="admin-alert admin-alert--info">📦 <strong><%= stats.processingOrders %></strong> Bestellung<%= stats.processingOrders > 1 ? 'en' : '' %> in Bearbeitung – <a href="/admin/bestellungen?status=processing">Ansehen →</a></div>
+      <% } %>
+      <% if (stats.unreadMessages > 0) { %>
+      <div class="admin-alert admin-alert--info">✉ <strong><%= stats.unreadMessages %></strong> ungelesene Nachricht<%= stats.unreadMessages > 1 ? 'en' : '' %> – <a href="/admin/nachrichten">Ansehen →</a></div>
+      <% } %>
+      <% if (stats.priceRequests > 0) { %>
+      <div class="admin-alert admin-alert--info">📋 <strong><%= stats.priceRequests %></strong> neue Preislisten-Anfrage<%= stats.priceRequests > 1 ? 'n' : '' %> – <a href="/admin/nachrichten">Ansehen →</a></div>
+      <% } %>
+      <% if (stats.stock0 > 0) { %>
+      <div class="admin-alert admin-alert--danger">📉 <strong><%= stats.stock0 %></strong> Produkt<%= stats.stock0 > 1 ? 'e' : '' %> nicht auf Lager – <a href="/admin/produkte">Überprüfen →</a></div>
+      <% } %>
+      <% if (stats.stockLow > 0) { %>
+      <div class="admin-alert admin-alert--warning">⚡ <strong><%= stats.stockLow %></strong> Produkt<%= stats.stockLow > 1 ? 'e' : '' %> mit niedrigem Lagerbestand (≤10 Stk)</div>
+      <% } %>
     </div>
 
-    <div class="admin-two-col">
+    <!-- Revenue Chart + Top Products -->
+    <div class="admin-two-col" style="margin-bottom:1.25rem">
       <div class="admin-card">
-        <div class="admin-card-header"><h3>Letzte Bestellungen</h3><a href="/admin/bestellungen" class="btn-sm btn-outline">Alle ansehen</a></div>
-        <div class="admin-table-wrap">
+        <div class="admin-card-header"><h3>Umsatz – Letzte 7 Tage</h3></div>
+        <% if (revenueDays.length === 0) { %>
+          <p style="color:#9CA3AF;text-align:center;padding:2rem">Noch keine Daten.</p>
+        <% } else { %>
+        <div class="revenue-chart">
+          <% const maxRev = Math.max(...revenueDays.map(d=>d.rev), 1); %>
+          <% for (const d of revenueDays) { %>
+          <div class="rev-bar-wrap" title="<%= new Date(d.day).toLocaleDateString('de-AT',{weekday:'short',day:'2-digit',month:'2-digit'}) %>: <%= formatEuro(d.rev) %> (<%= d.cnt %> Bestellungen)">
+            <div class="rev-bar" style="height:<%= Math.max(4, Math.round((d.rev/maxRev)*100)) %>%"></div>
+            <div class="rev-bar-label"><%= new Date(d.day).toLocaleDateString('de-AT',{weekday:'short'}).slice(0,2) %></div>
+            <div class="rev-bar-val"><%= d.rev > 0 ? formatEuro(d.rev).replace(',00€','€') : '' %></div>
+          </div>
+          <% } %>
+        </div>
+        <% } %>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>🏆 Meistverkaufte Produkte</h3><a href="/admin/produkte" class="btn-sm btn-outline">Alle</a></div>
+        <% if (!topProducts.length) { %>
+          <p style="color:#9CA3AF;text-align:center;padding:2rem">Noch keine Verkäufe.</p>
+        <% } else { %>
         <table class="admin-table">
-          <thead><tr><th>Bestellnr.</th><th>Datum</th><th>Betrag</th><th>Status</th></tr></thead>
+          <thead><tr><th>#</th><th>Produkt</th><th>Verkauft</th><th>Umsatz</th></tr></thead>
           <tbody>
-            <% for (const o of recentOrders) { %>
+            <% for (let i=0; i<topProducts.length; i++) { const p = topProducts[i]; %>
             <tr>
-              <td><a href="/admin/bestellungen/<%= o.id %>"><%= o.order_number %></a></td>
-              <td><%= formatDate(o.created_at) %></td>
-              <td><%= formatEuro(o.total) %></td>
-              <td><span class="status-badge status-<%= orderStatusClass(o.status) %>"><%= orderStatusLabel(o.status) %></span></td>
+              <td><span style="font-size:16px"><%= ['🥇','🥈','🥉','4️⃣','5️⃣'][i] %></span></td>
+              <td>
+                <a href="/admin/produkte/<%= p.id %>/bearbeiten" style="font-weight:500;font-size:13px"><%= p.name %></a>
+                <% if (p.sku) { %><div style="font-size:11px;color:#9CA3AF"><%= p.sku %></div><% } %>
+              </td>
+              <td><strong><%= p.sold_qty %></strong> Stk</td>
+              <td style="color:var(--accent-dark)"><strong><%= formatEuro(p.sold_total) %></strong></td>
             </tr>
             <% } %>
           </tbody>
         </table>
-        </div>
-      </div>
-      <div class="admin-card">
-        <div class="admin-card-header"><h3>Letzte Nachrichten</h3><a href="/admin/nachrichten" class="btn-sm btn-outline">Alle ansehen</a></div>
-        <% for (const m of recentMessages) { %>
-        <div class="message-preview <%= !m.read_at ? 'message-unread' : '' %>">
-          <div class="message-from"><strong><%= m.name %></strong> – <%= m.email %></div>
-          <div class="message-subject"><%= m.subject || '(kein Betreff)' %></div>
-          <div class="message-date"><%= formatDate(m.created_at) %></div>
-        </div>
         <% } %>
       </div>
     </div>
 
-    <div class="quick-actions">
+    <!-- Recent Orders + Messages -->
+    <div class="admin-two-col" style="margin-bottom:1.25rem">
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>Letzte Bestellungen</h3><a href="/admin/bestellungen" class="btn-sm btn-outline">Alle ansehen</a></div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Bestellnr.</th><th>Datum</th><th>Betrag</th><th>Status</th></tr></thead>
+            <tbody>
+              <% for (const o of recentOrders) { %>
+              <tr>
+                <td><a href="/admin/bestellungen/<%= o.id %>" style="font-weight:500"><%= o.order_number %></a></td>
+                <td style="font-size:12px;color:#6B7280"><%= formatDate(o.created_at) %></td>
+                <td><strong><%= formatEuro(o.total) %></strong></td>
+                <td><span class="status-badge status-<%= orderStatusClass(o.status) %>"><%= orderStatusLabel(o.status) %></span></td>
+              </tr>
+              <% } %>
+              <% if (!recentOrders.length) { %>
+              <tr><td colspan="4" style="text-align:center;color:#9CA3AF;padding:1.5rem">Noch keine Bestellungen.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>Letzte Nachrichten</h3><a href="/admin/nachrichten" class="btn-sm btn-outline">Alle ansehen</a></div>
+        <% if (!recentMessages.length) { %>
+          <p style="color:#9CA3AF;text-align:center;padding:2rem">Keine Nachrichten.</p>
+        <% } else { %>
+        <% for (const m of recentMessages) { %>
+        <div class="message-preview <%= !m.read_at ? 'message-unread' : '' %>">
+          <div class="message-from"><strong><%= m.name %></strong> <span style="font-size:12px;color:#9CA3AF"><%= m.email %></span></div>
+          <div class="message-subject"><%= m.subject || '(kein Betreff)' %></div>
+          <div class="message-date"><%= formatDate(m.created_at) %></div>
+        </div>
+        <% } %>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Low Stock + Price Requests -->
+    <div class="admin-two-col">
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>⚡ Niedriger Lagerbestand</h3><a href="/admin/produkte" class="btn-sm btn-outline">Alle Produkte</a></div>
+        <% if (!lowStockProducts.length) { %>
+          <p style="color:#9CA3AF;text-align:center;padding:2rem">✓ Alle Produkte ausreichend auf Lager.</p>
+        <% } else { %>
+        <table class="admin-table">
+          <thead><tr><th>Produkt</th><th>SKU</th><th>Stk</th><th>Stok aktualisieren</th></tr></thead>
+          <tbody>
+            <% for (const p of lowStockProducts) { %>
+            <tr>
+              <td><a href="/admin/produkte/<%= p.id %>/bearbeiten" style="font-size:13px"><%= p.name %></a></td>
+              <td style="font-size:12px;color:#9CA3AF"><%= p.sku || '–' %></td>
+              <td><span style="font-weight:700;color:<%= p.stock===0 ? '#EF4444' : '#F59E0B' %>"><%= p.stock %></span></td>
+              <td>
+                <div class="inline-stock-edit" data-id="<%= p.id %>">
+                  <input type="number" value="<%= p.stock %>" min="0" style="width:70px;padding:4px 8px;border:1px solid #E5E7EB;border-radius:6px;font-size:12px" class="stock-inp">
+                  <button onclick="updateStock(<%= p.id %>, this, '<%= csrfToken %>')" class="btn-blue btn-sm">OK</button>
+                </div>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <% } %>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>📋 Preislisten-Anfragen</h3><a href="/admin/nachrichten" class="btn-sm btn-outline">Alle</a></div>
+        <% if (!recentPriceRequests.length) { %>
+          <p style="color:#9CA3AF;text-align:center;padding:2rem">Keine Anfragen vorhanden.</p>
+        <% } else { %>
+        <table class="admin-table">
+          <thead><tr><th>E-Mail</th><th>Datum</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <% for (const r of recentPriceRequests) { %>
+            <tr id="preisreq-<%= r.id %>">
+              <td style="font-size:13px"><%= r.email %></td>
+              <td style="font-size:12px;color:#9CA3AF"><%= formatDate(r.created_at) %></td>
+              <td><span class="status-badge <%= r.sent ? 'status-success' : 'status-warning' %>"><%= r.sent ? '✓ Erledigt' : 'Ausstehend' %></span></td>
+              <td>
+                <% if (!r.sent) { %>
+                <button class="btn-outline btn-sm" onclick="markPreisreqDone(<%= r.id %>, '<%= csrfToken %>', this)">Erledigt</button>
+                <% } %>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions" style="margin-top:1.25rem">
       <h3>Schnellzugriff</h3>
-      <div class="quick-action-grid">
+      <div class="quick-action-grid" style="grid-template-columns:repeat(6,1fr)">
         <a href="/admin/produkte/neu" class="quick-action-btn">➕ Neues Produkt</a>
         <a href="/admin/bestellungen?status=pending" class="quick-action-btn">📋 Offene Bestellungen</a>
+        <a href="/admin/kuponlar" class="quick-action-btn">🎟 Kuponlar</a>
+        <a href="/admin/kunden" class="quick-action-btn">👥 Kunden</a>
         <a href="/admin/nachrichten" class="quick-action-btn">✉ Nachrichten</a>
         <a href="/admin/einstellungen" class="quick-action-btn">⚙ Einstellungen</a>
       </div>
     </div>
+
   </div>
 </div>
 <script src="/js/admin.js"></script>
+<script>
+function updateStock(productId, btn, csrf) {
+  const row = btn.closest('.inline-stock-edit');
+  const inp = row.querySelector('.stock-inp');
+  const stock = parseInt(inp.value) || 0;
+  btn.disabled = true;
+  btn.textContent = '…';
+  fetch(`/admin/produkte/${productId}/stok`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `stock=${stock}&_csrf=${encodeURIComponent(csrf)}`
+  }).then(r=>r.json()).then(d=>{
+    if (d.ok) {
+      btn.textContent = '✓';
+      btn.style.background = '#34C759';
+      setTimeout(() => { btn.textContent = 'OK'; btn.style.background = ''; btn.disabled = false; }, 2000);
+    } else { btn.textContent = 'Fehler'; btn.disabled = false; }
+  });
+}
+
+function markPreisreqDone(id, csrf, btn) {
+  fetch(`/admin/preisanfragen/${id}/erledigt`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `_csrf=${encodeURIComponent(csrf)}`
+  }).then(r=>r.json()).then(d=>{
+    if (d.ok) {
+      const row = document.getElementById('preisreq-'+id);
+      row.querySelector('.status-badge').className = 'status-badge status-success';
+      row.querySelector('.status-badge').textContent = '✓ Erledigt';
+      btn.remove();
+    }
+  });
+}
+</script>
 </body>
 </html>
