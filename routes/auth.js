@@ -41,7 +41,7 @@ router.post('/login', loginLimiter, (req, res) => {
   req.session.userEmail = user.email;
   req.session.userRole = user.role;
 
-  db.prepare('UPDATE users SET last_login=datetime("now") WHERE id=?').run(user.id);
+  db.prepare("UPDATE users SET last_login=datetime('now') WHERE id=?").run(user.id);
 
   const returnTo = req.session.returnTo || (user.role === 'admin' ? '/admin' : '/konto');
   delete req.session.returnTo;

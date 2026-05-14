@@ -83,7 +83,7 @@ router.post('/speichern', (req, res) => {
 });
 
 router.get('/laden/:token', (req, res) => {
-  const saved = db.prepare('SELECT * FROM saved_carts WHERE token=? AND expires_at>datetime("now")').get(req.params.token);
+  const saved = db.prepare("SELECT * FROM saved_carts WHERE token=? AND expires_at>datetime('now')").get(req.params.token);
   if (!saved) return res.redirect('/warenkorb');
   req.session.cart = JSON.parse(saved.items);
   res.redirect('/warenkorb');
