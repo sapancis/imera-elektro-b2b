@@ -103,10 +103,10 @@
             <div class="tier-table">
               <div class="tier-table-label">Staffelpreise</div>
               <div class="tier-table-row">
-                <% for (const t of p.tiers) { %>
+                <% for (let ti = 0; ti < p.tiers.length; ti++) { %>
                 <div>
-                  <div class="tier-qty"><%= t.min_qty %>–<%= t.max_qty ? t.max_qty : '∞' %> Stk</div>
-                  <div class="tier-price <%= p.tiers.indexOf(t) > 0 ? 'tier-price--green' : '' %>"><%= formatPrice(t.price) %></div>
+                  <div class="tier-qty">Ab <%= p.tiers[ti].min_qty %> Stk</div>
+                  <div class="tier-price <%= ti > 0 ? 'tier-price--green' : '' %>"><%= formatPrice(p.tiers[ti].price) %></div>
                 </div>
                 <% } %>
               </div>
