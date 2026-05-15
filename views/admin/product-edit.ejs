@@ -6,107 +6,213 @@
 <div class="admin-main">
   <div class="admin-topbar">
     <div class="admin-page-title"><%= product ? 'Produkt bearbeiten' : 'Neues Produkt' %></div>
-    <a href="/admin/produkte" class="btn-outline btn-sm">← Zurück</a>
+    <div style="display:flex;gap:0.5rem">
+      <% if (product) { %><a href="/shop/produkt/<%= product.slug %>" target="_blank" class="btn-outline btn-sm">Im Shop ansehen ↗</a><% } %>
+      <a href="/admin/produkte" class="btn-outline btn-sm">← Zurück</a>
+    </div>
   </div>
   <div class="admin-content">
     <form action="/admin/produkte/<%= product ? product.id + '/bearbeiten' : 'neu' %>" method="POST" enctype="multipart/form-data" class="admin-form">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
       <div class="admin-form-grid">
-        <div class="admin-card">
-          <h3>Grundinformationen</h3>
-          <div class="form-group"><label>Produktname *</label><input type="text" name="name" value="<%= product?.name || '' %>" required></div>
-          <div class="form-grid-2">
-            <div class="form-group"><label>URL-Slug</label><input type="text" name="slug" value="<%= product?.slug || '' %>" placeholder="automatisch generiert"></div>
-            <div class="form-group"><label>Art.-Nr. (SKU)</label><input type="text" name="sku" value="<%= product?.sku || '' %>"></div>
-          </div>
-          <div class="form-group">
-            <label>Kategorie</label>
-            <select name="category_id">
-              <option value="">– Keine –</option>
-              <% for (const cat of categories) { %><option value="<%= cat.id %>" <%= product?.category_id===cat.id ? 'selected' : '' %>><%= cat.name %></option><% } %>
-            </select>
-          </div>
-          <div class="form-group"><label>Beschreibung</label><textarea name="description" rows="5"><%= product?.description || '' %></textarea></div>
 
-          <div class="form-grid-2">
+        <!-- SOL SÜTUN -->
+        <div>
+
+          <!-- 1. Grundinformationen -->
+          <div class="admin-card">
+            <h3>Grundinformationen</h3>
             <div class="form-group">
-              <label>Lagerbestand</label>
-              <input type="number" name="stock" value="<%= product?.stock || 0 %>" min="0">
+              <label>Produktname *</label>
+              <input type="text" name="name" value="<%= product?.name || '' %>" required placeholder="z.B. Kabelbinder schwarz 200mm">
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Art.-Nr. (SKU)</label>
+                <input type="text" name="sku" value="<%= product?.sku || '' %>" placeholder="z.B. KB-200-SW">
+              </div>
+              <div class="form-group">
+                <label>URL-Slug</label>
+                <input type="text" name="slug" value="<%= product?.slug || '' %>" placeholder="auto-generiert">
+              </div>
             </div>
             <div class="form-group">
-              <label>Badge (z.B. BESTSELLER)</label>
-              <input type="text" name="badge" value="<%= product?.badge || '' %>">
+              <label>Kategorie</label>
+              <select name="category_id">
+                <option value="">– Keine –</option>
+                <% for (const cat of categories) { %>
+                <option value="<%= cat.id %>" <%= product?.category_id===cat.id ? 'selected' : '' %>><%= cat.name %></option>
+                <% } %>
+              </select>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Badge <small style="color:var(--text-muted)">(z.B. BESTSELLER, NEU)</small></label>
+                <input type="text" name="badge" value="<%= product?.badge || '' %>">
+              </div>
+              <div class="form-group" style="display:flex;align-items:flex-end;gap:1.5rem;padding-bottom:0.25rem">
+                <label class="checkbox-label">
+                  <input type="checkbox" name="featured" value="1" <%= product?.featured ? 'checked' : '' %>>
+                  <span>Featured (Startseite)</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="active" value="1" <%= (!product || product?.active) ? 'checked' : '' %>>
+                  <span>Aktiv im Shop</span>
+                </label>
+              </div>
             </div>
           </div>
 
-          <div class="form-grid-2">
+          <!-- 2. Beschreibungen -->
+          <div class="admin-card">
+            <h3>Beschreibungen</h3>
             <div class="form-group">
-              <label>Marktpreis min (€)</label>
-              <input type="number" step="0.001" name="market_price_min" value="<%= product?.market_price_min || '' %>">
+              <label>Kurzbeschreibung <small style="color:var(--text-muted)">(für Shoplistings & Übersicht)</small></label>
+              <input type="text" name="short_description" value="<%= product?.short_description || '' %>" placeholder="1–2 Sätze, prägnant">
             </div>
             <div class="form-group">
-              <label>Marktpreis max (€)</label>
-              <input type="number" step="0.001" name="market_price_max" value="<%= product?.market_price_max || '' %>">
+              <label>Ausführliche Beschreibung</label>
+              <textarea name="description" rows="6" placeholder="Detaillierte Produktbeschreibung…"><%= product?.description || '' %></textarea>
             </div>
           </div>
 
-          <div class="form-checks">
-            <label class="checkbox-label"><input type="checkbox" name="featured" value="1" <%= product?.featured ? 'checked' : '' %>> Featured (Startseite)</label>
-            <label class="checkbox-label"><input type="checkbox" name="active" value="1" <%= (!product || product?.active) ? 'checked' : '' %>> Aktiv (sichtbar im Shop)</label>
+          <!-- 3. Logistik -->
+          <div class="admin-card">
+            <h3>Logistik & Verfügbarkeit</h3>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Lagerbestand (Stk.)</label>
+                <input type="number" name="stock" value="<%= product?.stock ?? 0 %>" min="0">
+              </div>
+              <div class="form-group">
+                <label>Mindestbestellmenge</label>
+                <input type="number" name="min_order_qty" value="<%= product?.min_order_qty ?? 1 %>" min="1" placeholder="1">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Lieferzeit</label>
+              <input type="text" name="delivery_time" value="<%= product?.delivery_time || '' %>" placeholder="z.B. 2–5 Werktage">
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Gewicht</label>
+                <input type="text" name="weight" value="<%= product?.weight || '' %>" placeholder="z.B. 0,5 kg">
+              </div>
+              <div class="form-group">
+                <label>Maße (L × B × H)</label>
+                <input type="text" name="dimensions" value="<%= product?.dimensions || '' %>" placeholder="z.B. 30 × 20 × 10 cm">
+              </div>
+            </div>
           </div>
+
+          <!-- 4. Preise -->
+          <div class="admin-card">
+            <h3>Marktpreisvergleich</h3>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Marktpreis min (€)</label>
+                <input type="number" step="0.001" name="market_price_min" value="<%= product?.market_price_min || '' %>" placeholder="0.000">
+              </div>
+              <div class="form-group">
+                <label>Marktpreis max (€)</label>
+                <input type="number" step="0.001" name="market_price_max" value="<%= product?.market_price_max || '' %>" placeholder="0.000">
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. SEO -->
+          <div class="admin-card">
+            <h3>SEO & Meta-Daten</h3>
+            <div class="form-group">
+              <label>Meta-Titel <small style="color:var(--text-muted)">(leer = Produktname)</small></label>
+              <input type="text" name="meta_title" value="<%= product?.meta_title || '' %>" placeholder="<%= product?.name || 'Produktname' %> – Imera Elektro" maxlength="70">
+              <small class="form-hint">Empfohlen: max. 70 Zeichen</small>
+            </div>
+            <div class="form-group">
+              <label>Meta-Beschreibung <small style="color:var(--text-muted)">(leer = Kurzbeschreibung)</small></label>
+              <textarea name="meta_description" rows="2" placeholder="Kurze Beschreibung für Suchmaschinen…" maxlength="160"><%= product?.meta_description || '' %></textarea>
+              <small class="form-hint">Empfohlen: max. 160 Zeichen</small>
+            </div>
+          </div>
+
         </div>
 
+        <!-- SAĞ SÜTUN -->
         <div>
+
+          <!-- 6. Hauptbild -->
           <div class="admin-card">
-            <h3>Produktbild (Hauptbild)</h3>
-            <% if (product?.image) { %><div class="current-image" style="margin-bottom:0.5rem"><img src="<%= product.image %>" style="max-width:120px;border-radius:8px;border:1px solid var(--border)"></div><% } %>
+            <h3>Hauptbild</h3>
+            <% if (product?.image) { %>
+            <div style="margin-bottom:0.75rem;position:relative;display:inline-block">
+              <img src="<%= product.image %>" style="max-width:140px;border-radius:8px;border:1px solid var(--border);display:block">
+              <label class="checkbox-label" style="margin-top:0.5rem;font-size:13px">
+                <input type="checkbox" name="remove_image" value="1">
+                <span style="color:var(--red)">Hauptbild entfernen</span>
+              </label>
+            </div>
+            <% } %>
             <input type="file" name="image" accept="image/*" class="file-input">
-            <small class="text-gray">Max. 5MB. JPG, PNG, WEBP, GIF</small>
+            <small class="text-gray">Max. 5 MB · JPG, PNG, WEBP</small>
           </div>
 
+          <!-- 7. Galerie -->
           <div class="admin-card">
-            <h3>Weitere Bilder (Galerie)</h3>
-            <% if (product?.images) { %>
-              <% const imgs = JSON.parse(product.images || '[]'); %>
-              <% if (imgs.length > 0) { %>
-              <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.75rem">
-                <% for (const img of imgs) { %>
-                <img src="<%= img %>" style="width:70px;height:70px;object-fit:cover;border-radius:6px;border:1px solid var(--border)">
-                <% } %>
+            <h3>Galerie-Bilder</h3>
+            <% if (product?.images) {
+              const imgs = JSON.parse(product.images || '[]');
+              if (imgs.length > 0) { %>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem">
+              <% for (let gi = 0; gi < imgs.length; gi++) { %>
+              <div style="position:relative;width:72px">
+                <img src="<%= imgs[gi] %>" style="width:72px;height:72px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block">
+                <label style="display:flex;align-items:center;justify-content:center;gap:2px;margin-top:3px;cursor:pointer;font-size:11px;color:var(--red)">
+                  <input type="checkbox" name="remove_gallery_image" value="<%= imgs[gi] %>" style="width:12px;height:12px">
+                  löschen
+                </label>
               </div>
               <% } %>
-            <% } %>
+            </div>
+            <% } } %>
             <input type="file" name="images" accept="image/*" multiple class="file-input">
-            <small class="text-gray">Bis zu 5 weitere Bilder. Neue Bilder werden zu bestehenden hinzugefügt.</small>
+            <small class="text-gray">Bis zu 5 weitere · Neue werden hinzugefügt</small>
           </div>
 
+          <!-- 8. Specs -->
           <div class="admin-card">
             <h3>Technische Daten</h3>
             <p class="form-hint">Format: Eigenschaft | Wert (eine pro Zeile)</p>
-            <textarea name="specs_raw" rows="8" class="mono-input"><% if (product?.specsArr) { for (const [k,v] of product.specsArr) { %><%= k %> | <%= v %>
+            <textarea name="specs_raw" rows="9" class="mono-input" placeholder="Material | Polyamid PA66&#10;Farbe | Schwarz&#10;Temperaturbereich | -40 bis +85 °C"><% if (product?.specsArr) { for (const [k,v] of product.specsArr) { %><%= k %> | <%= v %>
 <% } } %></textarea>
           </div>
 
+          <!-- 9. Anwendungen -->
           <div class="admin-card">
             <h3>Anwendungsbereiche</h3>
-            <p class="form-hint">Ein Anwendungsbereich pro Zeile</p>
-            <textarea name="apps_raw" rows="5" class="mono-input"><%= product?.appsArr ? product.appsArr.join('\n') : '' %></textarea>
+            <p class="form-hint">Ein Bereich pro Zeile</p>
+            <textarea name="apps_raw" rows="5" class="mono-input" placeholder="Elektroinstallation&#10;Schaltschrankbau&#10;Maschinenbau"><%= product?.appsArr ? product.appsArr.join('\n') : '' %></textarea>
           </div>
+
         </div>
       </div>
 
+      <!-- Staffelpreise — full width -->
       <div class="admin-card">
         <h3>Staffelpreise</h3>
         <div id="tierRows">
           <div class="tier-header-row">
             <span>Min. Menge</span><span>Max. Menge</span><span>Preis (€)</span><span>Bezeichnung</span><span></span>
           </div>
-          <% const existingTiers = tiers.length > 0 ? tiers : [{min_qty:1, max_qty:99, price:'', label:'1–99 Stück'},{min_qty:100, max_qty:999, price:'', label:'100–999 Stück'},{min_qty:1000, max_qty:null, price:'', label:'Ab 1.000 Stück'}]; %>
+          <% const existingTiers = tiers.length > 0 ? tiers : [
+            {min_qty:1, max_qty:99, price:'', label:'1–99 Stück'},
+            {min_qty:100, max_qty:999, price:'', label:'100–999 Stück'},
+            {min_qty:1000, max_qty:null, price:'', label:'Ab 1.000 Stück'}
+          ]; %>
           <% for (let i = 0; i < existingTiers.length; i++) { %>
           <div class="tier-row" id="tier-<%= i %>">
-            <input type="number" name="tier_min" value="<%= existingTiers[i].min_qty %>" min="1" placeholder="Min. Menge" required>
-            <input type="number" name="tier_max" value="<%= existingTiers[i].max_qty || '' %>" min="1" placeholder="Leer = unbegrenzt">
+            <input type="number" name="tier_min" value="<%= existingTiers[i].min_qty %>" min="1" placeholder="Min." required>
+            <input type="number" name="tier_max" value="<%= existingTiers[i].max_qty || '' %>" min="1" placeholder="Leer = ∞">
             <input type="number" name="tier_price" value="<%= existingTiers[i].price %>" step="0.0001" min="0" placeholder="0.000" required>
             <input type="text" name="tier_label" value="<%= existingTiers[i].label || '' %>" placeholder="z.B. 1–99 Stück">
             <button type="button" onclick="this.parentElement.remove()" class="btn-danger btn-sm">×</button>
@@ -117,29 +223,64 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn-blue btn-lg">Speichern</button>
+        <button type="submit" class="btn-blue btn-lg">💾 Speichern</button>
         <a href="/admin/produkte" class="btn-outline">Abbrechen</a>
-        <% if (product) { %><a href="/shop/produkt/<%= product.slug %>" target="_blank" class="btn-outline">Im Shop ansehen</a><% } %>
       </div>
     </form>
   </div>
 </div>
+
 <script>
 function addTierRow() {
   const cont = document.getElementById('tierRows');
   const div = document.createElement('div');
   div.className = 'tier-row';
-  div.innerHTML = '<input type="number" name="tier_min" min="1" placeholder="Min. Menge" required><input type="number" name="tier_max" min="1" placeholder="Leer = unbegrenzt"><input type="number" name="tier_price" step="0.0001" min="0" placeholder="0.000" required><input type="text" name="tier_label" placeholder="z.B. Ab 1.000 Stück"><button type="button" onclick="this.parentElement.remove()" class="btn-danger btn-sm">×</button>';
+  div.innerHTML = `<input type="number" name="tier_min" min="1" placeholder="Min." required>
+    <input type="number" name="tier_max" min="1" placeholder="Leer = ∞">
+    <input type="number" name="tier_price" step="0.0001" min="0" placeholder="0.000" required>
+    <input type="text" name="tier_label" placeholder="z.B. Ab 1.000 Stück">
+    <button type="button" onclick="this.parentElement.remove()" class="btn-danger btn-sm">×</button>`;
   cont.appendChild(div);
 }
 
-document.querySelector('input[name="name"]')?.addEventListener('input', function() {
-  const slugEl = document.querySelector('input[name="slug"]');
-  if (!slugEl.dataset.manual) {
-    slugEl.value = this.value.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+// Auto-slug from name
+const nameInput = document.querySelector('input[name="name"]');
+const slugInput = document.querySelector('input[name="slug"]');
+if (nameInput && slugInput) {
+  nameInput.addEventListener('input', function() {
+    if (!slugInput.dataset.manual) {
+      slugInput.value = this.value.toLowerCase()
+        .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
+        .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    }
+  });
+  slugInput.addEventListener('input', function() { this.dataset.manual = '1'; });
+}
+
+// Meta-title placeholder from name
+const metaTitle = document.querySelector('input[name="meta_title"]');
+if (nameInput && metaTitle) {
+  nameInput.addEventListener('input', function() {
+    metaTitle.placeholder = this.value + ' – Imera Elektro';
+  });
+}
+
+// Character counters for SEO fields
+function addCounter(input, max) {
+  const hint = input.nextElementSibling;
+  function update() {
+    const len = input.value.length;
+    const color = len > max ? 'var(--red)' : len > max * 0.85 ? '#F59E0B' : 'var(--text-muted)';
+    hint.style.color = color;
+    hint.textContent = `${len}/${max} Zeichen`;
   }
-});
-document.querySelector('input[name="slug"]')?.addEventListener('input', function() { this.dataset.manual = '1'; });
+  input.addEventListener('input', update);
+  update();
+}
+const mt = document.querySelector('input[name="meta_title"]');
+const md = document.querySelector('textarea[name="meta_description"]');
+if (mt) addCounter(mt, 70);
+if (md) addCounter(md, 160);
 </script>
 <script src="/js/admin.js"></script>
 </body></html>

@@ -95,8 +95,10 @@ router.get('/produkt/:slug', (req, res) => {
     rp.tiers = db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(rp.id);
   }
 
-  const metaDesc = `${product.name} – ${product.sku ? 'Art.-Nr. ' + product.sku + '. ' : ''}${(product.description || '').slice(0, 140)} | Imera Elektro`;
-  res.render('product', { title: product.name, product, related, metaDesc });
+  const metaDesc = product.meta_description ||
+    `${product.short_description || ''}${product.short_description ? ' ' : ''}${product.name} – ${product.sku ? 'Art.-Nr. ' + product.sku + '. ' : ''}${(product.description || '').slice(0, 120)} | Imera Elektro`;
+  const title = product.meta_title || product.name;
+  res.render('product', { title, product, related, metaDesc });
 });
 
 router.get('/api/preis/:id', (req, res) => {

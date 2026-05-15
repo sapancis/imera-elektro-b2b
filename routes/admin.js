@@ -87,21 +87,28 @@ router.get('/produkte/neu', (req, res) => {
 });
 
 router.post('/produkte/neu', uploadMulti.fields([{name:'image',maxCount:1},{name:'images',maxCount:5}]), (req, res) => {
-  const { name, slug, sku, category_id, description, specs_raw, apps_raw, market_price_min, market_price_max, stock, featured, badge, active } = req.body;
+  const { name, slug, sku, category_id, short_description, description, specs_raw, apps_raw,
+          market_price_min, market_price_max, stock, min_order_qty, delivery_time,
+          weight, dimensions, meta_title, meta_description, featured, badge, active } = req.body;
   const image = req.files?.image?.[0] ? '/uploads/' + req.files.image[0].filename : null;
   const extraImages = (req.files?.images || []).map(f => '/uploads/' + f.filename);
-
   const specsArr = parseTableInput(specs_raw);
   const appsArr = parseListInput(apps_raw);
 
   try {
     const r = db.prepare(`
-      INSERT INTO products (name, slug, sku, category_id, description, specs, applications, market_price_min, market_price_max, stock, image, images, featured, badge, active)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `).run(name, slug || slugify(name), sku || null, category_id || null, description || null,
+      INSERT INTO products (name, slug, sku, category_id, short_description, description, specs, applications,
+        market_price_min, market_price_max, stock, min_order_qty, delivery_time, weight, dimensions,
+        meta_title, meta_description, image, images, featured, badge, active)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `).run(name, slug || slugify(name), sku || null, category_id || null,
+      short_description || null, description || null,
       JSON.stringify(specsArr), JSON.stringify(appsArr),
       parseFloat(market_price_min) || null, parseFloat(market_price_max) || null,
-      parseInt(stock) || 0, image, JSON.stringify(extraImages), featured ? 1 : 0, badge || null, active ? 1 : 0);
+      parseInt(stock) || 0, parseInt(min_order_qty) || 1,
+      delivery_time || null, weight || null, dimensions || null,
+      meta_title || null, meta_description || null,
+      image, JSON.stringify(extraImages), featured ? 1 : 0, badge || null, active ? 1 : 0);
 
     saveTiers(r.lastInsertRowid, req.body);
     flash(req, 'success', 'Produkt wurde erstellt.');
@@ -123,25 +130,42 @@ router.get('/produkte/:id/bearbeiten', (req, res) => {
 });
 
 router.post('/produkte/:id/bearbeiten', uploadMulti.fields([{name:'image',maxCount:1},{name:'images',maxCount:5}]), (req, res) => {
-  const { name, slug, sku, category_id, description, specs_raw, apps_raw, market_price_min, market_price_max, stock, featured, badge, active } = req.body;
+  const { name, slug, sku, category_id, short_description, description, specs_raw, apps_raw,
+          market_price_min, market_price_max, stock, min_order_qty, delivery_time,
+          weight, dimensions, meta_title, meta_description, featured, badge, active,
+          remove_image, remove_gallery_image } = req.body;
   const product = db.prepare('SELECT * FROM products WHERE id=?').get(req.params.id);
   if (!product) return res.redirect('/admin/produkte');
 
-  const image = req.files?.image?.[0] ? '/uploads/' + req.files.image[0].filename : product.image;
-  const existingImages = product.images ? JSON.parse(product.images) : [];
+  // Ana görsel: yeni yüklendi → yeni, remove işaretlendi → null, yoksa mevcut
+  let image = product.image;
+  if (req.files?.image?.[0]) image = '/uploads/' + req.files.image[0].filename;
+  else if (remove_image) image = null;
+
+  // Galeri: mevcut listeden işaretlenenleri çıkar, yenileri ekle
+  const toRemove = Array.isArray(remove_gallery_image) ? remove_gallery_image : (remove_gallery_image ? [remove_gallery_image] : []);
+  const existingImages = (product.images ? JSON.parse(product.images) : []).filter(img => !toRemove.includes(img));
   const newImages = (req.files?.images || []).map(f => '/uploads/' + f.filename);
   const extraImages = [...existingImages, ...newImages];
+
   const specsArr = parseTableInput(specs_raw);
   const appsArr = parseListInput(apps_raw);
 
   db.prepare(`
-    UPDATE products SET name=?, slug=?, sku=?, category_id=?, description=?, specs=?, applications=?,
-    market_price_min=?, market_price_max=?, stock=?, image=?, images=?, featured=?, badge=?, active=?, updated_at=datetime('now')
+    UPDATE products SET name=?, slug=?, sku=?, category_id=?, short_description=?, description=?,
+    specs=?, applications=?, market_price_min=?, market_price_max=?,
+    stock=?, min_order_qty=?, delivery_time=?, weight=?, dimensions=?,
+    meta_title=?, meta_description=?, image=?, images=?, featured=?, badge=?, active=?, updated_at=datetime('now')
     WHERE id=?
-  `).run(name, slug || slugify(name), sku || null, category_id || null, description || null,
+  `).run(name, slug || slugify(name), sku || null, category_id || null,
+    short_description || null, description || null,
     JSON.stringify(specsArr), JSON.stringify(appsArr),
     parseFloat(market_price_min) || null, parseFloat(market_price_max) || null,
-    parseInt(stock) || 0, image, JSON.stringify(extraImages), featured ? 1 : 0, badge || null, active ? 1 : 0, req.params.id);
+    parseInt(stock) || 0, parseInt(min_order_qty) || 1,
+    delivery_time || null, weight || null, dimensions || null,
+    meta_title || null, meta_description || null,
+    image, JSON.stringify(extraImages), featured ? 1 : 0, badge || null, active ? 1 : 0,
+    req.params.id);
 
   saveTiers(req.params.id, req.body);
   flash(req, 'success', 'Produkt wurde aktualisiert.');
