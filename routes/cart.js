@@ -29,7 +29,8 @@ router.get('/', (req, res) => {
     const lineTotal = unitPrice * qty;
     subtotal += lineTotal;
     const tiers = db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(productId);
-    items.push({ product, qty, unitPrice, lineTotal, tiers });
+    const nextTier = db.prepare('SELECT * FROM product_tiers WHERE product_id=? AND min_qty>? ORDER BY min_qty ASC LIMIT 1').get(productId, qty);
+    items.push({ product, qty, unitPrice, lineTotal, tiers, nextTier });
   }
 
   const freeShippingThreshold = parseFloat(db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get()?.value || 200);

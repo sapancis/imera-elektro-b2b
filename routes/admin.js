@@ -89,7 +89,7 @@ router.get('/produkte/neu', (req, res) => {
 router.post('/produkte/neu', uploadMulti.fields([{name:'image',maxCount:1},{name:'images',maxCount:5}]), (req, res) => {
   const { name, slug, sku, category_id, short_description, description, specs_raw, apps_raw,
           market_price_min, market_price_max, stock, min_order_qty, delivery_time,
-          weight, dimensions, meta_title, meta_description, featured, badge, active } = req.body;
+          weight, dimensions, size, meta_title, meta_description, featured, badge, active } = req.body;
   const image = req.files?.image?.[0] ? '/uploads/' + req.files.image[0].filename : null;
   const extraImages = (req.files?.images || []).map(f => '/uploads/' + f.filename);
   const specsArr = parseTableInput(specs_raw);
@@ -98,15 +98,15 @@ router.post('/produkte/neu', uploadMulti.fields([{name:'image',maxCount:1},{name
   try {
     const r = db.prepare(`
       INSERT INTO products (name, slug, sku, category_id, short_description, description, specs, applications,
-        market_price_min, market_price_max, stock, min_order_qty, delivery_time, weight, dimensions,
+        market_price_min, market_price_max, stock, min_order_qty, delivery_time, weight, dimensions, size,
         meta_title, meta_description, image, images, featured, badge, active)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `).run(name, slug || slugify(name), sku || null, category_id || null,
       short_description || null, description || null,
       JSON.stringify(specsArr), JSON.stringify(appsArr),
       parseFloat(market_price_min) || null, parseFloat(market_price_max) || null,
       parseInt(stock) || 0, parseInt(min_order_qty) || 1,
-      delivery_time || null, weight || null, dimensions || null,
+      delivery_time || null, weight || null, dimensions || null, size || null,
       meta_title || null, meta_description || null,
       image, JSON.stringify(extraImages), featured ? 1 : 0, badge || null, active ? 1 : 0);
 
@@ -132,7 +132,7 @@ router.get('/produkte/:id/bearbeiten', (req, res) => {
 router.post('/produkte/:id/bearbeiten', uploadMulti.fields([{name:'image',maxCount:1},{name:'images',maxCount:5}]), (req, res) => {
   const { name, slug, sku, category_id, short_description, description, specs_raw, apps_raw,
           market_price_min, market_price_max, stock, min_order_qty, delivery_time,
-          weight, dimensions, meta_title, meta_description, featured, badge, active,
+          weight, dimensions, size, meta_title, meta_description, featured, badge, active,
           remove_image, remove_gallery_image } = req.body;
   const product = db.prepare('SELECT * FROM products WHERE id=?').get(req.params.id);
   if (!product) return res.redirect('/admin/produkte');
@@ -154,7 +154,7 @@ router.post('/produkte/:id/bearbeiten', uploadMulti.fields([{name:'image',maxCou
   db.prepare(`
     UPDATE products SET name=?, slug=?, sku=?, category_id=?, short_description=?, description=?,
     specs=?, applications=?, market_price_min=?, market_price_max=?,
-    stock=?, min_order_qty=?, delivery_time=?, weight=?, dimensions=?,
+    stock=?, min_order_qty=?, delivery_time=?, weight=?, dimensions=?, size=?,
     meta_title=?, meta_description=?, image=?, images=?, featured=?, badge=?, active=?, updated_at=datetime('now')
     WHERE id=?
   `).run(name, slug || slugify(name), sku || null, category_id || null,
@@ -162,7 +162,7 @@ router.post('/produkte/:id/bearbeiten', uploadMulti.fields([{name:'image',maxCou
     JSON.stringify(specsArr), JSON.stringify(appsArr),
     parseFloat(market_price_min) || null, parseFloat(market_price_max) || null,
     parseInt(stock) || 0, parseInt(min_order_qty) || 1,
-    delivery_time || null, weight || null, dimensions || null,
+    delivery_time || null, weight || null, dimensions || null, size || null,
     meta_title || null, meta_description || null,
     image, JSON.stringify(extraImages), featured ? 1 : 0, badge || null, active ? 1 : 0,
     req.params.id);

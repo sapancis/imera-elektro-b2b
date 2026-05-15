@@ -94,6 +94,10 @@
               <label>Lieferzeit</label>
               <input type="text" name="delivery_time" value="<%= product?.delivery_time || '' %>" placeholder="z.B. 2–5 Werktage">
             </div>
+            <div class="form-group">
+              <label>Größe / Abmessung <small style="color:#9CA3AF">(für Shop-Filter, z.B. 200×3,6mm oder M20)</small></label>
+              <input type="text" name="size" value="<%= product?.size || '' %>" placeholder="z.B. 200×3,6mm">
+            </div>
             <div class="form-grid-2">
               <div class="form-group">
                 <label>Gewicht</label>

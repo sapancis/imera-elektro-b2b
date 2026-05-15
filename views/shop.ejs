@@ -42,6 +42,18 @@
               </label>
             </div>
 
+            <% if (sizes && sizes.length > 0) { %>
+            <div class="filter-group">
+              <div class="filter-label">Größe</div>
+              <% const selectedSizes = Array.isArray(filters.groesse) ? filters.groesse : (filters.groesse ? [filters.groesse] : []); %>
+              <% for (const s of sizes) { %>
+              <label class="filter-option">
+                <input type="checkbox" name="groesse" value="<%= s %>" <%= selectedSizes.includes(s) ? 'checked' : '' %> onchange="this.form.submit()"> <%= s %>
+              </label>
+              <% } %>
+            </div>
+            <% } %>
+
             <input type="hidden" name="sort" value="<%= filters.sort %>">
             <a href="/shop" class="btn-reset">Filter zurücksetzen</a>
           </form>

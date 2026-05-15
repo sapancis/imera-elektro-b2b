@@ -304,6 +304,7 @@ img { max-width: 100%; display: block; }
 .tier-hint-sm { font-size: 11px; color: var(--text-light); margin-top: 4px; display: flex; gap: 8px; flex-wrap: wrap; }
 .tier-hint-sm span { padding: 2px 6px; border-radius: 4px; background: var(--bg); }
 .tier-hint-sm .tier-active { background: var(--accent-light); color: var(--accent-dark); }
+.cart-tier-nudge { font-size: 12px; color: #92400E; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px; padding: 5px 10px; margin-top: 6px; line-height: 1.4; }
 .qty-form { display: flex; align-items: center; }
 .btn-remove { background: none; border: none; font-size: 20px; color: var(--text-light); cursor: pointer; padding: 4px 8px; border-radius: 6px; }
 .btn-remove:hover { background: #FFF0EE; color: var(--red); }
@@ -518,7 +519,7 @@ img { max-width: 100%; display: block; }
   gap: 8px;
   margin-top: 8px;
 }
-.btn-merken, .btn-vergleichen {
+.btn-merken, .btn-vergleichen, .btn-share-cart {
   flex: 1;
   padding: 6px 10px;
   font-size: 12px;
@@ -528,7 +529,13 @@ img { max-width: 100%; display: block; }
   transition: all 0.15s ease;
   border: 1.5px solid;
   background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
+.btn-share-cart { color: #6B7280; border-color: #D1D5DB; }
+.btn-share-cart:hover { background: #F3F4F6; border-color: #9CA3AF; }
 .btn-merken {
   color: #EF4444;
   border-color: #EF4444;

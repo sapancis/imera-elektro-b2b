@@ -19,12 +19,12 @@
         <div class="gallery-thumbs">
           <% if (product.image) { %>
           <div class="gallery-thumb active" onclick="document.getElementById('mainImage').src='<%= product.image %>';document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active')">
-            <img src="<%= product.image %>" alt="">
+            <img src="<%= product.image %>" alt="<%= product.name %> – Hauptbild">
           </div>
           <% } %>
-          <% for (const img of product.imagesArr) { %>
-          <div class="gallery-thumb" onclick="document.getElementById('mainImage').src='<%= img %>';document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active')">
-            <img src="<%= img %>" alt="">
+          <% for (let gi = 0; gi < product.imagesArr.length; gi++) { %>
+          <div class="gallery-thumb" onclick="document.getElementById('mainImage').src='<%= product.imagesArr[gi] %>';document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active')">
+            <img src="<%= product.imagesArr[gi] %>" alt="<%= product.name %> – Bild <%= gi + 2 %>">
           </div>
           <% } %>
         </div>
@@ -101,6 +101,15 @@
         <div class="product-actions-row" style="margin-top:12px">
           <button class="btn-merken" id="merkenBtn" data-product-id="<%= product.id %>" data-csrf="<%= csrfToken %>">♥ Merken</button>
           <button class="btn-vergleichen" id="vergleichenBtn" data-product-id="<%= product.id %>" data-csrf="<%= csrfToken %>">⚖ Vergleichen</button>
+          <button class="btn-share-cart" id="shareCartBtn" data-csrf="<%= csrfToken %>" title="Warenkorb speichern & teilen">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            Teilen
+          </button>
+        </div>
+        <div id="shareCartResult" style="display:none;margin-top:8px;font-size:13px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:8px 12px">
+          <strong>Link zum Teilen:</strong>
+          <input type="text" id="shareCartLink" readonly style="border:none;background:transparent;width:calc(100% - 80px);font-size:12px;outline:none">
+          <button onclick="navigator.clipboard.writeText(document.getElementById('shareCartLink').value);this.textContent='✓ Kopiert!';setTimeout(()=>this.textContent='Kopieren',2000)" style="font-size:12px;background:#10B981;color:#fff;border:none;border-radius:4px;padding:3px 8px;cursor:pointer">Kopieren</button>
         </div>
 
         <div class="trust-row">
@@ -348,6 +357,20 @@ function showTab(id, btn) {
 }
 
 updatePrice();
+
+// ─── Share Cart ───────────────────────────────────────────────────────────
+document.getElementById('shareCartBtn')?.addEventListener('click', function() {
+  fetch('/warenkorb/speichern', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: '_csrf=' + encodeURIComponent(this.dataset.csrf)
+  }).then(r => r.json()).then(d => {
+    if (d.ok) {
+      document.getElementById('shareCartResult').style.display = 'block';
+      document.getElementById('shareCartLink').value = d.link;
+    }
+  });
+});
 
 // ─── Star Picker ──────────────────────────────────────────────────────────
 (function() {

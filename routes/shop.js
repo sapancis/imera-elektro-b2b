@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../database/db');
 
 router.get('/', (req, res) => {
-  const { kategorie, preis, sort = 'popular', page = 1, verfuegbar } = req.query;
+  const { kategorie, preis, sort = 'popular', page = 1, verfuegbar, groesse } = req.query;
   const perPage = 12;
   const offset = (parseInt(page) - 1) * perPage;
 
@@ -29,6 +29,13 @@ router.get('/', (req, res) => {
       if (r === 'over100') priceConds.push('(SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) > 1.00');
     }
     if (priceConds.length) where.push('(' + priceConds.join(' OR ') + ')');
+  }
+
+  if (groesse) {
+    const sizes = Array.isArray(groesse) ? groesse : [groesse];
+    const placeholders = sizes.map(() => '?').join(',');
+    where.push(`p.size IN (${placeholders})`);
+    params.push(...sizes);
   }
 
   const orderMap = {
@@ -62,12 +69,14 @@ router.get('/', (req, res) => {
 
   const categories = db.prepare('SELECT c.*, COUNT(p.id) as cnt FROM categories c LEFT JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1 GROUP BY c.id ORDER BY c.sort_order').all();
   const totalPages = Math.ceil(total / perPage);
+  const sizes = db.prepare("SELECT DISTINCT size FROM products WHERE active=1 AND size IS NOT NULL AND size != '' ORDER BY size").all().map(r => r.size);
 
   res.render('shop', {
     title: 'Shop',
     products,
     categories,
-    filters: { kategorie, preis, sort, verfuegbar },
+    sizes,
+    filters: { kategorie, preis, sort, verfuegbar, groesse },
     pagination: { page: parseInt(page), totalPages, total },
   });
 });

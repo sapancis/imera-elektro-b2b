@@ -30,6 +30,11 @@
                     <span class="<%= item.qty >= t.min_qty && (!t.max_qty || item.qty <= t.max_qty) ? 'tier-active' : '' %>"><%= t.min_qty %>–<%= t.max_qty||'∞' %> Stk: <%= formatPrice(t.price) %></span>
                     <% } %>
                   </div>
+                  <% if (item.nextTier) { %>
+                  <div class="cart-tier-nudge">
+                    💡 Noch <strong><%= item.nextTier.min_qty - item.qty %> Stk.</strong> bis zum nächsten Rabatt – dann nur <strong><%= formatPrice(item.nextTier.price) %>/Stk.</strong>
+                  </div>
+                  <% } %>
                 </div>
               </td>
               <td class="price-green"><strong><%= formatPrice(item.unitPrice) %></strong></td>
