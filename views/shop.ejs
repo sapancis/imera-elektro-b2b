@@ -77,6 +77,10 @@
             <% } else { %>
               <div class="product-placeholder"><%= p.cat_name === 'Kabelbinder & Zubehör' ? '🔗' : p.cat_name === 'Kabelverschraubungen' ? '🔧' : p.cat_name === 'Reihenklemmen' ? '⚡' : '📦' %></div>
             <% } %>
+            <button class="quickview-btn" data-slug="<%= p.slug %>" title="Schnellansicht">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              Schnellansicht
+            </button>
           </a>
           <div class="product-card-body">
             <% if (p.badge === 'BESTSELLER') { %><div class="product-tag">BESTSELLER</div><% } %>
@@ -161,6 +165,25 @@
   </div>
 </main>
 
+<!-- Schnellansicht Modal -->
+<div id="quickviewOverlay" class="qv-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Schnellansicht">
+  <div class="qv-modal">
+    <button class="qv-close" id="qvClose" aria-label="Schließen">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="qv-body">
+      <div class="qv-image-col">
+        <div class="qv-image-wrap" id="qvImageWrap">
+          <div class="qv-loading">⟳</div>
+        </div>
+      </div>
+      <div class="qv-info-col" id="qvInfoCol">
+        <div class="qv-loading-full">Wird geladen…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // Schnell-Bestellformular
 (function() {
@@ -220,6 +243,112 @@
       submitBtn.textContent = 'In den Warenkorb';
     });
   });
+})();
+</script>
+
+<script>
+// ─── Schnellansicht ────────────────────────────────────────────────────────
+(function() {
+  const overlay  = document.getElementById('quickviewOverlay');
+  const closeBtn = document.getElementById('qvClose');
+  const imgWrap  = document.getElementById('qvImageWrap');
+  const infoCol  = document.getElementById('qvInfoCol');
+  const csrf     = '<%= csrfToken %>';
+
+  function fmt(n) {
+    return parseFloat(n).toLocaleString('de-AT', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' €';
+  }
+
+  function openModal(slug) {
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    imgWrap.innerHTML = '<div class="qv-loading">⟳</div>';
+    infoCol.innerHTML = '<div class="qv-loading-full">Wird geladen…</div>';
+
+    fetch('/shop/api/schnellansicht/' + encodeURIComponent(slug))
+      .then(r => r.json())
+      .then(data => {
+        if (!data.ok) { infoCol.innerHTML = '<p style="color:#EF4444">Produkt nicht gefunden.</p>'; return; }
+        const p = data.product;
+        const imgSrc = p.image || '';
+        imgWrap.innerHTML = imgSrc
+          ? `<img src="${imgSrc}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain">`
+          : `<div class="qv-placeholder">📦</div>`;
+
+        const savBadge = data.savingsPct >= 10
+          ? `<span class="qv-badge">-${data.savingsPct}% günstiger</span>` : '';
+        const mktLine = p.market_price_max > 0
+          ? `<div class="qv-mkt">Marktpreis: <s style="color:#EF4444">${fmt(p.market_price_max)}</s></div>` : '';
+        const stockHtml = p.stock > 0
+          ? `<div class="qv-stock stock-in">✓ ${p.stock} Stück auf Lager</div>`
+          : `<div class="qv-stock stock-out">⚠ Nicht auf Lager</div>`;
+
+        let tiersHtml = '<div class="qv-tiers">';
+        p.tiers.forEach((t, i) => {
+          const high = i > 0 ? ' qv-tier--green' : '';
+          const label = t.max_qty ? `${t.min_qty}–${t.max_qty} Stk` : `Ab ${t.min_qty} Stk`;
+          tiersHtml += `<div class="qv-tier${high}"><span class="qv-tier-qty">${label}</span><span class="qv-tier-price">${fmt(t.price)}</span></div>`;
+        });
+        tiersHtml += '</div>';
+
+        infoCol.innerHTML = `
+          <div class="qv-cat">${p.cat_name || ''}</div>
+          <h2 class="qv-name">${p.name}</h2>
+          ${savBadge}
+          ${p.sku ? `<div class="qv-sku">Art.-Nr.: ${p.sku}</div>` : ''}
+          ${mktLine}
+          <div class="qv-tiers-label">Staffelpreise</div>
+          ${tiersHtml}
+          ${stockHtml}
+          <div class="qv-order-row">
+            <input type="number" id="qvQty" class="qty-input" value="1" min="1" style="width:80px">
+            ${p.stock > 0
+              ? `<button class="btn-add-cart" id="qvAddCart" data-product-id="${p.id}" data-csrf="${csrf}">In den Warenkorb</button>`
+              : `<button class="btn-add-cart btn-disabled" disabled>Ausverkauft</button>`}
+          </div>
+          <a href="/shop/produkt/${p.slug}" class="qv-detail-link">Vollständige Produktdetails →</a>
+        `;
+
+        const addBtn = document.getElementById('qvAddCart');
+        if (addBtn) {
+          addBtn.addEventListener('click', () => {
+            const qty = parseInt(document.getElementById('qvQty').value) || 1;
+            addBtn.disabled = true;
+            addBtn.textContent = '…';
+            fetch('/warenkorb/hinzufuegen', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `product_id=${p.id}&qty=${qty}&_csrf=${encodeURIComponent(csrf)}`
+            })
+            .then(r => r.json())
+            .then(d => {
+              if (d.ok) {
+                document.querySelectorAll('.cart-badge').forEach(b => { b.textContent = d.cartCount; b.style.display = 'flex'; });
+                const msg = document.getElementById('cartToastMsg');
+                const toast = document.getElementById('cartToast');
+                if (msg && toast) { msg.textContent = d.message || 'Hinzugefügt!'; toast.style.display = 'flex'; setTimeout(() => toast.style.display = 'none', 3000); }
+              }
+              addBtn.disabled = false;
+              addBtn.textContent = 'In den Warenkorb';
+            });
+          });
+        }
+      });
+  }
+
+  function closeModal() {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.quickview-btn');
+    if (btn) { e.preventDefault(); openModal(btn.dataset.slug); }
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 })();
 </script>
 

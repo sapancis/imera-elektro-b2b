@@ -101,6 +101,21 @@ router.get('/produkt/:slug', (req, res) => {
   res.render('product', { title, product, related, metaDesc });
 });
 
+router.get('/api/schnellansicht/:slug', (req, res) => {
+  const product = db.prepare(`
+    SELECT p.*, c.name as cat_name
+    FROM products p LEFT JOIN categories c ON p.category_id=c.id
+    WHERE p.slug=? AND p.active=1
+  `).get(req.params.slug);
+  if (!product) return res.json({ ok: false });
+  product.tiers = db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(product.id);
+  product.imagesArr = product.images ? JSON.parse(product.images) : [];
+  const mktMax = product.market_price_max || 0;
+  const priceMin = product.tiers[0]?.price || 0;
+  const savingsPct = mktMax > priceMin ? Math.round((1 - priceMin / mktMax) * 100) : 0;
+  res.json({ ok: true, product, savingsPct });
+});
+
 router.get('/api/preis/:id', (req, res) => {
   const qty = parseInt(req.query.qty) || 1;
   const tier = db.prepare(`
