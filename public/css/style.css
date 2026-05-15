@@ -1041,15 +1041,30 @@ img { max-width: 100%; display: block; }
 .step-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
 .step-arrow { font-size: 1.5rem; color: var(--border-dark); padding: 0 1rem; flex-shrink: 0; }
 
-/* ─── Testimonials ───────────────────────────────────────────────────────── */
-.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-.testimonial-card { background: var(--bg); border-radius: var(--radius-lg); padding: 1.75rem; border: 1px solid var(--border); }
-.testimonial-stars { color: #FFB800; font-size: 16px; margin-bottom: 0.75rem; letter-spacing: 2px; }
-.testimonial-text { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.25rem; font-style: italic; }
-.testimonial-author { display: flex; align-items: center; gap: 0.75rem; }
-.testimonial-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.testimonial-author strong { display: block; font-size: 14px; }
-.testimonial-author span { font-size: 12px; color: var(--text-muted); }
+/* ─── Google Reviews ─────────────────────────────────────────────────────── */
+.google-rating-header { display: inline-flex; align-items: center; gap: 1rem; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 0.875rem 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 2.5rem; }
+.google-logo { width: 28px; height: 28px; flex-shrink: 0; }
+.google-rating-score { display: flex; align-items: center; gap: 0.5rem; }
+.google-score-num { font-size: 1.5rem; font-weight: 700; color: var(--text); line-height: 1; }
+.google-stars { color: #FBBC05; font-size: 18px; letter-spacing: 1px; line-height: 1; }
+.google-rating-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.google-icon-sm { width: 18px; height: 18px; flex-shrink: 0; margin-left: auto; }
+
+.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.testimonial-card { background: #fff; border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; border: 1px solid var(--border); box-shadow: var(--shadow-xs); transition: box-shadow 0.2s; }
+.testimonial-card:hover { box-shadow: var(--shadow-md); }
+
+.testimonial-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
+.testimonial-avatar { width: 42px; height: 42px; border-radius: 50%; color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.testimonial-meta { flex: 1; }
+.testimonial-meta strong { display: block; font-size: 14px; font-weight: 600; color: var(--text); }
+.testimonial-meta span { font-size: 12px; color: var(--text-muted); }
+
+.testimonial-stars-row { display: flex; align-items: center; gap: 1px; margin-bottom: 0.6rem; }
+.testimonial-stars-row span { color: #FBBC05; font-size: 15px; }
+.testimonial-date { font-size: 12px; color: var(--text-muted); margin-left: 0.5rem; font-family: inherit; }
+
+.testimonial-text { font-size: 14px; color: #3C4043; line-height: 1.65; margin: 0; }
 
 /* ─── CTA Banner ─────────────────────────────────────────────────────────── */
 .cta-banner { background: linear-gradient(135deg, #1D1D1F 0%, #2C2C2E 100%); padding: 4rem 0; }
