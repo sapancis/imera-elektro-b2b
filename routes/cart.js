@@ -43,13 +43,27 @@ router.post('/hinzufuegen', (req, res) => {
   const productId = parseInt(req.body.product_id);
   const qty = Math.max(1, parseInt(req.body.qty) || 1);
 
-  const product = db.prepare('SELECT id, stock FROM products WHERE id=? AND active=1').get(productId);
+  const product = db.prepare('SELECT id, name, stock FROM products WHERE id=? AND active=1').get(productId);
   if (!product) return res.json({ ok: false, message: 'Produkt nicht gefunden.' });
 
+  // ── Stok kontrolü ────────────────────────────────────────────────
+  if (product.stock <= 0) {
+    return res.json({ ok: false, message: `"${product.name}" ist leider ausverkauft.` });
+  }
   if (!req.session.cart) req.session.cart = {};
-  const current = req.session.cart[productId] || 0;
-  req.session.cart[productId] = current + qty;
+  const alreadyInCart = req.session.cart[productId] || 0;
+  const totalRequested = alreadyInCart + qty;
+  if (totalRequested > product.stock) {
+    const available = product.stock - alreadyInCart;
+    if (available <= 0) {
+      return res.json({ ok: false, message: `Sie haben bereits die maximale Menge (${product.stock} Stk.) im Warenkorb.` });
+    }
+    req.session.cart[productId] = product.stock;
+    const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
+    return res.json({ ok: true, cartCount, message: `Nur noch ${product.stock} Stk. auf Lager – Menge auf ${product.stock} angepasst.` });
+  }
 
+  req.session.cart[productId] = totalRequested;
   const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
   res.json({ ok: true, cartCount, message: 'Produkt wurde in den Warenkorb gelegt.' });
 });

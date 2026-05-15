@@ -199,4 +199,109 @@ async function sendAdminOrderNotification({ order, items, customerName, customer
   });
 }
 
-module.exports = { sendOrderConfirmation, sendAdminOrderNotification };
+/**
+ * Müşteriye sipariş durum değişikliği maili (kargoya verildi / teslim / iptal)
+ */
+async function sendStatusUpdate({ order, items, customerEmail, customerName }) {
+  if (!process.env.SMTP_PASS) return;
+
+  const configs = {
+    shipped: {
+      emoji: '🚚',
+      title: 'Ihre Bestellung wurde versendet!',
+      color: '#3B82F6',
+      bgColor: '#EFF6FF',
+      borderColor: '#BFDBFE',
+      textColor: '#1E40AF',
+      message: 'Ihre Bestellung ist auf dem Weg zu Ihnen. Die Lieferung dauert in der Regel 1–3 Werktage.',
+      subject: `🚚 Ihre Bestellung ${order.order_number} wurde versendet`,
+    },
+    delivered: {
+      emoji: '✅',
+      title: 'Bestellung erfolgreich geliefert!',
+      color: '#34C759',
+      bgColor: '#F0FDF4',
+      borderColor: '#BBF7D0',
+      textColor: '#166534',
+      message: 'Wir hoffen, Sie sind mit Ihrer Bestellung zufrieden. Bei Fragen stehen wir jederzeit zur Verfügung.',
+      subject: `✅ Ihre Bestellung ${order.order_number} wurde geliefert`,
+    },
+    cancelled: {
+      emoji: '❌',
+      title: 'Bestellung storniert',
+      color: '#EF4444',
+      bgColor: '#FFF5F5',
+      borderColor: '#FED7D7',
+      textColor: '#991B1B',
+      message: 'Ihre Bestellung wurde storniert. Falls Sie Fragen haben oder eine neue Bestellung aufgeben möchten, kontaktieren Sie uns bitte.',
+      subject: `❌ Ihre Bestellung ${order.order_number} wurde storniert`,
+    },
+  };
+
+  const cfg = configs[order.status];
+  if (!cfg) return;
+
+  const itemsHtml = items.map(item => `
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB">${item.product_name}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;text-align:center">${item.quantity}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;text-align:right;font-weight:600">${fmt2(item.total_price)}</td>
+    </tr>`).join('');
+
+  const html = `
+<!DOCTYPE html>
+<html lang="de">
+<body style="margin:0;padding:0;background:#F5F5F7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+  <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)">
+    <div style="background:#1D1D1F;padding:28px 32px;text-align:center">
+      <h1 style="color:#fff;margin:0;font-size:22px;letter-spacing:-0.5px">IMERA ELEKTRO</h1>
+      <p style="color:#A1A1A6;margin:4px 0 0;font-size:13px">Elektrokomponenten 40–60% unter Marktpreis</p>
+    </div>
+    <div style="padding:32px">
+      <div style="background:${cfg.bgColor};border-left:4px solid ${cfg.color};padding:16px 20px;border-radius:0 8px 8px 0;margin-bottom:24px">
+        <h2 style="margin:0 0 4px;color:${cfg.textColor};font-size:18px">${cfg.emoji} ${cfg.title}</h2>
+        <p style="margin:0;color:${cfg.textColor};font-size:14px">Bestellnummer: <strong>${order.order_number}</strong></p>
+      </div>
+
+      <p style="color:#1D1D1F;font-size:15px;margin:0 0 20px">
+        Liebe/r ${customerName},<br><br>${cfg.message}
+      </p>
+
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+        <thead>
+          <tr style="background:#F5F5F7">
+            <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6E6E73;font-weight:600;text-transform:uppercase">Produkt</th>
+            <th style="padding:10px 12px;text-align:center;font-size:12px;color:#6E6E73;font-weight:600;text-transform:uppercase">Menge</th>
+            <th style="padding:10px 12px;text-align:right;font-size:12px;color:#6E6E73;font-weight:600;text-transform:uppercase">Gesamt</th>
+          </tr>
+        </thead>
+        <tbody>${itemsHtml}</tbody>
+      </table>
+
+      <div style="text-align:right;padding:8px 12px;font-weight:700;font-size:16px;border-top:2px solid #1D1D1F">
+        Gesamtbetrag: ${fmt2(order.total)}
+      </div>
+
+      <p style="color:#6E6E73;font-size:13px;margin-top:24px;border-top:1px solid #E5E7EB;padding-top:16px">
+        Bei Fragen stehen wir Ihnen gerne zur Verfügung:<br>
+        📞 <a href="tel:+436608514467" style="color:#1D1D1F">+43 660 8514467</a> &nbsp;|&nbsp;
+        ✉ <a href="mailto:info@imeragroup.com" style="color:#1D1D1F">info@imeragroup.com</a>
+      </p>
+    </div>
+    <div style="background:#F5F5F7;padding:16px 32px;text-align:center;font-size:12px;color:#6E6E73">
+      <p style="margin:0">Imera Elektro · www.imeragroup.com · Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const transporter = createTransport();
+  await transporter.sendMail({
+    from:    `"Imera Elektro" <${process.env.SMTP_USER || process.env.MAIL_FROM}>`,
+    to:      customerEmail,
+    subject: cfg.subject,
+    html,
+  });
+}
+
+module.exports = { sendOrderConfirmation, sendAdminOrderNotification, sendStatusUpdate };

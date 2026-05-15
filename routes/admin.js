@@ -6,6 +6,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { requireAdmin, flash } = require('../middleware/auth');
+const { sendStatusUpdate } = require('../utils/mailer');
 
 const uploadDir = path.join(__dirname, '../public/uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -197,7 +198,25 @@ router.post('/bestellungen/:id/status', (req, res) => {
   const { status } = req.body;
   const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
   if (!validStatuses.includes(status)) return res.redirect('/admin/bestellungen');
+
+  const order = db.prepare('SELECT * FROM orders WHERE id=?').get(req.params.id);
+  if (!order) return res.redirect('/admin/bestellungen');
+
   db.prepare("UPDATE orders SET status=?, updated_at=datetime('now') WHERE id=?").run(status, req.params.id);
+
+  // ── Durum değişince müşteriye mail gönder ────────────────────────
+  if (['shipped', 'delivered', 'cancelled'].includes(status)) {
+    const items = db.prepare('SELECT * FROM order_items WHERE order_id=?').all(order.id);
+    const customerUser = order.user_id ? db.prepare('SELECT name, email FROM users WHERE id=?').get(order.user_id) : null;
+    const customerEmail = customerUser?.email || order.guest_email || '';
+    const customerName  = customerUser?.name  || order.guest_name  || 'Kunde';
+    if (customerEmail) {
+      const updatedOrder = { ...order, status };
+      sendStatusUpdate({ order: updatedOrder, items, customerEmail, customerName })
+        .catch(e => console.error('Status-Mail Fehler:', e.message));
+    }
+  }
+
   flash(req, 'success', 'Bestellstatus aktualisiert.');
   res.redirect('/admin/bestellungen/' + req.params.id);
 });

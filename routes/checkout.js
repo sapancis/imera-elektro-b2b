@@ -73,6 +73,19 @@ router.post('/bestellung', (req, res) => {
   const { items, subtotal } = buildOrderItems(cart);
   if (!items.length) return res.redirect('/warenkorb');
 
+  // ── Checkout stok kontrolü ───────────────────────────────────────
+  const stockErrors = [];
+  for (const item of items) {
+    const current = db.prepare('SELECT stock, name FROM products WHERE id=?').get(item.product.id);
+    if (!current || current.stock < item.qty) {
+      stockErrors.push(`"${item.product.name}": Nur noch ${current?.stock || 0} Stk. auf Lager (Sie möchten ${item.qty})`);
+    }
+  }
+  if (stockErrors.length) {
+    flash(req, 'error', 'Lagerproblem: ' + stockErrors.join(' | '));
+    return res.redirect('/warenkorb');
+  }
+
   const freeThreshold = parseFloat(db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get()?.value || 200);
   const shipping = subtotal >= freeThreshold ? 0 : 7.90;
   const { discount, coupon } = applyCoupon(coupon_code, subtotal, req.session.userId || null);
@@ -106,8 +119,10 @@ router.post('/bestellung', (req, res) => {
   // ── B) E-posta bildirimleri (asenkron, hata siparişi engellemez) ──
   const savedOrder = db.prepare('SELECT * FROM orders WHERE id=?').get(orderId);
   const savedItems = db.prepare('SELECT * FROM order_items WHERE order_id=?').all(orderId);
-  const customerName  = name || req.session.userName || 'Kunde';
-  const customerEmail = email || req.session.userEmail || '';
+  // Üye için email users tablosundan, misafir için formdan al
+  const customerUser  = userId ? db.prepare('SELECT name, email FROM users WHERE id=?').get(userId) : null;
+  const customerName  = customerUser?.name  || name  || req.session.userName  || 'Kunde';
+  const customerEmail = customerUser?.email || email || req.session.userEmail || '';
 
   if (customerEmail) {
     sendOrderConfirmation({ order: savedOrder, items: savedItems, customerEmail, customerName })
@@ -163,7 +178,7 @@ router.get('/bestaetigung', (req, res) => {
   if (!orderNumber && !req.query.stripe) return res.redirect('/');
   const order = orderNumber ? db.prepare('SELECT * FROM orders WHERE order_number=?').get(orderNumber) : null;
   const items = order ? db.prepare('SELECT * FROM order_items WHERE order_id=?').all(order.id) : [];
-  res.render('confirmation', { title: 'Bestellung bestätigt', order, items });
+  res.render('confirmation', { title: 'Bestellung bestätigt', order, items, bankIban: process.env.BANK_IBAN || '' });
 });
 
 module.exports = router;
