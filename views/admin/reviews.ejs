@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bewertungen – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar">
+    <div class="admin-page-title">⭐ Bewertungen (<%= reviews.length %>)<% if (pending > 0) { %> <span class="badge-small badge-orange" style="font-size:12px"><%=pending%> ausstehend</span><% } %></div>
+  </div>
+  <div class="admin-content">
+
+    <% if (pending > 0) { %>
+    <div class="admin-card" style="margin-bottom:1.25rem;border-left:4px solid #F59E0B">
+      <h3 style="margin:0 0 1rem;color:#92400E">⏳ Ausstehende Bewertungen (<%= pending %>)</h3>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Produkt</th><th>Autor</th><th>Sterne</th><th>Bewertung</th><th>Datum</th><th>Aktionen</th></tr></thead>
+          <tbody>
+            <% for (const r of reviews.filter(r => !r.approved)) { %>
+            <tr>
+              <td><a href="/shop/produkt/<%= r.product_slug %>" target="_blank" style="color:#3B82F6;font-size:13px"><%= r.product_name %></a></td>
+              <td>
+                <strong><%= r.author_name %></strong>
+                <% if (r.company) { %><br><span style="font-size:12px;color:#6B7280"><%= r.company %></span><% } %>
+                <% if (r.verified_purchase) { %><br><span style="font-size:11px;color:#10B981">✓ Verifizierter Kauf</span><% } %>
+              </td>
+              <td>
+                <% for (let i=1; i<=5; i++) { %><span style="color:<%= i<=r.rating ? '#FBBC05' : '#E5E7EB' %>">★</span><% } %>
+              </td>
+              <td style="max-width:300px;font-size:13px"><%= r.text %></td>
+              <td style="font-size:12px;color:#9CA3AF;white-space:nowrap"><%= new Date(r.created_at).toLocaleDateString('de-AT') %></td>
+              <td>
+                <div style="display:flex;gap:6px">
+                  <form action="/admin/bewertungen/<%= r.id %>/freigeben" method="POST" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-sm btn-green-sm">✓ Freigeben</button>
+                  </form>
+                  <form action="/admin/bewertungen/<%= r.id %>/loeschen" method="POST" style="display:inline" onsubmit="return confirm('Bewertung löschen?')">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn-sm btn-danger">✕ Löschen</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="admin-card">
+      <h3 style="margin:0 0 1rem">✅ Freigegebene Bewertungen (<%= reviews.filter(r=>r.approved).length %>)</h3>
+      <% if (!reviews.filter(r=>r.approved).length) { %>
+        <p style="color:#9CA3AF;text-align:center;padding:2rem">Noch keine freigegebenen Bewertungen.</p>
+      <% } else { %>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Produkt</th><th>Autor</th><th>Sterne</th><th>Bewertung</th><th>Datum</th><th></th></tr></thead>
+          <tbody>
+            <% for (const r of reviews.filter(r=>r.approved)) { %>
+            <tr>
+              <td><a href="/shop/produkt/<%= r.product_slug %>" target="_blank" style="color:#3B82F6;font-size:13px"><%= r.product_name %></a></td>
+              <td>
+                <strong><%= r.author_name %></strong>
+                <% if (r.verified_purchase) { %><br><span style="font-size:11px;color:#10B981">✓ Verifizierter Kauf</span><% } %>
+              </td>
+              <td>
+                <% for (let i=1; i<=5; i++) { %><span style="color:<%= i<=r.rating ? '#FBBC05' : '#E5E7EB' %>">★</span><% } %>
+              </td>
+              <td style="max-width:300px;font-size:13px"><%= r.text %></td>
+              <td style="font-size:12px;color:#9CA3AF;white-space:nowrap"><%= new Date(r.created_at).toLocaleDateString('de-AT') %></td>
+              <td>
+                <form action="/admin/bewertungen/<%= r.id %>/loeschen" method="POST" style="display:inline" onsubmit="return confirm('Bewertung löschen?')">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn-sm btn-danger">✕</button>
+                </form>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+      <% } %>
+    </div>
+
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+</body>
+</html>

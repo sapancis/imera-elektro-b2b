@@ -118,6 +118,12 @@
         <button class="tab-btn tab-active" onclick="showTab('details', this)">Produktdetails</button>
         <button class="tab-btn" onclick="showTab('specs', this)">Technische Daten</button>
         <button class="tab-btn" onclick="showTab('why', this)">Warum bei uns?</button>
+        <button class="tab-btn" onclick="showTab('reviews', this)">
+          Bewertungen
+          <% if (reviewStats.count > 0) { %>
+            <span class="tab-badge"><%= reviewStats.count %></span>
+          <% } %>
+        </button>
       </div>
 
       <div class="tab-content tab-active" id="tab-details">
@@ -172,6 +178,86 @@
             <div><strong>Statt bei:</strong> Schrack, Würth, Sonepar, Rexel</div>
             <div><strong>Kaufen Sie direkt:</strong> 40–72% günstiger</div>
           </div>
+        </div>
+      </div>
+
+      <!-- Bewertungen Tab -->
+      <div class="tab-content" id="tab-reviews" style="display:none">
+        <div class="reviews-layout">
+
+          <!-- Summary -->
+          <div class="reviews-summary">
+            <% if (reviewStats.count > 0) { %>
+            <div class="review-score-big"><%= reviewStats.avg %></div>
+            <div class="review-stars-big">
+              <% for (let i=1; i<=5; i++) { %>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="<%= i <= Math.round(reviewStats.avg) ? '#FBBC05' : '#E5E7EB' %>" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <% } %>
+            </div>
+            <div class="review-count-text">Basierend auf <%= reviewStats.count %> Bewertung<%= reviewStats.count !== 1 ? 'en' : '' %></div>
+            <% } else { %>
+            <div class="review-empty-hint">
+              <div style="font-size:2rem;margin-bottom:0.5rem">⭐</div>
+              <p>Noch keine Bewertungen für dieses Produkt.</p>
+              <p style="font-size:13px;color:#9CA3AF">Seien Sie der Erste!</p>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Review List -->
+          <div class="reviews-list">
+            <% for (const rv of reviews) { %>
+            <div class="review-card">
+              <div class="review-card-header">
+                <div class="review-avatar" style="background:<%= ['#1E3A8A','#10B981','#F59E0B','#EF4444','#8B5CF6'][rv.id % 5] %>">
+                  <%= (rv.author_name || 'K').charAt(0).toUpperCase() %>
+                </div>
+                <div class="review-meta">
+                  <strong><%= rv.author_name %><%= rv.company ? ' · ' + rv.company : '' %></strong>
+                  <span><%= new Date(rv.created_at).toLocaleDateString('de-AT', { year:'numeric', month:'long', day:'numeric' }) %></span>
+                </div>
+                <% if (rv.verified_purchase) { %>
+                <div class="review-verified">✓ Verifizierter Kauf</div>
+                <% } %>
+              </div>
+              <div class="review-stars">
+                <% for (let i=1; i<=5; i++) { %>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="<%= i <= rv.rating ? '#FBBC05' : '#E5E7EB' %>" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <% } %>
+              </div>
+              <p class="review-text"><%= rv.text %></p>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Review Form -->
+          <div class="review-form-wrap">
+            <h3>Produkt bewerten</h3>
+            <% if (!locals.user) { %>
+            <div class="review-login-note">
+              <a href="/konto/login">Anmelden</a>, um eine Bewertung zu hinterlassen.
+            </div>
+            <% } else if (alreadyReviewed) { %>
+            <div class="review-login-note" style="color:#10B981">✓ Sie haben dieses Produkt bereits bewertet. Vielen Dank!</div>
+            <% } else { %>
+            <form id="reviewForm" class="review-form">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <div class="star-picker" id="starPicker">
+                <% for (let i=1; i<=5; i++) { %>
+                <svg class="star-pick" data-val="<%= i %>" width="32" height="32" viewBox="0 0 24 24" fill="#E5E7EB" xmlns="http://www.w3.org/2000/svg" style="cursor:pointer;transition:fill .15s"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <% } %>
+              </div>
+              <input type="hidden" name="rating" id="ratingInput" value="0">
+              <div class="form-group">
+                <label>Ihre Bewertung *</label>
+                <textarea name="text" id="reviewText" rows="4" placeholder="Teilen Sie Ihre Erfahrungen mit diesem Produkt (mindestens 10 Zeichen)…" required></textarea>
+              </div>
+              <button type="submit" class="btn-green btn-full" id="reviewSubmitBtn">Bewertung einreichen</button>
+              <div id="reviewMsg" style="display:none;margin-top:10px;font-size:14px;padding:10px;border-radius:8px"></div>
+            </form>
+            <% } %>
+          </div>
+
         </div>
       </div>
     </div>
@@ -262,6 +348,53 @@ function showTab(id, btn) {
 }
 
 updatePrice();
+
+// ─── Star Picker ──────────────────────────────────────────────────────────
+(function() {
+  const picker = document.getElementById('starPicker');
+  if (!picker) return;
+  const stars = picker.querySelectorAll('.star-pick');
+  let selected = 0;
+
+  function paint(n, hover) {
+    stars.forEach((s, i) => {
+      s.setAttribute('fill', i < n ? '#FBBC05' : (hover ? '#FDE68A' : '#E5E7EB'));
+    });
+  }
+
+  stars.forEach((s, i) => {
+    s.addEventListener('mouseenter', () => paint(i + 1, true));
+    s.addEventListener('mouseleave', () => paint(selected, false));
+    s.addEventListener('click', () => {
+      selected = i + 1;
+      document.getElementById('ratingInput').value = selected;
+      paint(selected, false);
+    });
+  });
+
+  document.getElementById('reviewForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const rating = document.getElementById('ratingInput').value;
+    const text = document.getElementById('reviewText').value.trim();
+    const msg = document.getElementById('reviewMsg');
+    const btn = document.getElementById('reviewSubmitBtn');
+    if (!rating || rating === '0') { msg.style.display='block'; msg.style.background='#FEF2F2'; msg.style.color='#DC2626'; msg.textContent='Bitte wählen Sie eine Sternebewertung.'; return; }
+    btn.disabled = true; btn.textContent = 'Wird eingereicht…';
+
+    fetch('/shop/produkt/<%= product.slug %>/bewertung', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `rating=${rating}&text=${encodeURIComponent(text)}&_csrf=${encodeURIComponent('<%= csrfToken %>')}`
+    }).then(r => r.json()).then(d => {
+      msg.style.display = 'block';
+      msg.style.background = d.ok ? '#ECFDF5' : '#FEF2F2';
+      msg.style.color = d.ok ? '#059669' : '#DC2626';
+      msg.textContent = d.message;
+      if (d.ok) { document.getElementById('reviewForm').style.display = 'none'; }
+      btn.disabled = false; btn.textContent = 'Bewertung einreichen';
+    });
+  });
+})();
 </script>
 
 <%- include('partials/footer') %>

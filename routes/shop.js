@@ -95,10 +95,64 @@ router.get('/produkt/:slug', (req, res) => {
     rp.tiers = db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(rp.id);
   }
 
+  const reviews = db.prepare(`
+    SELECT r.*, u.name as user_display_name
+    FROM reviews r LEFT JOIN users u ON u.id=r.user_id
+    WHERE r.product_id=? AND r.approved=1
+    ORDER BY r.created_at DESC
+  `).all(product.id);
+  const reviewStats = {
+    count: reviews.length,
+    avg: reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : 0,
+  };
+
+  // Giriş yapmış kullanıcı bu ürünü daha önce sipariş etmiş mi?
+  let hasOrdered = false;
+  let alreadyReviewed = false;
+  if (req.session.userId) {
+    const ordered = db.prepare(`
+      SELECT 1 FROM order_items oi
+      JOIN orders o ON o.id=oi.order_id
+      WHERE o.user_id=? AND oi.product_id=? LIMIT 1
+    `).get(req.session.userId, product.id);
+    hasOrdered = !!ordered;
+    const existing = db.prepare('SELECT 1 FROM reviews WHERE product_id=? AND user_id=?').get(product.id, req.session.userId);
+    alreadyReviewed = !!existing;
+  }
+
   const metaDesc = product.meta_description ||
     `${product.short_description || ''}${product.short_description ? ' ' : ''}${product.name} – ${product.sku ? 'Art.-Nr. ' + product.sku + '. ' : ''}${(product.description || '').slice(0, 120)} | Imera Elektro`;
   const title = product.meta_title || product.name;
-  res.render('product', { title, product, related, metaDesc });
+  res.render('product', { title, product, related, metaDesc, reviews, reviewStats, hasOrdered, alreadyReviewed });
+});
+
+router.post('/produkt/:slug/bewertung', (req, res) => {
+  if (!req.session.userId) {
+    return res.json({ ok: false, message: 'Bitte melden Sie sich an, um eine Bewertung zu hinterlassen.' });
+  }
+  const product = db.prepare('SELECT id FROM products WHERE slug=? AND active=1').get(req.params.slug);
+  if (!product) return res.json({ ok: false, message: 'Produkt nicht gefunden.' });
+
+  const existing = db.prepare('SELECT 1 FROM reviews WHERE product_id=? AND user_id=?').get(product.id, req.session.userId);
+  if (existing) return res.json({ ok: false, message: 'Sie haben dieses Produkt bereits bewertet.' });
+
+  const { rating, text } = req.body;
+  const ratingNum = parseInt(rating);
+  if (!ratingNum || ratingNum < 1 || ratingNum > 5) return res.json({ ok: false, message: 'Ungültige Bewertung.' });
+  if (!text || text.trim().length < 10) return res.json({ ok: false, message: 'Bitte schreiben Sie mindestens 10 Zeichen.' });
+
+  const user = db.prepare('SELECT name, company FROM users WHERE id=?').get(req.session.userId);
+  const hasOrdered = db.prepare(`
+    SELECT 1 FROM order_items oi JOIN orders o ON o.id=oi.order_id
+    WHERE o.user_id=? AND oi.product_id=? LIMIT 1
+  `).get(req.session.userId, product.id);
+
+  db.prepare(`
+    INSERT INTO reviews (product_id, user_id, author_name, company, rating, text, approved, verified_purchase)
+    VALUES (?,?,?,?,?,?,0,?)
+  `).run(product.id, req.session.userId, user.name || 'Kunde', user.company || null, ratingNum, text.trim(), hasOrdered ? 1 : 0);
+
+  res.json({ ok: true, message: 'Ihre Bewertung wurde eingereicht und wird nach Prüfung veröffentlicht.' });
 });
 
 router.get('/api/schnellansicht/:slug', (req, res) => {

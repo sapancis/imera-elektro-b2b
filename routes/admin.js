@@ -342,6 +342,29 @@ router.post('/kuponlar/:id/toggle', (req, res) => {
   res.redirect('/admin/kuponlar');
 });
 
+// ─── REVIEWS ────────────────────────────────────────────────────────────────
+router.get('/bewertungen', (req, res) => {
+  const reviews = db.prepare(`
+    SELECT r.*, p.name as product_name, p.slug as product_slug
+    FROM reviews r LEFT JOIN products p ON p.id=r.product_id
+    ORDER BY r.approved ASC, r.created_at DESC
+  `).all();
+  const pending = reviews.filter(r => !r.approved).length;
+  res.render('admin/reviews', { title: 'Bewertungen', reviews, pending });
+});
+
+router.post('/bewertungen/:id/freigeben', (req, res) => {
+  db.prepare('UPDATE reviews SET approved=1 WHERE id=?').run(req.params.id);
+  flash(req, 'success', 'Bewertung freigegeben.');
+  res.redirect('/admin/bewertungen');
+});
+
+router.post('/bewertungen/:id/loeschen', (req, res) => {
+  db.prepare('DELETE FROM reviews WHERE id=?').run(req.params.id);
+  flash(req, 'success', 'Bewertung gelöscht.');
+  res.redirect('/admin/bewertungen');
+});
+
 // ─── STOCK QUICK UPDATE ──────────────────────────────────────────────────────
 router.post('/produkte/:id/stok', (req, res) => {
   const { stock } = req.body;
