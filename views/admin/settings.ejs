@@ -40,6 +40,31 @@
           <h3>Google Analytics</h3>
           <div class="form-group"><label>Google Analytics Measurement ID</label><input type="text" name="google_analytics_id" value="<%= settings.google_analytics_id || '' %>" placeholder="G-XXXXXXXXXX"><small style="color:#6B7280">Format: G-XXXXXXXXXX (Google Analytics 4). Leer lassen = deaktiviert. Wird automatisch im Header eingebunden.</small></div>
         </div>
+        <div class="admin-card">
+          <h3>Soziale Medien</h3>
+          <p style="font-size:13px;color:#6B7280;margin-bottom:1rem">Vollständige URL eingeben (z.B. https://www.instagram.com/imeraelektro). Leer lassen = Icon wird ausgeblendet.</p>
+          <div class="form-group">
+            <label>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/></svg>
+              Instagram URL
+            </label>
+            <input type="url" name="social_instagram" value="<%= settings.social_instagram || '' %>" placeholder="https://www.instagram.com/imeraelektro">
+          </div>
+          <div class="form-group">
+            <label>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:4px"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.77a8.18 8.18 0 004.78 1.52V6.85a4.85 4.85 0 01-1.01-.16z"/></svg>
+              TikTok URL
+            </label>
+            <input type="url" name="social_tiktok" value="<%= settings.social_tiktok || '' %>" placeholder="https://www.tiktok.com/@imeraelektro">
+          </div>
+          <div class="form-group">
+            <label>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:4px"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+              LinkedIn URL
+            </label>
+            <input type="url" name="social_linkedin" value="<%= settings.social_linkedin || '' %>" placeholder="https://www.linkedin.com/company/imeraelektro">
+          </div>
+        </div>
       </div>
       <div class="form-actions">
         <button type="submit" class="btn-blue btn-lg">Einstellungen speichern</button>

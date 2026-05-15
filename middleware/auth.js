@@ -32,6 +32,9 @@ function setLocals(req, res, next) {
     res.locals.tawktoId = tawkId?.value || '';
     const gaRow = db.prepare("SELECT value FROM settings WHERE key='google_analytics_id'").get();
     res.locals.gaId = gaRow?.value || '';
+    res.locals.socialInstagram = db.prepare("SELECT value FROM settings WHERE key='social_instagram'").get()?.value || '';
+    res.locals.socialTiktok    = db.prepare("SELECT value FROM settings WHERE key='social_tiktok'").get()?.value || '';
+    res.locals.socialLinkedin  = db.prepare("SELECT value FROM settings WHERE key='social_linkedin'").get()?.value || '';
     if (req.session.userId) {
       const mc = db.prepare('SELECT COUNT(*) as c FROM merkliste WHERE user_id=?').get(req.session.userId);
       res.locals.merklisteCount = mc?.c || 0;
