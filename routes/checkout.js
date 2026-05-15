@@ -47,8 +47,9 @@ router.get('/', (req, res) => {
   const shipping = subtotal >= freeThreshold ? 0 : 7.90;
   const total = subtotal + shipping;
   const user = req.session.userId ? db.prepare('SELECT * FROM users WHERE id=?').get(req.session.userId) : null;
+  const isStammkunde = user?.stammkunde === 1;
   const stripeKey = db.prepare("SELECT value FROM settings WHERE key='stripe_publishable_key'").get()?.value || '';
-  res.render('checkout', { title: 'Kasse', items, subtotal, shipping, total, user, stripeKey });
+  res.render('checkout', { title: 'Kasse', items, subtotal, shipping, total, user, stripeKey, isStammkunde });
 });
 
 // Coupon prüfen (AJAX)
@@ -68,6 +69,16 @@ router.post('/bestellung', (req, res) => {
   if (!name || !email || !address) {
     flash(req, 'error', 'Bitte füllen Sie alle Pflichtfelder aus.');
     return res.redirect('/kasse');
+  }
+
+  // Rechnungskauf nur für freigeschaltete Stammkunden
+  if (payment_method === 'invoice') {
+    const userId = req.session.userId || null;
+    const user = userId ? db.prepare('SELECT stammkunde FROM users WHERE id=?').get(userId) : null;
+    if (!user || !user.stammkunde) {
+      flash(req, 'error', 'Rechnungskauf ist nur für freigeschaltete Stammkunden verfügbar. Bitte wählen Sie Überweisung oder kontaktieren Sie uns.');
+      return res.redirect('/kasse');
+    }
   }
 
   const { items, subtotal } = buildOrderItems(cart);

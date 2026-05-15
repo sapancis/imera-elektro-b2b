@@ -260,7 +260,18 @@ router.post('/kunden/:id/sperren', (req, res) => {
   if (!user) return res.redirect('/admin/kunden');
   db.prepare('UPDATE users SET active=? WHERE id=?').run(user.active ? 0 : 1, req.params.id);
   flash(req, 'success', user.active ? 'Kunde gesperrt.' : 'Kunde freigeschaltet.');
-  res.redirect('/admin/kunden');
+  const ref = req.get('Referer') || '/admin/kunden';
+  res.redirect(ref.includes('/admin/kunden/') ? ref : '/admin/kunden');
+});
+
+router.post('/kunden/:id/stammkunde', (req, res) => {
+  const user = db.prepare("SELECT * FROM users WHERE id=? AND role='customer'").get(req.params.id);
+  if (!user) return res.redirect('/admin/kunden');
+  const newVal = user.stammkunde ? 0 : 1;
+  db.prepare('UPDATE users SET stammkunde=? WHERE id=?').run(newVal, req.params.id);
+  flash(req, 'success', newVal ? '✅ Stammkunde freigeschaltet – Rechnungskauf aktiviert.' : 'Stammkunde-Status entfernt.');
+  const ref = req.get('Referer') || '/admin/kunden';
+  res.redirect(ref);
 });
 
 // ─── MESSAGES ───────────────────────────────────────────────────────────────

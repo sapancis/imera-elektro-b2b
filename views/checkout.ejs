@@ -46,13 +46,23 @@
                 <p>IBAN wird nach Bestellbestätigung mitgeteilt</p>
               </div>
             </label>
+            <% if (isStammkunde) { %>
             <label class="payment-option" id="pay-invoice">
               <input type="radio" name="payment_method" value="invoice">
               <div>
                 <strong>📄 Auf Rechnung</strong>
-                <p>Nur für Stammkunden nach Prüfung</p>
+                <p>Zahlungsziel 14 Tage – freigeschaltet für Stammkunden</p>
               </div>
             </label>
+            <% } else { %>
+            <div class="payment-option payment-option--locked" title="Nur für freigeschaltete Stammkunden verfügbar">
+              <div class="payment-locked-icon">🔒</div>
+              <div>
+                <strong style="color:#9CA3AF">📄 Auf Rechnung</strong>
+                <p style="color:#9CA3AF">Nur für freigeschaltete Stammkunden. <a href="/kontakt" target="_blank" style="color:#3B82F6">Jetzt anfragen →</a></p>
+              </div>
+            </div>
+            <% } %>
           </div>
         </div>
 

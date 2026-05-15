@@ -10,7 +10,13 @@
       <a href="/admin/kunden" class="btn-outline btn-sm">← Zurück</a>
       <div class="admin-page-title">👤 <%= customer.name || customer.email %></div>
     </div>
-    <div class="admin-topbar-right">
+    <div class="admin-topbar-right" style="display:flex;gap:8px;align-items:center">
+      <form action="/admin/kunden/<%= customer.id %>/stammkunde" method="POST" style="display:inline" onsubmit="return confirm('<%= customer.stammkunde ? 'Rechnungskauf deaktivieren?' : 'Rechnungskauf freischalten?' %>')">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="<%= customer.stammkunde ? 'btn-green-sm' : 'btn-outline' %> btn-sm" title="Rechnungskauf (Auf Rechnung)">
+          📄 <%= customer.stammkunde ? 'Stammkunde (Rechnung aktiv)' : 'Rechnungskauf freischalten' %>
+        </button>
+      </form>
       <form action="/admin/kunden/<%= customer.id %>/sperren" method="POST" style="display:inline" onsubmit="return confirm('<%= customer.active ? 'Kunden sperren?' : 'Kunden freischalten?' %>')">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <button type="submit" class="<%= customer.active ? 'btn-danger' : 'btn-outline' %> btn-sm">
@@ -33,6 +39,9 @@
         <div class="detail-row"><span>Letzter Login</span><strong><%= customer.last_login ? formatDate(customer.last_login) : 'Noch nie' %></strong></div>
         <div class="detail-row"><span>Status</span>
           <span class="status-badge <%= customer.active ? 'status-success' : 'status-danger' %>"><%= customer.active ? 'Aktiv' : 'Gesperrt' %></span>
+        </div>
+        <div class="detail-row"><span>Rechnungskauf</span>
+          <span class="status-badge <%= customer.stammkunde ? 'status-success' : 'status-secondary' %>"><%= customer.stammkunde ? '✅ Stammkunde – freigeschaltet' : '🔒 Nicht freigeschaltet' %></span>
         </div>
       </div>
 
