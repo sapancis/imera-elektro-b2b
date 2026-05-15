@@ -17,8 +17,23 @@ router.get('/', (req, res) => {
     p.tiers = db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(p.id);
   }
 
+  const stats = {
+    products: db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get().n,
+    categories: db.prepare('SELECT COUNT(*) as n FROM categories WHERE active=1').get().n,
+    orders: db.prepare('SELECT COUNT(*) as n FROM orders').get().n,
+  };
+
+  const newProducts = db.prepare(`
+    SELECT p.*, c.name as cat_name,
+      (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
+    FROM products p
+    LEFT JOIN categories c ON p.category_id=c.id
+    WHERE p.active=1
+    ORDER BY p.id DESC LIMIT 8
+  `).all();
+
   const settings = getSettings();
-  res.render('index', { title: 'Startseite', categories, featured, settings });
+  res.render('index', { title: 'Startseite', categories, featured, newProducts, stats, settings });
 });
 
 // Sitemap.xml – otomatik üretilir

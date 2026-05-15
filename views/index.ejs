@@ -20,6 +20,33 @@
     </div>
   </section>
 
+  <!-- Stats Bar -->
+  <section class="stats-bar">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number"><%= stats.products %>+</div>
+          <div class="stat-label">Produkte im Sortiment</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number">40-60%</div>
+          <div class="stat-label">Günstiger als Marktpreis</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number">2-5</div>
+          <div class="stat-label">Werktage Lieferzeit</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number">CE</div>
+          <div class="stat-label">Zertifizierte Qualität</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Preisvergleich -->
   <section class="section section-white">
     <div class="container">
@@ -83,6 +110,45 @@
     </div>
   </section>
 
+  <!-- Neue Produkte -->
+  <section class="section section-white">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">SORTIMENT</div>
+        <h2>Aktuelle Produkte</h2>
+        <p>Direkt verfügbar – sofort bestellbar</p>
+      </div>
+      <div class="products-grid">
+        <% for (const p of newProducts) { %>
+        <a href="/shop/produkt/<%= p.slug %>" class="product-card">
+          <div class="product-img-wrap">
+            <% if (p.image) { %>
+            <img src="<%= p.image %>" alt="<%= p.name %>" loading="lazy">
+            <% } else { %>
+            <div class="product-img-placeholder">📦</div>
+            <% } %>
+            <% if (p.stock <= 0) { %><span class="product-badge product-badge--out">Ausverkauft</span><% } else if (p.featured) { %><span class="product-badge product-badge--hot">Bestseller</span><% } %>
+          </div>
+          <div class="product-info">
+            <div class="product-cat"><%= p.cat_name %></div>
+            <h3 class="product-name"><%= p.name %></h3>
+            <% if (p.sku) { %><div class="product-sku">Art.-Nr. <%= p.sku %></div><% } %>
+            <div class="product-footer">
+              <% if (p.price_min) { %>
+              <div class="product-price">ab <strong><%= formatEuro(p.price_min) %></strong></div>
+              <% } %>
+              <span class="product-cta">Details →</span>
+            </div>
+          </div>
+        </a>
+        <% } %>
+      </div>
+      <div style="text-align:center;margin-top:2.5rem">
+        <a href="/shop" class="btn-blue btn-lg">Alle Produkte ansehen</a>
+      </div>
+    </div>
+  </section>
+
   <!-- Für wen? -->
   <section class="section section-white">
     <div class="container">
@@ -95,6 +161,39 @@
         <div class="target-card"><div class="target-icon">🏭</div><h3>Schaltschrankbauer</h3><p>Profis, die auf zuverlässige Reihenklemmen, DIN-Schienen und Kabelmanagement angewiesen sind</p></div>
         <div class="target-card"><div class="target-icon">🔧</div><h3>Industrie</h3><p>Wartungsabteilungen und Facility Management mit laufendem Bedarf</p></div>
         <div class="target-card"><div class="target-icon">🏪</div><h3>Händler</h3><p>Kleinere Elektrogroßhändler, die ihr Sortiment ergänzen möchten</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wie funktioniert's -->
+  <section class="section section-white">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">SO EINFACH</div>
+        <h2>In 3 Schritten zum Produkt</h2>
+        <p>Schnell, einfach und ohne Aufwand</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-icon">🔍</div>
+          <h3>Produkt wählen</h3>
+          <p>Durchsuchen Sie unser Sortiment nach SKU oder Kategorie. Staffelpreise sind sofort sichtbar.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-icon">🛒</div>
+          <h3>Bestellen</h3>
+          <p>Einfach in den Warenkorb, Adresse eingeben, Zahlung per Überweisung oder Rechnung wählen.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-icon">📦</div>
+          <h3>Lieferung erhalten</h3>
+          <p>Ihre Bestellung wird innerhalb von 2-5 Werktagen direkt zu Ihnen geliefert.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -130,6 +229,68 @@
       </div>
     </div>
   </section>
+
+  <!-- Referenzen / Social Proof -->
+  <section class="section section-white">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">KUNDENSTIMMEN</div>
+        <h2>Das sagen unsere Kunden</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">„Qualität ist genauso wie bei namhaften Herstellern – zum halben Preis. Wir bestellen jetzt regelmäßig Kabelbinder und Kabelschuhe."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">MS</div>
+            <div>
+              <strong>Markus S.</strong>
+              <span>Elektriker, Wien</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">„Lieferung kam in 3 Tagen, Reihenklemmen sind CE-zertifiziert und passen perfekt. Werde definitiv wieder bestellen."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">TK</div>
+            <div>
+              <strong>Thomas K.</strong>
+              <span>Schaltschrankbau, Graz</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">„Staffelpreise sind sehr fair. Bei größeren Mengen spart man enorm. Der Kundenservice ist schnell und hilfsbereit."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">RF</div>
+            <div>
+              <strong>Roland F.</strong>
+              <span>Facility Management, Linz</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner">
+    <div class="container">
+      <div class="cta-banner-inner">
+        <div class="cta-banner-text">
+          <h2>Bereit zu sparen?</h2>
+          <p>Fordern Sie jetzt kostenlos unsere vollständige Preisliste an oder starten Sie direkt mit dem Einkauf.</p>
+        </div>
+        <div class="cta-banner-actions">
+          <a href="/shop" class="btn-white-solid btn-lg">Zum Shop</a>
+          <a href="#preisliste" class="btn-outline-white btn-lg">Preisliste anfordern</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <%- include('partials/footer') %>
