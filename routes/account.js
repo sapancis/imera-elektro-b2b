@@ -174,6 +174,36 @@ router.post('/profil', requireAuth, (req, res) => {
   res.redirect('/konto');
 });
 
+// ── Hesap silme ────────────────────────────────────────────────────────────
+router.get('/konto-loeschen', requireAuth, (req, res) => {
+  res.render('account/delete-account', { title: 'Konto löschen' });
+});
+
+router.post('/konto-loeschen', requireAuth, (req, res) => {
+  const { password } = req.body;
+  if (!password) {
+    flash(req, 'error', 'Bitte geben Sie Ihr Passwort zur Bestätigung ein.');
+    return res.redirect('/konto/konto-loeschen');
+  }
+
+  const user = db.prepare('SELECT * FROM users WHERE id=?').get(req.session.userId);
+  if (!user || !bcrypt.compareSync(password, user.password_hash)) {
+    flash(req, 'error', 'Passwort ist falsch. Bitte versuchen Sie es erneut.');
+    return res.redirect('/konto/konto-loeschen');
+  }
+
+  // Siparişleri anonimleştir (sil değil — muhasebe için sakla)
+  db.prepare(`UPDATE orders SET user_id=NULL, guest_name='Gelöschter Nutzer', guest_email=NULL WHERE user_id=?`)
+    .run(user.id);
+
+  // Kullanıcıyı sil
+  db.prepare('DELETE FROM users WHERE id=?').run(user.id);
+
+  req.session.destroy(() => {
+    res.redirect('/?konto=geloescht');
+  });
+});
+
 router.post('/passwort', requireAuth, (req, res) => {
   const { current, password, password2 } = req.body;
   const user = db.prepare('SELECT * FROM users WHERE id=?').get(req.session.userId);

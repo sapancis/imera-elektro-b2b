@@ -51,9 +51,13 @@ router.post('/login', loginLimiter, (req, res) => {
 });
 
 router.post('/registrieren', (req, res) => {
-  const { name, email, company, phone, password, password2 } = req.body;
+  const { name, email, company, phone, password, password2, datenschutz } = req.body;
   if (!email || !password) {
     flash(req, 'error', 'Bitte füllen Sie alle Pflichtfelder aus.');
+    return res.redirect('/konto/registrieren');
+  }
+  if (!datenschutz) {
+    flash(req, 'error', 'Bitte stimmen Sie der Datenschutzerklärung zu, um fortzufahren.');
     return res.redirect('/konto/registrieren');
   }
   if (password !== password2) {

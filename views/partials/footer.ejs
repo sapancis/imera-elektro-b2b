@@ -68,6 +68,57 @@
 </div>
 
 <script src="/js/main.js"></script>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieBanner" class="cookie-banner" style="display:none" role="dialog" aria-label="Cookie-Einstellungen">
+  <div class="cookie-banner-inner">
+    <div class="cookie-banner-text">
+      <strong>🍪 Cookie-Einstellungen</strong>
+      <p>Wir verwenden technisch notwendige Cookies für den Betrieb dieser Website. Mit Ihrer Zustimmung aktivieren wir zusätzlich Google Analytics, um die Nutzung zu analysieren. Mehr dazu in unserer <a href="/datenschutz">Datenschutzerklärung</a>.</p>
+    </div>
+    <div class="cookie-banner-actions">
+      <button id="cookieDecline" class="btn-cookie-decline">Nur notwendige</button>
+      <button id="cookieAccept" class="btn-cookie-accept">Alle akzeptieren</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var consent = localStorage.getItem('cookieConsent');
+
+  function loadGA() {
+    if (!window._gaId) return;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + window._gaId;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', window._gaId, { anonymize_ip: true });
+  }
+
+  if (consent === 'accepted') {
+    loadGA();
+  } else if (consent === null) {
+    // Henüz karar verilmemiş — banner'ı göster
+    document.getElementById('cookieBanner').style.display = 'block';
+  }
+
+  document.getElementById('cookieAccept').addEventListener('click', function() {
+    localStorage.setItem('cookieConsent', 'accepted');
+    document.getElementById('cookieBanner').style.display = 'none';
+    loadGA();
+  });
+
+  document.getElementById('cookieDecline').addEventListener('click', function() {
+    localStorage.setItem('cookieConsent', 'declined');
+    document.getElementById('cookieBanner').style.display = 'none';
+  });
+})();
+</script>
 <% if (locals.tawktoId) { %>
 <script>
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
