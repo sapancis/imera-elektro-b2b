@@ -118,7 +118,7 @@
         <h2>Aktuelle Produkte</h2>
         <p>Direkt verfügbar – sofort bestellbar</p>
       </div>
-      <div class="products-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem">
+      <div class="products-grid">
         <% for (const p of newProducts) { %>
         <a href="/shop/produkt/<%= p.slug %>" class="product-card">
           <div class="product-img-wrap">
@@ -173,7 +173,7 @@
         <h2>In 3 Schritten zum Produkt</h2>
         <p>Schnell, einfach und ohne Aufwand</p>
       </div>
-      <div class="steps-grid" style="display:flex;align-items:flex-start;gap:0">
+      <div class="steps-grid">
         <div class="step-card">
           <div class="step-num">1</div>
           <div class="step-icon">🔍</div>
@@ -253,7 +253,7 @@
         </div>
       </div>
 
-      <div class="testimonials-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem">
+      <div class="testimonials-grid">
         <div class="testimonial-card">
           <div class="testimonial-card-header">
             <div class="testimonial-avatar" style="background:#1A73E8">MS</div>
