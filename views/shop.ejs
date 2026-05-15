@@ -77,22 +77,29 @@
         <% for (const p of products) { %>
         <div class="product-card <%= p.stock === 0 ? 'product-card--sold-out' : '' %>">
           <a href="/shop/produkt/<%= p.slug %>" class="product-card-image">
-            <% const savingsPct = savings(p.price_min, p.market_price_max); %>
-            <% if (savingsPct >= 10) { %>
-              <div class="product-badge badge-savings">-<%= savingsPct %>%</div>
-            <% } else if (p.badge) { %>
-              <div class="product-badge <%= p.badge === 'BESTSELLER' ? 'badge-green' : 'badge-blue' %>"><%= p.badge %></div>
+            <% if (p.stock > 0) { %>
+              <% const savingsPct = savings(p.price_min, p.market_price_max); %>
+              <% if (savingsPct >= 10) { %>
+                <div class="product-badge badge-savings">-<%= savingsPct %>%</div>
+              <% } else if (p.badge) { %>
+                <div class="product-badge <%= p.badge === 'BESTSELLER' ? 'badge-green' : 'badge-blue' %>"><%= p.badge %></div>
+              <% } %>
             <% } %>
-            <% if (p.stock === 0) { %><div class="product-badge product-badge--br badge-red">Ausverkauft</div><% } %>
             <% if (p.image) { %>
               <img src="<%= p.image %>" alt="<%= p.name %>" loading="lazy">
             <% } else { %>
               <div class="product-placeholder"><%= p.cat_name === 'Kabelbinder & Zubehör' ? '🔗' : p.cat_name === 'Kabelverschraubungen' ? '🔧' : p.cat_name === 'Reihenklemmen' ? '⚡' : '📦' %></div>
             <% } %>
-            <button class="quickview-btn" data-slug="<%= p.slug %>" title="Schnellansicht">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-              Schnellansicht
-            </button>
+            <% if (p.stock === 0) { %>
+              <div class="sold-out-overlay">
+                <span>Ausverkauft</span>
+              </div>
+            <% } else { %>
+              <button class="quickview-btn" data-slug="<%= p.slug %>" title="Schnellansicht">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                Schnellansicht
+              </button>
+            <% } %>
           </a>
           <div class="product-card-body">
             <% if (p.badge === 'BESTSELLER') { %><div class="product-tag">BESTSELLER</div><% } %>
