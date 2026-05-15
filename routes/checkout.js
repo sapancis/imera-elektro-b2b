@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
 const { flash } = require('../middleware/auth');
+const { sendOrderConfirmation, sendAdminOrderNotification } = require('../utils/mailer');
 
 function calcItemPrice(productId, qty) {
   const tier = db.prepare(`
@@ -85,17 +86,36 @@ router.post('/bestellung', (req, res) => {
       VALUES (?,?,?,?,?,?,?,?,?,?,?)
     `).run(orderNumber, userId, userId ? null : email, userId ? null : name, userId ? null : company,
       payment_method || 'transfer', subtotal, shipping, total, notes || null, address);
+
     for (const item of items) {
       db.prepare(`INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, total_price) VALUES (?,?,?,?,?,?,?)`)
         .run(r.lastInsertRowid, item.product.id, item.product.name, item.product.sku, item.qty, item.unitPrice, item.lineTotal);
+      // ── A) Stok düşür ─────────────────────────────────────────────
+      db.prepare('UPDATE products SET stock = MAX(0, stock - ?) WHERE id=?')
+        .run(item.qty, item.product.id);
     }
+
     if (coupon) db.prepare('UPDATE coupons SET used_count=used_count+1 WHERE id=?').run(coupon.id);
     return r.lastInsertRowid;
   });
 
-  createOrder();
+  const orderId = createOrder();
   req.session.cart = {};
   req.session.lastOrderNumber = orderNumber;
+
+  // ── B) E-posta bildirimleri (asenkron, hata siparişi engellemez) ──
+  const savedOrder = db.prepare('SELECT * FROM orders WHERE id=?').get(orderId);
+  const savedItems = db.prepare('SELECT * FROM order_items WHERE order_id=?').all(orderId);
+  const customerName  = name || req.session.userName || 'Kunde';
+  const customerEmail = email || req.session.userEmail || '';
+
+  if (customerEmail) {
+    sendOrderConfirmation({ order: savedOrder, items: savedItems, customerEmail, customerName })
+      .catch(e => console.error('Bestätigungsmail Fehler:', e.message));
+  }
+  sendAdminOrderNotification({ order: savedOrder, items: savedItems, customerName, customerEmail })
+    .catch(e => console.error('Admin-Mail Fehler:', e.message));
+
   res.redirect('/kasse/bestaetigung');
 });
 
