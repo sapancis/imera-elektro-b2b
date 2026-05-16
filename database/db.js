@@ -1,8 +1,23 @@
-const Database = require('better-sqlite3');
 const path = require('path');
 
+// Try native better-sqlite3 first; fall back to pure-WASM shim on hosts
+// where the native binary is incompatible (e.g. old glibc on shared hosting).
+let Database;
+try {
+  Database = require('better-sqlite3');
+} catch (_) {
+  Database = require('./bs3-compat');
+}
+
 const DB_PATH = path.join(__dirname, 'imera.db');
-const db = new Database(DB_PATH);
+let db;
+try {
+  db = new Database(DB_PATH);
+} catch (_) {
+  // Native module loaded but failed at runtime (glibc mismatch etc.)
+  Database = require('./bs3-compat');
+  db = new Database(DB_PATH);
+}
 
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
