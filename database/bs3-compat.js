@@ -5,7 +5,23 @@
  */
 'use strict';
 
+const fs   = require('fs');
+const path = require('path');
 const { Database: WasmDB } = require('node-sqlite3-wasm');
+
+/**
+ * node-sqlite3-wasm creates a "<db>.lock" directory for file locking.
+ * If the process crashes, this directory is left behind and causes
+ * "database is locked" errors on next startup. Clean it on open.
+ */
+function cleanStaleLock(dbPath) {
+  const lockDir = dbPath + '.lock';
+  try {
+    if (fs.existsSync(lockDir) && fs.statSync(lockDir).isDirectory()) {
+      fs.rmdirSync(lockDir, { recursive: true });
+    }
+  } catch (_) { /* ignore — might not exist or no permission */ }
+}
 
 /**
  * Normalize variadic or single-array params to an array.
@@ -51,6 +67,7 @@ class Statement {
 
 class Database {
   constructor(filePath, _options) {
+    cleanStaleLock(filePath);
     this._db = new WasmDB(filePath);
   }
 
