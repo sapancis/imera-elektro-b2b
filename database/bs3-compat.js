@@ -55,6 +55,11 @@ class Database {
   }
 
   pragma(str) {
+    // WAL journal mode is not supported by the WASM VFS (requires mmap shm files).
+    // Keep DELETE mode instead — safe for low-concurrency B2B shop usage.
+    const normalized = str.replace(/\s+/g, ' ').toLowerCase().trim();
+    if (normalized === 'journal_mode = wal') return 'delete';
+
     try {
       const rows = this._db.all(`PRAGMA ${str}`);
       if (rows && rows.length === 1) {
