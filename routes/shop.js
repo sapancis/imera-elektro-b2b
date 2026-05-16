@@ -132,7 +132,46 @@ router.get('/produkt/:slug', (req, res) => {
   const metaDesc = product.meta_description ||
     `${product.short_description || ''}${product.short_description ? ' ' : ''}${product.name} – ${product.sku ? 'Art.-Nr. ' + product.sku + '. ' : ''}${(product.description || '').slice(0, 120)} | Imera Elektro`;
   const title = product.meta_title || product.name;
-  res.render('product', { title, product, related, metaDesc, reviews, reviewStats, hasOrdered, alreadyReviewed });
+
+  // ── Product JSON-LD (Google Rich Results: Preis, Bewertungen) ──
+  const minPrice = product.tiers.length ? Math.min(...product.tiers.map(t => t.price)) : null;
+  const productJsonLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: (product.description || '').slice(0, 500),
+    sku: product.sku || undefined,
+    image: product.image ? `https://www.imeragroup.com${product.image}` : undefined,
+    brand: { '@type': 'Brand', name: 'Imera Elektro' },
+    offers: {
+      '@type': 'Offer',
+      url: `https://www.imeragroup.com/shop/produkt/${product.slug}`,
+      priceCurrency: 'EUR',
+      price: minPrice ? minPrice.toFixed(2) : undefined,
+      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      seller: { '@type': 'Organization', name: 'Imera Elektro' },
+    },
+    ...(reviewStats.count > 0 ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: reviewStats.avg,
+        reviewCount: reviewStats.count,
+      },
+    } : {}),
+  });
+
+  // ── Breadcrumb JSON-LD ──
+  const breadcrumbJsonLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Shop', item: 'https://www.imeragroup.com/shop' },
+      ...(product.cat_name ? [{ '@type': 'ListItem', position: 2, name: product.cat_name, item: `https://www.imeragroup.com/shop?kategorie=${product.cat_slug}` }] : []),
+      { '@type': 'ListItem', position: product.cat_name ? 3 : 2, name: product.name, item: `https://www.imeragroup.com/shop/produkt/${product.slug}` },
+    ],
+  });
+
+  res.render('product', { title, product, related, metaDesc, reviews, reviewStats, hasOrdered, alreadyReviewed, productJsonLd, breadcrumbJsonLd, noJsonLd: true, ogType: 'product', ogTitle: `${product.name} – Imera Elektro`, ogImage: product.image ? `https://www.imeragroup.com${product.image}` : undefined });
 });
 
 router.post('/produkt/:slug/bewertung', (req, res) => {

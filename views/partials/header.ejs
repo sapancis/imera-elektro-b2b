@@ -3,8 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ─── Primary Meta ─────────────────────────────────────────────────── -->
   <title><%= title %> – Imera Elektro</title>
   <meta name="description" content="<%= locals.metaDesc || 'CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt. Direktimport Türkei. Kabelbinder, Kabelverschraubungen, Reihenklemmen.' %>">
+  <meta name="keywords" content="Elektrokomponenten, Kabelbinder, Kabelverschraubungen, Reihenklemmen, DIN-Schienen, CE-zertifiziert, Direktimport, günstig, Österreich">
+  <meta name="author" content="Imera Elektro">
+  <meta name="robots" content="<%= locals.noindex ? 'noindex,nofollow' : 'index,follow' %>">
+  <link rel="canonical" href="https://www.imeragroup.com<%= locals.currentPath || '/' %>">
+
+  <!-- ─── Open Graph (Facebook, LinkedIn, WhatsApp preview) ───────────── -->
+  <meta property="og:type"        content="<%= locals.ogType || 'website' %>">
+  <meta property="og:site_name"   content="Imera Elektro">
+  <meta property="og:title"       content="<%= locals.ogTitle || title + ' – Imera Elektro' %>">
+  <meta property="og:description" content="<%= locals.metaDesc || 'CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt.' %>">
+  <meta property="og:url"         content="https://www.imeragroup.com<%= locals.currentPath || '/' %>">
+  <meta property="og:image"       content="<%= locals.ogImage || 'https://www.imeragroup.com/img/og-default.jpg' %>">
+  <meta property="og:locale"      content="de_AT">
+
+  <!-- ─── Twitter / X Card ────────────────────────────────────────────── -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="<%= locals.ogTitle || title + ' – Imera Elektro' %>">
+  <meta name="twitter:description" content="<%= locals.metaDesc || 'CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt.' %>">
+  <meta name="twitter:image"       content="<%= locals.ogImage || 'https://www.imeragroup.com/img/og-default.jpg' %>">
+
+  <!-- ─── JSON-LD Structured Data ─────────────────────────────────────── -->
+  <% if (!locals.noJsonLd) { %>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    "name": "Imera Elektro",
+    "description": "CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt. Direktimport Türkei.",
+    "url": "https://www.imeragroup.com",
+    "telephone": "+43660851446​7",
+    "email": "info@imeragroup.com",
+    "logo": "https://www.imeragroup.com/favicon.svg",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+43660851446​7",
+      "contactType": "customer service",
+      "availableLanguage": ["German"],
+      "contactOption": "TollFree"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "AT"
+    },
+    "sameAs": [],
+    "priceRange": "€€",
+    "currenciesAccepted": "EUR",
+    "paymentAccepted": "Bank Transfer, Invoice"<% if (locals.productJsonLd) { %>,
+    "offers": <%- locals.productJsonLd %><% } %>
+  }
+  </script>
+  <% } %>
+  <% if (locals.breadcrumbJsonLd) { %>
+  <script type="application/ld+json"><%- locals.breadcrumbJsonLd %></script>
+  <% } %>
+  <% if (locals.productJsonLd) { %>
+  <script type="application/ld+json"><%- locals.productJsonLd %></script>
+  <% } %>
+
+  <!-- ─── Favicon ──────────────────────────────────────────────────────── -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="/favicon.svg">
+
+  <!-- ─── Styles ───────────────────────────────────────────────────────── -->
   <link rel="stylesheet" href="/css/style.css?v=10">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">

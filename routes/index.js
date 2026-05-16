@@ -33,7 +33,12 @@ router.get('/', (req, res) => {
   `).all();
 
   const settings = getSettings();
-  res.render('index', { title: 'Startseite', categories, featured, newProducts, stats, settings });
+  res.render('index', {
+    title: 'CE-zertifizierte Elektrokomponenten – 40-60% günstiger',
+    metaDesc: 'Kabelbinder, Kabelverschraubungen & Reihenklemmen direkt vom Hersteller. CE-zertifiziert, Direktimport Türkei. Bis zu 72% günstiger als der österreichische Markt.',
+    ogTitle: 'Imera Elektro – Elektrokomponenten 40-60% unter Marktpreis',
+    categories, featured, newProducts, stats, settings,
+  });
 });
 
 // Sitemap.xml – otomatik üretilir

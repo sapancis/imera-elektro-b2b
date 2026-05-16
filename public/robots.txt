@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /konto/
+Disallow: /warenkorb
+Disallow: /kasse
+Disallow: /api/
+Disallow: /merkliste
+Disallow: /vergleich
+
+Sitemap: https://www.imeragroup.com/sitemap.xml
