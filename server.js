@@ -1,4 +1,12 @@
 require('dotenv').config();
+
+// ─── Global error handlers — prevent crash on unhandled exceptions ────────
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', new Date().toISOString(), err.stack || err.message);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', new Date().toISOString(), reason);
+});
 const express = require('express');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
