@@ -13,7 +13,7 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-function setLocals(req, res, next) {
+async function setLocals(req, res, next) {
   res.locals.user = req.session.userId
     ? { id: req.session.userId, name: req.session.userName, email: req.session.userEmail, role: req.session.userRole }
     : null;
@@ -28,15 +28,15 @@ function setLocals(req, res, next) {
   // Tawk.to & Merkliste count
   try {
     const db = require('../database/db');
-    const tawkId = db.prepare("SELECT value FROM settings WHERE key='tawkto_property_id'").get();
+    const tawkId = await db.prepare("SELECT value FROM settings WHERE key='tawkto_property_id'").get();
     res.locals.tawktoId = tawkId?.value || '';
-    const gaRow = db.prepare("SELECT value FROM settings WHERE key='google_analytics_id'").get();
+    const gaRow = await db.prepare("SELECT value FROM settings WHERE key='google_analytics_id'").get();
     res.locals.gaId = gaRow?.value || '';
-    res.locals.socialInstagram = db.prepare("SELECT value FROM settings WHERE key='social_instagram'").get()?.value || '';
-    res.locals.socialTiktok    = db.prepare("SELECT value FROM settings WHERE key='social_tiktok'").get()?.value || '';
-    res.locals.socialLinkedin  = db.prepare("SELECT value FROM settings WHERE key='social_linkedin'").get()?.value || '';
+    res.locals.socialInstagram = (await db.prepare("SELECT value FROM settings WHERE key='social_instagram'").get())?.value || '';
+    res.locals.socialTiktok    = (await db.prepare("SELECT value FROM settings WHERE key='social_tiktok'").get())?.value || '';
+    res.locals.socialLinkedin  = (await db.prepare("SELECT value FROM settings WHERE key='social_linkedin'").get())?.value || '';
     if (req.session.userId) {
-      const mc = db.prepare('SELECT COUNT(*) as c FROM merkliste WHERE user_id=?').get(req.session.userId);
+      const mc = await db.prepare('SELECT COUNT(*) as c FROM merkliste WHERE user_id=?').get(req.session.userId);
       res.locals.merklisteCount = mc?.c || 0;
     } else {
       res.locals.merklisteCount = (req.session.merkliste || []).length;

@@ -1,3 +1,8 @@
+if (process.env.TURSO_DATABASE_URL) {
+  module.exports = require('./turso');
+  return;
+}
+
 const path = require('path');
 
 // Try native better-sqlite3 first; fall back to pure-WASM shim on hosts

@@ -4,8 +4,8 @@ const db = require('../database/db');
 const { flash } = require('../middleware/auth');
 const { sendOrderConfirmation, sendAdminOrderNotification } = require('../utils/mailer');
 
-function calcItemPrice(productId, qty) {
-  const tier = db.prepare(`
+async function calcItemPrice(productId, qty) {
+  const tier = await db.prepare(`
     SELECT price FROM product_tiers
     WHERE product_id=? AND min_qty<=? AND (max_qty IS NULL OR max_qty>=?)
     ORDER BY min_qty DESC LIMIT 1
@@ -13,13 +13,13 @@ function calcItemPrice(productId, qty) {
   return tier ? tier.price : null;
 }
 
-function buildOrderItems(cart) {
+async function buildOrderItems(cart) {
   const items = [];
   let subtotal = 0;
   for (const [productId, qty] of Object.entries(cart)) {
-    const product = db.prepare('SELECT * FROM products WHERE id=? AND active=1').get(productId);
+    const product = await db.prepare('SELECT * FROM products WHERE id=? AND active=1').get(productId);
     if (!product) continue;
-    const unitPrice = calcItemPrice(parseInt(productId), qty);
+    const unitPrice = await calcItemPrice(parseInt(productId), qty);
     if (!unitPrice) continue;
     subtotal += unitPrice * qty;
     items.push({ product, qty, unitPrice, lineTotal: unitPrice * qty });
@@ -27,9 +27,9 @@ function buildOrderItems(cart) {
   return { items, subtotal };
 }
 
-function applyCoupon(code, subtotal, userId) {
+async function applyCoupon(code, subtotal, userId) {
   if (!code) return { discount: 0, coupon: null, error: null };
-  const coupon = db.prepare("SELECT * FROM coupons WHERE UPPER(code)=UPPER(?) AND active=1").get(code.trim());
+  const coupon = await db.prepare("SELECT * FROM coupons WHERE UPPER(code)=UPPER(?) AND active=1").get(code.trim());
   if (!coupon) return { discount: 0, coupon: null, error: 'Gutscheincode nicht gefunden.' };
   if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) return { discount: 0, coupon: null, error: 'Gutschein ist abgelaufen.' };
   if (coupon.used_count >= coupon.max_uses) return { discount: 0, coupon: null, error: 'Gutschein wurde bereits verwendet.' };
@@ -39,110 +39,119 @@ function applyCoupon(code, subtotal, userId) {
   return { discount, coupon, error: null };
 }
 
-router.get('/', (req, res) => {
-  const cart = req.session.cart || {};
-  if (!Object.keys(cart).length) return res.redirect('/warenkorb');
-  const { items, subtotal } = buildOrderItems(cart);
-  const freeThreshold = parseFloat(db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get()?.value || 200);
-  const shipping = subtotal >= freeThreshold ? 0 : 7.90;
-  const total = subtotal + shipping;
-  const user = req.session.userId ? db.prepare('SELECT * FROM users WHERE id=?').get(req.session.userId) : null;
-  const isStammkunde = user?.stammkunde === 1;
-  const stripeKey = db.prepare("SELECT value FROM settings WHERE key='stripe_publishable_key'").get()?.value || '';
-  res.render('checkout', { title: 'Kasse', items, subtotal, shipping, total, user, stripeKey, isStammkunde });
+router.get('/', async (req, res) => {
+  try {
+    const cart = req.session.cart || {};
+    if (!Object.keys(cart).length) return res.redirect('/warenkorb');
+    const { items, subtotal } = await buildOrderItems(cart);
+    const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
+    const freeThreshold = parseFloat(freeThresholdRow?.value || 200);
+    const shipping = subtotal >= freeThreshold ? 0 : 7.90;
+    const total = subtotal + shipping;
+    const user = req.session.userId ? await db.prepare('SELECT * FROM users WHERE id=?').get(req.session.userId) : null;
+    const isStammkunde = user?.stammkunde === 1;
+    const stripeKeyRow = await db.prepare("SELECT value FROM settings WHERE key='stripe_publishable_key'").get();
+    const stripeKey = stripeKeyRow?.value || '';
+    res.render('checkout', { title: 'Kasse', items, subtotal, shipping, total, user, stripeKey, isStammkunde });
+  } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
 // Coupon prüfen (AJAX)
-router.post('/coupon-pruefen', (req, res) => {
-  const { code, subtotal } = req.body;
-  const sub = parseFloat(subtotal) || 0;
-  const { discount, coupon, error } = applyCoupon(code, sub, req.session.userId || null);
-  if (error) return res.json({ ok: false, message: error });
-  res.json({ ok: true, discount, type: coupon.type, value: coupon.value, message: `Gutschein angewendet: -${coupon.type === 'percent' ? coupon.value + '%' : coupon.value.toFixed(2) + '€'}` });
+router.post('/coupon-pruefen', async (req, res) => {
+  try {
+    const { code, subtotal } = req.body;
+    const sub = parseFloat(subtotal) || 0;
+    const { discount, coupon, error } = await applyCoupon(code, sub, req.session.userId || null);
+    if (error) return res.json({ ok: false, message: error });
+    res.json({ ok: true, discount, type: coupon.type, value: coupon.value, message: `Gutschein angewendet: -${coupon.type === 'percent' ? coupon.value + '%' : coupon.value.toFixed(2) + '€'}` });
+  } catch { res.status(500).json({ ok: false, message: 'Serverfehler.' }); }
 });
 
-router.post('/bestellung', (req, res) => {
-  const cart = req.session.cart || {};
-  if (!Object.keys(cart).length) return res.redirect('/warenkorb');
+router.post('/bestellung', async (req, res) => {
+  try {
+    const cart = req.session.cart || {};
+    if (!Object.keys(cart).length) return res.redirect('/warenkorb');
 
-  const { name, email, company, phone, address, payment_method, notes, coupon_code } = req.body;
-  if (!name || !email || !address) {
-    flash(req, 'error', 'Bitte füllen Sie alle Pflichtfelder aus.');
-    return res.redirect('/kasse');
-  }
-
-  // Rechnungskauf nur für freigeschaltete Stammkunden
-  if (payment_method === 'invoice') {
-    const userId = req.session.userId || null;
-    const user = userId ? db.prepare('SELECT stammkunde FROM users WHERE id=?').get(userId) : null;
-    if (!user || !user.stammkunde) {
-      flash(req, 'error', 'Rechnungskauf ist nur für freigeschaltete Stammkunden verfügbar. Bitte wählen Sie Überweisung oder kontaktieren Sie uns.');
+    const { name, email, company, phone, address, payment_method, notes, coupon_code } = req.body;
+    if (!name || !email || !address) {
+      flash(req, 'error', 'Bitte füllen Sie alle Pflichtfelder aus.');
       return res.redirect('/kasse');
     }
-  }
 
-  const { items, subtotal } = buildOrderItems(cart);
-  if (!items.length) return res.redirect('/warenkorb');
-
-  // ── Checkout stok kontrolü ───────────────────────────────────────
-  const stockErrors = [];
-  for (const item of items) {
-    const current = db.prepare('SELECT stock, name FROM products WHERE id=?').get(item.product.id);
-    if (!current || current.stock < item.qty) {
-      stockErrors.push(`"${item.product.name}": Nur noch ${current?.stock || 0} Stk. auf Lager (Sie möchten ${item.qty})`);
+    // Rechnungskauf nur für freigeschaltete Stammkunden
+    if (payment_method === 'invoice') {
+      const userId = req.session.userId || null;
+      const user = userId ? await db.prepare('SELECT stammkunde FROM users WHERE id=?').get(userId) : null;
+      if (!user || !user.stammkunde) {
+        flash(req, 'error', 'Rechnungskauf ist nur für freigeschaltete Stammkunden verfügbar. Bitte wählen Sie Überweisung oder kontaktieren Sie uns.');
+        return res.redirect('/kasse');
+      }
     }
-  }
-  if (stockErrors.length) {
-    flash(req, 'error', 'Lagerproblem: ' + stockErrors.join(' | '));
-    return res.redirect('/warenkorb');
-  }
 
-  const freeThreshold = parseFloat(db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get()?.value || 200);
-  const shipping = subtotal >= freeThreshold ? 0 : 7.90;
-  const { discount, coupon } = applyCoupon(coupon_code, subtotal, req.session.userId || null);
-  const total = Math.max(0, subtotal + shipping - discount);
-  const orderNumber = 'IE-' + Date.now();
-  const userId = req.session.userId || null;
+    const { items, subtotal } = await buildOrderItems(cart);
+    if (!items.length) return res.redirect('/warenkorb');
 
-  const createOrder = db.transaction(() => {
-    const r = db.prepare(`
-      INSERT INTO orders (order_number, user_id, guest_email, guest_name, guest_company, payment_method, subtotal, shipping, total, notes, shipping_address)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?)
-    `).run(orderNumber, userId, userId ? null : email, userId ? null : name, userId ? null : company,
-      payment_method || 'transfer', subtotal, shipping, total, notes || null, address);
-
+    // ── Checkout stok kontrolü ───────────────────────────────────────
+    const stockErrors = [];
     for (const item of items) {
-      db.prepare(`INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, total_price) VALUES (?,?,?,?,?,?,?)`)
-        .run(r.lastInsertRowid, item.product.id, item.product.name, item.product.sku, item.qty, item.unitPrice, item.lineTotal);
-      // ── A) Stok düşür ─────────────────────────────────────────────
-      db.prepare('UPDATE products SET stock = MAX(0, stock - ?) WHERE id=?')
-        .run(item.qty, item.product.id);
+      const current = await db.prepare('SELECT stock, name FROM products WHERE id=?').get(item.product.id);
+      if (!current || current.stock < item.qty) {
+        stockErrors.push(`"${item.product.name}": Nur noch ${current?.stock || 0} Stk. auf Lager (Sie möchten ${item.qty})`);
+      }
+    }
+    if (stockErrors.length) {
+      flash(req, 'error', 'Lagerproblem: ' + stockErrors.join(' | '));
+      return res.redirect('/warenkorb');
     }
 
-    if (coupon) db.prepare('UPDATE coupons SET used_count=used_count+1 WHERE id=?').run(coupon.id);
-    return r.lastInsertRowid;
-  });
+    const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
+    const freeThreshold = parseFloat(freeThresholdRow?.value || 200);
+    const shipping = subtotal >= freeThreshold ? 0 : 7.90;
+    const { discount, coupon } = await applyCoupon(coupon_code, subtotal, req.session.userId || null);
+    const total = Math.max(0, subtotal + shipping - discount);
+    const orderNumber = 'IE-' + Date.now();
+    const userId = req.session.userId || null;
 
-  const orderId = createOrder();
-  req.session.cart = {};
-  req.session.lastOrderNumber = orderNumber;
+    const createOrder = db.transaction(async () => {
+      const r = await db.prepare(`
+        INSERT INTO orders (order_number, user_id, guest_email, guest_name, guest_company, payment_method, subtotal, shipping, total, notes, shipping_address)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+      `).run(orderNumber, userId, userId ? null : email, userId ? null : name, userId ? null : company,
+        payment_method || 'transfer', subtotal, shipping, total, notes || null, address);
 
-  // ── B) E-posta bildirimleri (asenkron, hata siparişi engellemez) ──
-  const savedOrder = db.prepare('SELECT * FROM orders WHERE id=?').get(orderId);
-  const savedItems = db.prepare('SELECT * FROM order_items WHERE order_id=?').all(orderId);
-  // Üye için email users tablosundan, misafir için formdan al
-  const customerUser  = userId ? db.prepare('SELECT name, email FROM users WHERE id=?').get(userId) : null;
-  const customerName  = customerUser?.name  || name  || req.session.userName  || 'Kunde';
-  const customerEmail = customerUser?.email || email || req.session.userEmail || '';
+      for (const item of items) {
+        await db.prepare(`INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, total_price) VALUES (?,?,?,?,?,?,?)`)
+          .run(r.lastInsertRowid, item.product.id, item.product.name, item.product.sku, item.qty, item.unitPrice, item.lineTotal);
+        // ── A) Stok düşür ─────────────────────────────────────────────
+        await db.prepare('UPDATE products SET stock = MAX(0, stock - ?) WHERE id=?')
+          .run(item.qty, item.product.id);
+      }
 
-  if (customerEmail) {
-    sendOrderConfirmation({ order: savedOrder, items: savedItems, customerEmail, customerName })
-      .catch(e => console.error('Bestätigungsmail Fehler:', e.message));
-  }
-  sendAdminOrderNotification({ order: savedOrder, items: savedItems, customerName, customerEmail })
-    .catch(e => console.error('Admin-Mail Fehler:', e.message));
+      if (coupon) await db.prepare('UPDATE coupons SET used_count=used_count+1 WHERE id=?').run(coupon.id);
+      return r.lastInsertRowid;
+    });
 
-  res.redirect('/kasse/bestaetigung');
+    const orderId = await createOrder();
+    req.session.cart = {};
+    req.session.lastOrderNumber = orderNumber;
+
+    // ── B) E-posta bildirimleri (asenkron, hata siparişi engellemez) ──
+    const savedOrder = await db.prepare('SELECT * FROM orders WHERE id=?').get(orderId);
+    const savedItems = await db.prepare('SELECT * FROM order_items WHERE order_id=?').all(orderId);
+    // Üye için email users tablosundan, misafir için formdan al
+    const customerUser  = userId ? await db.prepare('SELECT name, email FROM users WHERE id=?').get(userId) : null;
+    const customerName  = customerUser?.name  || name  || req.session.userName  || 'Kunde';
+    const customerEmail = customerUser?.email || email || req.session.userEmail || '';
+
+    if (customerEmail) {
+      sendOrderConfirmation({ order: savedOrder, items: savedItems, customerEmail, customerName })
+        .catch(e => console.error('Bestätigungsmail Fehler:', e.message));
+    }
+    sendAdminOrderNotification({ order: savedOrder, items: savedItems, customerName, customerEmail })
+      .catch(e => console.error('Admin-Mail Fehler:', e.message));
+
+    res.redirect('/kasse/bestaetigung');
+  } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
 // Stripe Checkout Session
@@ -153,8 +162,9 @@ router.post('/stripe-session', async (req, res) => {
     const stripe = require('stripe')(stripeSecret);
     const cart = req.session.cart || {};
     if (!Object.keys(cart).length) return res.json({ ok: false, message: 'Warenkorb ist leer.' });
-    const { items, subtotal } = buildOrderItems(cart);
-    const freeThreshold = parseFloat(db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get()?.value || 200);
+    const { items, subtotal } = await buildOrderItems(cart);
+    const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
+    const freeThreshold = parseFloat(freeThresholdRow?.value || 200);
     const shipping = subtotal >= freeThreshold ? 0 : 7.90;
 
     const lineItems = items.map(item => ({
@@ -184,12 +194,14 @@ router.post('/stripe-session', async (req, res) => {
   }
 });
 
-router.get('/bestaetigung', (req, res) => {
-  const orderNumber = req.session.lastOrderNumber;
-  if (!orderNumber && !req.query.stripe) return res.redirect('/');
-  const order = orderNumber ? db.prepare('SELECT * FROM orders WHERE order_number=?').get(orderNumber) : null;
-  const items = order ? db.prepare('SELECT * FROM order_items WHERE order_id=?').all(order.id) : [];
-  res.render('confirmation', { title: 'Bestellung bestätigt', order, items, bankIban: process.env.BANK_IBAN || '' });
+router.get('/bestaetigung', async (req, res) => {
+  try {
+    const orderNumber = req.session.lastOrderNumber;
+    if (!orderNumber && !req.query.stripe) return res.redirect('/');
+    const order = orderNumber ? await db.prepare('SELECT * FROM orders WHERE order_number=?').get(orderNumber) : null;
+    const items = order ? await db.prepare('SELECT * FROM order_items WHERE order_id=?').all(order.id) : [];
+    res.render('confirmation', { title: 'Bestellung bestätigt', order, items, bankIban: process.env.BANK_IBAN || '' });
+  } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
 module.exports = router;

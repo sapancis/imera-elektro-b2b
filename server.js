@@ -9,7 +9,6 @@ process.on('unhandledRejection', (reason) => {
 });
 const express = require('express');
 const session = require('express-session');
-const FileStore = require('session-file-store')(session);
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
@@ -42,8 +41,18 @@ app.use('/konto', rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
 
-// ─── Session ─────────────────────────────────────────────────────────────
-const sessionStore = new FileStore({ path: path.join(__dirname, 'database/sessions'), ttl: 604800, retries: 0, logFn: () => {} });
+// ─── Session Store ────────────────────────────────────────────────────────
+let sessionStore;
+if (process.env.REDIS_URL) {
+  const Redis = require('ioredis');
+  const connectRedis = require('connect-redis');
+  const RedisStore = connectRedis(session);
+  const redisClient = new Redis(process.env.REDIS_URL, { tls: { rejectUnauthorized: false } });
+  sessionStore = new RedisStore({ client: redisClient });
+} else {
+  const FileStore = require('session-file-store')(session);
+  sessionStore = new FileStore({ path: path.join(__dirname, 'database/sessions'), ttl: 604800, retries: 0, logFn: () => {} });
+}
 
 app.use(session({
   store: sessionStore,
@@ -60,8 +69,10 @@ app.use(session({
 }));
 
 // ─── Static Files ─────────────────────────────────────────────────────────
-const uploadsDir = path.join(__dirname, 'public/uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+if (!process.env.VERCEL) {
+  const uploadsDir = path.join(__dirname, 'public/uploads');
+  if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+}
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── View Engine ──────────────────────────────────────────────────────────
@@ -111,16 +122,16 @@ app.use((err, req, res, next) => {
 });
 
 // ─── Auto-Setup: Admin kullanıcısı yoksa oluştur ──────────────────────────
-(function autoSetup() {
+(async function autoSetup() {
   try {
     const db = require('./database/db');
     const bcrypt = require('bcryptjs');
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@imeraelektro.at';
     const adminPass  = process.env.ADMIN_PASSWORD || 'admin123';
-    const existing   = db.prepare('SELECT id FROM users WHERE role=?').get('admin');
+    const existing   = await db.prepare('SELECT id FROM users WHERE role=?').get('admin');
     if (!existing) {
       const hash = bcrypt.hashSync(adminPass, 12);
-      db.prepare('INSERT INTO users (email, password_hash, name, company, role) VALUES (?,?,?,?,?)')
+      await db.prepare('INSERT INTO users (email, password_hash, name, company, role) VALUES (?,?,?,?,?)')
         .run(adminEmail, hash, 'Administrator', 'Imera Elektro', 'admin');
       console.log(`✓ Admin kullanıcısı oluşturuldu: ${adminEmail}`);
     }
@@ -133,8 +144,8 @@ app.use((err, req, res, next) => {
 (async function autoSeed() {
   try {
     const db = require('./database/db');
-    const count = db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get().n;
-    if (count === 0) {
+    const countRow = await db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get();
+    if (countRow.n === 0) {
       console.log('⏳ Keine Produkte gefunden — starte automatisches Seeding...');
       try {
         await require('./scripts/seed-products');
@@ -147,8 +158,12 @@ app.use((err, req, res, next) => {
   }
 })();
 
-app.listen(PORT, () => {
-  console.log(`\n✓ Imera Elektro läuft auf http://localhost:${PORT}`);
-  console.log(`  Admin: http://localhost:${PORT}/admin`);
-  console.log(`  Shop:  http://localhost:${PORT}/shop\n`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n✓ Imera Elektro läuft auf http://localhost:${PORT}`);
+    console.log(`  Admin: http://localhost:${PORT}/admin`);
+    console.log(`  Shop:  http://localhost:${PORT}/shop\n`);
+  });
+}
+
+module.exports = app;

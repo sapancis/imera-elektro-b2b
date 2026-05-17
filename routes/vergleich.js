@@ -2,16 +2,18 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
 
-router.get('/', (req, res) => {
-  const ids = req.session.vergleich || [];
-  const products = ids.length
-    ? db.prepare(`SELECT p.*, c.name as cat_name, (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min FROM products p LEFT JOIN categories c ON p.category_id=c.id WHERE p.id IN (${ids.map(()=>'?').join(',')}) AND p.active=1`).all(...ids)
-    : [];
-  for (const p of products) {
-    p.tiers = db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(p.id);
-    p.specsArr = p.specs ? JSON.parse(p.specs) : [];
-  }
-  res.render('vergleich', { title: 'Produktvergleich', products });
+router.get('/', async (req, res) => {
+  try {
+    const ids = req.session.vergleich || [];
+    const products = ids.length
+      ? await db.prepare(`SELECT p.*, c.name as cat_name, (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min FROM products p LEFT JOIN categories c ON p.category_id=c.id WHERE p.id IN (${ids.map(()=>'?').join(',')}) AND p.active=1`).all(...ids)
+      : [];
+    for (const p of products) {
+      p.tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(p.id);
+      p.specsArr = p.specs ? JSON.parse(p.specs) : [];
+    }
+    res.render('vergleich', { title: 'Produktvergleich', products });
+  } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
 router.post('/toggle', (req, res) => {

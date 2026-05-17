@@ -12,20 +12,22 @@ router.get('/widerruf', (req, res) => res.render('pages/widerruf', { title: 'Wid
 
 router.get('/kontakt', (req, res) => res.render('pages/contact', { title: 'Kontakt' }));
 
-router.post('/kontakt', (req, res) => {
-  const { name, email, phone, subject, message } = req.body;
-  if (!name || !email || !message) {
-    flash(req, 'error', 'Bitte füllen Sie alle Pflichtfelder aus.');
-    return res.redirect('/kontakt');
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    flash(req, 'error', 'Ungültige E-Mail-Adresse.');
-    return res.redirect('/kontakt');
-  }
-  db.prepare('INSERT INTO contact_messages (name, email, phone, subject, message) VALUES (?,?,?,?,?)')
-    .run(name.trim(), email.trim(), phone || null, subject || null, message.trim());
-  flash(req, 'success', 'Ihre Nachricht wurde gesendet. Wir melden uns so schnell wie möglich!');
-  res.redirect('/kontakt');
+router.post('/kontakt', async (req, res) => {
+  try {
+    const { name, email, phone, subject, message } = req.body;
+    if (!name || !email || !message) {
+      flash(req, 'error', 'Bitte füllen Sie alle Pflichtfelder aus.');
+      return res.redirect('/kontakt');
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      flash(req, 'error', 'Ungültige E-Mail-Adresse.');
+      return res.redirect('/kontakt');
+    }
+    await db.prepare('INSERT INTO contact_messages (name, email, phone, subject, message) VALUES (?,?,?,?,?)')
+      .run(name.trim(), email.trim(), phone || null, subject || null, message.trim());
+    flash(req, 'success', 'Ihre Nachricht wurde gesendet. Wir melden uns so schnell wie möglich!');
+    res.redirect('/kontakt');
+  } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
 module.exports = router;
