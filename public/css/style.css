@@ -1321,6 +1321,19 @@ img { max-width: 100%; display: block; }
   .about-stats { grid-template-columns: 1fr 1fr !important; gap: 0.75rem !important; }
   .about-box { padding: 1rem !important; }
 
+  /* Categories → 2×2 grid on mobile */
+  .categories-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  .category-card { padding: 1.25rem 1rem; }
+  .category-icon { width: 40px; height: 40px; font-size: 20px; margin-bottom: 0.625rem; }
+  .category-card h3 { font-size: 14px; }
+  .category-card p { font-size: 12px; margin-bottom: 0.5rem; }
+
+  /* Shop product card: simplify tier table on mobile */
+  .tier-table-label { font-size: 10px; }
+  .tier-table-row > div:nth-child(n+3) { display: none; } /* show max 2 tiers */
+  .tier-qty { font-size: 11px; }
+  .tier-price { font-size: 13px; }
+
   /* Product detail — specs table scroll */
   .specs-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .specs-table { min-width: 320px; }

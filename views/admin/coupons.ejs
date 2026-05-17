@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="de">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kuponlar – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gutscheine – Admin</title><link rel="stylesheet" href="/css/admin.css"></head>
 <body class="admin-body">
 <% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
 <%- include('../partials/admin-nav') %>
 <div class="admin-main">
   <div class="admin-topbar">
-    <div class="admin-page-title">🎟 Kuponlar</div>
+    <div class="admin-page-title">🎟 Gutscheine</div>
     <div class="admin-topbar-right">
-      <button class="btn-blue btn-sm" onclick="document.getElementById('newCouponForm').style.display=document.getElementById('newCouponForm').style.display==='none'?'block':'none'">+ Neuer Kupon</button>
+      <button class="btn-blue btn-sm" onclick="document.getElementById('newCouponForm').style.display=document.getElementById('newCouponForm').style.display==='none'?'block':'none'">+ Neuer Gutschein</button>
     </div>
   </div>
   <div class="admin-content">
 
     <!-- New coupon form -->
     <div class="admin-card" id="newCouponForm" style="display:none;margin-bottom:1.5rem">
-      <h3>Neuen Kupon erstellen</h3>
+      <h3>Neuen Gutschein erstellen</h3>
       <form action="/admin/kuponlar/neu" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="form-grid-3">
           <div class="form-group">
-            <label>Kupon-Code *</label>
+            <label>Gutschein-Code *</label>
             <input type="text" name="code" placeholder="SOMMER20" required style="text-transform:uppercase">
           </div>
           <div class="form-group">
@@ -52,7 +52,7 @@
           <input type="number" name="user_id" placeholder="leer = für alle">
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn-blue">Kupon erstellen</button>
+          <button type="submit" class="btn-blue">Gutschein erstellen</button>
           <button type="button" class="btn-outline" onclick="this.closest('#newCouponForm').style.display='none'">Abbrechen</button>
         </div>
       </form>
@@ -61,7 +61,7 @@
     <!-- Coupon list -->
     <div class="admin-card">
       <div class="admin-card-header">
-        <h3>Alle Kuponlar (<%= coupons.length %>)</h3>
+        <h3>Alle Gutscheine (<%= coupons.length %>)</h3>
       </div>
       <div class="admin-table-wrap">
         <table class="admin-table">
@@ -81,7 +81,7 @@
           </thead>
           <tbody>
             <% if (!coupons.length) { %>
-            <tr><td colspan="10" style="text-align:center;color:#9CA3AF;padding:2rem">Noch keine Kuponlar vorhanden.</td></tr>
+            <tr><td colspan="10" style="text-align:center;color:#9CA3AF;padding:2rem">Noch keine Gutscheine vorhanden.</td></tr>
             <% } %>
             <% for (const c of coupons) { %>
             <tr class="<%= !c.active ? 'row-inactive' : '' %>">
@@ -110,7 +110,7 @@
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button type="submit" class="btn-outline btn-sm"><%= c.active ? 'Deaktivieren' : 'Aktivieren' %></button>
                   </form>
-                  <form action="/admin/kuponlar/<%= c.id %>/loeschen" method="POST" style="display:inline" onsubmit="return confirm('Kupon löschen?')">
+                  <form action="/admin/kuponlar/<%= c.id %>/loeschen" method="POST" style="display:inline" onsubmit="return confirm('Gutschein löschen?')">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button type="submit" class="btn-danger btn-sm">Löschen</button>
                   </form>
@@ -127,8 +127,8 @@
     <div class="admin-two-col">
       <div class="admin-card">
         <h3>Nutzungsstatistik</h3>
-        <div class="detail-row"><span>Gesamt Kuponlar</span><strong><%= coupons.length %></strong></div>
-        <div class="detail-row"><span>Aktive Kuponlar</span><strong><%= coupons.filter(c=>c.active && c.used_count<c.max_uses && (!c.expires_at || new Date(c.expires_at)>new Date())).length %></strong></div>
+        <div class="detail-row"><span>Gutscheine gesamt</span><strong><%= coupons.length %></strong></div>
+        <div class="detail-row"><span>Aktive Gutscheine</span><strong><%= coupons.filter(c=>c.active && c.used_count<c.max_uses && (!c.expires_at || new Date(c.expires_at)>new Date())).length %></strong></div>
         <div class="detail-row"><span>Gesamt eingelöst</span><strong><%= coupons.reduce((s,c)=>s+c.used_count,0) %> mal</strong></div>
       </div>
       <div class="admin-card">
