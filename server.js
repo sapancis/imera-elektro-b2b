@@ -41,14 +41,12 @@ app.use('/konto', rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(express.json({ limit: '2mb' }));
 
-// ─── Session Store ────────────────────────────────────────────────────────
+// ─── Session Store (Turso DB veya lokal FileStore) ───────────────────────
 let sessionStore;
-if (process.env.REDIS_URL) {
-  const Redis = require('ioredis');
-  const connectRedis = require('connect-redis');
-  const RedisStore = connectRedis(session);
-  const redisClient = new Redis(process.env.REDIS_URL, { tls: { rejectUnauthorized: false } });
-  sessionStore = new RedisStore({ client: redisClient });
+if (process.env.TURSO_DATABASE_URL) {
+  const TursoSessionStore = require('./database/session-store');
+  const db = require('./database/db');
+  sessionStore = new TursoSessionStore(db);
 } else {
   const FileStore = require('session-file-store')(session);
   sessionStore = new FileStore({ path: path.join(__dirname, 'database/sessions'), ttl: 604800, retries: 0, logFn: () => {} });
