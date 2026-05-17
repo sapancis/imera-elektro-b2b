@@ -1,4 +1,17 @@
 <%- include('../partials/header') %>
+<style>
+@media (max-width: 768px) {
+  .about-grid { display: block !important; }
+  .about-grid > div { margin-bottom: 24px; }
+  .about-stats { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .about-stats span { font-size: 22px !important; }
+  .about-box { padding: 18px !important; }
+  .supplier-card { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .cert-download-btn { flex-direction: column; gap: 8px; }
+  h1 { font-size: 26px !important; }
+  h2 { font-size: 20px !important; }
+}
+</style>
 <main>
   <div class="container page-content">
     <h1>Über uns</h1>
@@ -13,7 +26,7 @@
         <p>Durch den <strong>Direktimport ohne Zwischenhändler</strong> sparen Sie den kompletten Handelsstufenaufschlag – dieser Vorteil landet direkt in Ihrer Kalkulation.</p>
 
         <h2>Qualitätssicherung</h2>
-        <ul>
+        <ul style="list-style:none;padding:0;margin:0">
           <li>✓ Alle Produkte sind CE-zertifiziert und EU-konform</li>
           <li>✓ RoHS-konforme Fertigung</li>
           <li>✓ Übereinstimmung mit IEC/EN Normen</li>
@@ -26,7 +39,7 @@
           <div class="about-stats">
             <div><span>40-72%</span><small>günstiger als Markt</small></div>
             <div><span>CE</span><small>zertifiziert</small></div>
-            <div><span>2-5</span><small>Tage Lieferzeit</small></div>
+            <div><span>1-2</span><small>Tage Lieferzeit</small></div>
             <div><span>1+</span><small>Stück Mindestbestellung</small></div>
           </div>
         </div>
