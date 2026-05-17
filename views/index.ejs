@@ -1,5 +1,14 @@
 <%- include('partials/header') %>
 
+<div id="renewal-banner" style="background:#1a1a2e;color:#fff;text-align:center;padding:14px 20px;position:relative;z-index:100;border-bottom:2px solid #34C759">
+  <div style="max-width:700px;margin:0 auto">
+    <span style="font-size:18px;margin-right:8px">🔧</span>
+    <strong style="font-size:15px">Wir erneuern uns für Sie!</strong>
+    <span style="font-size:14px;color:#ccc;display:block;margin-top:4px">Unser Shop wird gerade verbessert, um Ihnen noch besseren Service bieten zu können. Vielen Dank für Ihre Geduld.</span>
+  </div>
+  <button onclick="document.getElementById('renewal-banner').style.display='none'" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#888;font-size:20px;cursor:pointer;line-height:1">&times;</button>
+</div>
+
 <main>
   <!-- Hero -->
   <section class="hero">
