@@ -1,44 +1,51 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
+const cache = require('../utils/cache');
 
 router.get('/', async (req, res) => {
   try {
-    const categories = await db.prepare('SELECT * FROM categories WHERE active=1 ORDER BY sort_order').all();
-    const featured = await db.prepare(`
-      SELECT p.*, c.name as cat_name,
-        (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
-      FROM products p
-      LEFT JOIN categories c ON p.category_id=c.id
-      WHERE p.active=1 AND p.featured=1
-      ORDER BY p.id LIMIT 3
-    `).all();
-
-    for (const p of featured) {
-      p.tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(p.id);
+    // Cache'den al, yoksa DB'den çek (2 dk TTL)
+    let categories = cache.get('categories');
+    if (!categories) {
+      categories = await db.prepare('SELECT * FROM categories WHERE active=1 ORDER BY sort_order').all();
+      cache.set('categories', categories, 120_000);
     }
 
-    const stats = {
-      products: (await db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get()).n,
-      categories: (await db.prepare('SELECT COUNT(*) as n FROM categories WHERE active=1').get()).n,
-      orders: (await db.prepare('SELECT COUNT(*) as n FROM orders').get()).n,
-    };
-
-    const newProducts = await db.prepare(`
-      SELECT p.*, c.name as cat_name,
-        (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
-      FROM products p
-      LEFT JOIN categories c ON p.category_id=c.id
-      WHERE p.active=1
-      ORDER BY p.id DESC LIMIT 8
-    `).all();
+    let homeData = cache.get('home_data');
+    if (!homeData) {
+      const featured = await db.prepare(`
+        SELECT p.*, c.name as cat_name,
+          (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
+        FROM products p
+        LEFT JOIN categories c ON p.category_id=c.id
+        WHERE p.active=1 AND p.featured=1
+        ORDER BY p.id LIMIT 3
+      `).all();
+      for (const p of featured) {
+        p.tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(p.id);
+      }
+      const [statsRow, newProducts] = await Promise.all([
+        db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get(),
+        db.prepare(`
+          SELECT p.*, c.name as cat_name,
+            (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
+          FROM products p
+          LEFT JOIN categories c ON p.category_id=c.id
+          WHERE p.active=1
+          ORDER BY p.id DESC LIMIT 8
+        `).all(),
+      ]);
+      homeData = { featured, newProducts, stats: { products: statsRow.n } };
+      cache.set('home_data', homeData, 120_000);
+    }
 
     const settings = await getSettings();
     res.render('index', {
       title: 'CE-zertifizierte Elektrokomponenten – 40-60% günstiger',
       metaDesc: 'Kabelbinder, Kabelverschraubungen & Reihenklemmen direkt vom Hersteller. CE-zertifiziert, Direktimport Türkei. Bis zu 72% günstiger als der österreichische Markt.',
       ogTitle: 'Imera Elektro – Elektrokomponenten 40-60% unter Marktpreis',
-      categories, featured, newProducts, stats, settings,
+      categories, featured: homeData.featured, newProducts: homeData.newProducts, stats: homeData.stats, settings,
     });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });

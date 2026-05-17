@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
+const cache = require('../utils/cache');
 
 router.get('/', async (req, res) => {
   try {
@@ -69,7 +70,11 @@ router.get('/', async (req, res) => {
       p.tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(p.id);
     }
 
-    const categories = await db.prepare('SELECT c.*, COUNT(p.id) as cnt FROM categories c LEFT JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1 GROUP BY c.id ORDER BY c.sort_order').all();
+    let categories = cache.get('shop_categories');
+    if (!categories) {
+      categories = await db.prepare('SELECT c.*, COUNT(p.id) as cnt FROM categories c LEFT JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1 GROUP BY c.id ORDER BY c.sort_order').all();
+      cache.set('shop_categories', categories, 120_000);
+    }
     const totalPages = Math.ceil(total / perPage);
     const sizesRows = await db.prepare("SELECT DISTINCT size FROM products WHERE active=1 AND size IS NOT NULL AND size != '' ORDER BY size").all();
     const sizes = sizesRows.map(r => r.size);
