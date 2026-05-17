@@ -450,16 +450,17 @@ router.get('/einstellungen', async (req, res) => {
 
 router.post('/einstellungen', async (req, res) => {
   try {
-    const update = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
-    const updateAll = db.transaction(async (data) => {
-      for (const [key, value] of Object.entries(data)) {
-        if (key !== '_csrf') await update.run(key, value);
+    for (const [key, value] of Object.entries(req.body)) {
+      if (key !== '_csrf') {
+        await db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run(key, value);
       }
-    });
-    await updateAll(req.body);
+    }
     flash(req, 'success', 'Einstellungen gespeichert.');
     res.redirect('/admin/einstellungen');
-  } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
+  } catch (e) {
+    console.error('Einstellungen Fehler:', e);
+    res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 });
+  }
 });
 
 // ─── HELPERS ────────────────────────────────────────────────────────────────

@@ -112,26 +112,22 @@ router.post('/bestellung', async (req, res) => {
     const orderNumber = 'IE-' + Date.now();
     const userId = req.session.userId || null;
 
-    const createOrder = db.transaction(async () => {
-      const r = await db.prepare(`
-        INSERT INTO orders (order_number, user_id, guest_email, guest_name, guest_company, payment_method, subtotal, shipping, total, notes, shipping_address)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)
-      `).run(orderNumber, userId, userId ? null : email, userId ? null : name, userId ? null : company,
-        payment_method || 'transfer', subtotal, shipping, total, notes || null, address);
+    const r = await db.prepare(`
+      INSERT INTO orders (order_number, user_id, guest_email, guest_name, guest_company, payment_method, subtotal, shipping, total, notes, shipping_address)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?)
+    `).run(orderNumber, userId, userId ? null : email, userId ? null : name, userId ? null : company,
+      payment_method || 'transfer', subtotal, shipping, total, notes || null, address);
 
-      for (const item of items) {
-        await db.prepare(`INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, total_price) VALUES (?,?,?,?,?,?,?)`)
-          .run(r.lastInsertRowid, item.product.id, item.product.name, item.product.sku, item.qty, item.unitPrice, item.lineTotal);
-        // ── A) Stok düşür ─────────────────────────────────────────────
-        await db.prepare('UPDATE products SET stock = MAX(0, stock - ?) WHERE id=?')
-          .run(item.qty, item.product.id);
-      }
+    const orderId = r.lastInsertRowid;
 
-      if (coupon) await db.prepare('UPDATE coupons SET used_count=used_count+1 WHERE id=?').run(coupon.id);
-      return r.lastInsertRowid;
-    });
+    for (const item of items) {
+      await db.prepare(`INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, total_price) VALUES (?,?,?,?,?,?,?)`)
+        .run(orderId, item.product.id, item.product.name, item.product.sku, item.qty, item.unitPrice, item.lineTotal);
+      await db.prepare('UPDATE products SET stock = MAX(0, stock - ?) WHERE id=?')
+        .run(item.qty, item.product.id);
+    }
 
-    const orderId = await createOrder();
+    if (coupon) await db.prepare('UPDATE coupons SET used_count=used_count+1 WHERE id=?').run(coupon.id);
     req.session.cart = {};
     req.session.lastOrderNumber = orderNumber;
 
