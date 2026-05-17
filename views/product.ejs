@@ -171,11 +171,13 @@
 
       <div class="tab-content" id="tab-specs" style="display:none">
         <% if (product.specsArr.length) { %>
+        <div class="specs-table-wrap">
         <table class="specs-table">
           <% for (const [key, val] of product.specsArr) { %>
           <tr><td><%= key %></td><td><%= val %></td></tr>
           <% } %>
         </table>
+        </div>
         <% } %>
       </div>
 

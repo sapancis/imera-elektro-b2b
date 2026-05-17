@@ -1301,4 +1301,156 @@ img { max-width: 100%; display: block; }
   .qv-body { grid-template-columns: 1fr; }
   .qv-image-col { border-radius: 16px 16px 0 0; min-height: 200px; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — ADDITIONAL MOBILE IMPROVEMENTS  (≤ 768px)
+   ════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Container padding tighter */
+  .container { padding: 0 1rem; }
+
+  /* Page content headings */
+  .page-content { padding: 2rem 0; }
+  .page-content h1 { font-size: 26px; margin-bottom: 1.25rem; }
+  .page-content h2 { font-size: 18px; margin: 1.5rem 0 0.5rem; }
+  .page-content h3 { font-size: 15px; }
+
+  /* About page */
+  .about-grid { display: block; }
+  .about-grid > div { margin-bottom: 1.5rem; }
+  .about-stats { grid-template-columns: 1fr 1fr !important; gap: 0.75rem !important; }
+  .about-box { padding: 1rem !important; }
+
+  /* Product detail — specs table scroll */
+  .specs-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .specs-table { min-width: 320px; }
+
+  /* Market price box */
+  .market-price-row { flex-direction: column; gap: 6px; }
+
+  /* Comparison logos → 1 col */
+  .comparison-logos { grid-template-columns: 1fr; }
+
+  /* Contact layout already 1fr but tighten */
+  .contact-info-card { margin-bottom: 1rem; }
+
+  /* Auth box padding */
+  .auth-box { margin: 1.5rem auto 2.5rem; }
+
+  /* Confirmation box */
+  .confirmation-box { margin: 1.5rem auto; padding: 1rem; }
+  .confirmation-actions { flex-direction: column; align-items: center; }
+
+  /* Error page */
+  .error-code { font-size: 64px; }
+  .error-page { padding: 4rem 1rem; }
+
+  /* Footer CTA email input */
+  .price-list-input { flex-direction: column; gap: 0.5rem; }
+  .price-list-input input, .price-list-input .btn-green { width: 100%; border-radius: 12px; }
+
+  /* Footer bottom */
+  .footer-bottom { flex-direction: column; text-align: center; gap: 0.5rem; }
+
+  /* Stats bar — 2 per row */
+  .stats-grid { flex-wrap: wrap; justify-content: center; }
+  .stat-item { flex: 1 1 45%; min-width: 120px; }
+  .stat-divider { display: none; }
+
+  /* Section header */
+  .section { padding: 2.5rem 0; }
+  .section-header { margin-bottom: 2rem; }
+
+  /* Product detail tabs */
+  .tab-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+
+  /* Trust row in product detail → 3 col stays but smaller */
+  .trust-row { gap: 0.5rem; }
+  .trust-item { padding: 8px 6px; }
+  .trust-item small { font-size: 11px; }
+
+  /* Back link */
+  .back-link { display: inline-block; margin-bottom: 0.5rem; }
+
+  /* Order meta wrap */
+  .order-meta { gap: 0.75rem; }
+  .order-card-header { flex-wrap: wrap; gap: 0.5rem; }
+
+  /* Cert download button */
+  .cert-download-btn { flex-wrap: wrap; gap: 0.75rem; }
+
+  /* Supplier card */
+  .supplier-card { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+
+  /* Header link text — hide label on mobile, keep icon */
+  .header-link-text { display: none; }
+
+  /* Quick-view button: hide on touch to avoid sticky hover */
+  .quickview-btn { display: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE ADDITIONS  (≤ 480px)
+   ════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  /* Container */
+  .container { padding: 0 0.875rem; }
+
+  /* Page content */
+  .page-content h1 { font-size: 22px; }
+  .page-content h2 { font-size: 16px; }
+
+  /* Stats bar compact */
+  .stat-number { font-size: 1.75rem; }
+  .stat-label { font-size: 12px; }
+  .stat-item { flex: 1 1 44%; padding: 0.4rem 0.5rem; }
+  .stats-bar { padding: 1.75rem 0; }
+
+  /* Product detail title smaller */
+  .product-detail-title { font-size: 20px; }
+
+  /* Auth box */
+  .auth-box { margin: 1rem auto 2rem; }
+
+  /* Footer main */
+  .footer-main { padding: 2rem 0; }
+  .footer-cta h2 { font-size: 20px; }
+  .footer-cta p { font-size: 14px; }
+
+  /* Page title */
+  .page-title { font-size: 20px; }
+
+  /* Section card (account) */
+  .section-card { padding: 1rem; }
+
+  /* Form section */
+  .form-section { padding: 1.25rem; }
+
+  /* Cart summary / checkout summary */
+  .cart-summary, .checkout-summary { padding: 1rem; }
+
+  /* About stats text */
+  .about-stats span { font-size: 22px !important; }
+  .about-stats small { font-size: 11px; }
+
+  /* bank info */
+  .bank-info { padding: 1rem; }
+
+  /* Tab buttons - smaller on tiny screens */
+  .tab-btn { padding: 8px 10px; font-size: 12px; }
+
+  /* Tier table */
+  .tier-box { padding: 1rem; }
+
+  /* Comparison card */
+  .comparison-card { padding: 1.5rem 1.25rem; }
+  .price-value { font-size: 28px; }
+
+  /* Steps - compact */
+  .step-card { padding: 1.5rem 1rem; }
+
+  /* Empty state */
+  .empty-icon { font-size: 48px; }
+  .empty-state { padding: 3rem 1rem; }
+  .empty-state h2 { font-size: 20px; }
 }
