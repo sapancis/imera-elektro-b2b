@@ -70,7 +70,9 @@ router.post('/hinzufuegen', async (req, res) => {
 
     req.session.cart[productId] = totalRequested;
     const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
-    res.json({ ok: true, cartCount, message: 'Produkt wurde in den Warenkorb gelegt.' });
+    req.session.save(() => {
+      res.json({ ok: true, cartCount, message: 'Produkt wurde in den Warenkorb gelegt.' });
+    });
   } catch { res.status(500).json({ ok: false, message: 'Serverfehler.' }); }
 });
 

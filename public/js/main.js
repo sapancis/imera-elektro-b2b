@@ -32,6 +32,36 @@ if (filterToggle && filterBody) {
   });
 }
 
+// ─── Cart Queue — aynı anda sadece 1 sepet isteği gider ──────────────────
+let cartBusy = false;
+const cartQueue = [];
+
+function processCartQueue() {
+  if (cartBusy || cartQueue.length === 0) return;
+  cartBusy = true;
+  const { productId, qty, csrf, btn, originalText } = cartQueue.shift();
+  fetch('/warenkorb/hinzufuegen', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `product_id=${productId}&qty=${qty}&_csrf=${encodeURIComponent(csrf)}`
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      document.querySelectorAll('.cart-badge').forEach(b => { b.textContent = data.cartCount; b.style.display = 'flex'; });
+      showToast(data.message);
+      btn.textContent = '✓ Hinzugefügt';
+      setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 1800);
+    } else {
+      btn.textContent = originalText;
+      btn.disabled = false;
+      showToast(data.message || 'Fehler aufgetreten.');
+    }
+  })
+  .catch(() => { btn.textContent = originalText; btn.disabled = false; })
+  .finally(() => { cartBusy = false; processCartQueue(); });
+}
+
 // Add to cart (shop page)
 document.querySelectorAll('.btn-add-cart').forEach(btn => {
   if (btn.disabled) return;
@@ -43,26 +73,8 @@ document.querySelectorAll('.btn-add-cart').forEach(btn => {
     const originalText = this.textContent;
     this.disabled = true;
     this.textContent = 'Wird hinzugefügt...';
-
-    fetch('/warenkorb/hinzufuegen', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `product_id=${productId}&qty=${qty}&_csrf=${encodeURIComponent(csrf)}`
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.ok) {
-        document.querySelectorAll('.cart-badge').forEach(b => { b.textContent = data.cartCount; b.style.display = 'flex'; });
-        showToast(data.message);
-        this.textContent = '✓ Hinzugefügt';
-        setTimeout(() => { this.textContent = originalText; this.disabled = false; }, 2000);
-      } else {
-        this.textContent = originalText;
-        this.disabled = false;
-        showToast(data.message || 'Fehler aufgetreten.');
-      }
-    })
-    .catch(() => { this.textContent = originalText; this.disabled = false; });
+    cartQueue.push({ productId, qty, csrf, btn: this, originalText });
+    processCartQueue();
   });
 });
 
