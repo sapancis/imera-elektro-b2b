@@ -504,7 +504,7 @@ img { max-width: 100%; display: block; }
 .text-gray { color: var(--text-muted); }
 
 /* ─── Cart Toast ─────────────────────────────────────────────────────────── */
-.cart-toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--black); color: white; padding: 1rem 1.5rem; border-radius: var(--radius-lg); font-size: 14px; z-index: 9999; box-shadow: var(--shadow-md); animation: slideIn .3s ease; }
+.cart-toast { position: fixed; top: 5rem; left: 50%; transform: translateX(-50%); background: var(--black); color: white; padding: 0.875rem 1.5rem; border-radius: var(--radius-lg); font-size: 14px; z-index: 99999; box-shadow: var(--shadow-md); animation: slideIn .3s ease; white-space: nowrap; max-width: 90vw; text-align: center; }
 @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 /* ─── Header Left ─────────────────────────────────────────────────────────── */
@@ -1855,7 +1855,7 @@ img {
   .btn-cookie-decline, .btn-cookie-accept { flex: 1; min-height: 44px; }
 
   /* Cart toast: avoid hiding content at bottom */
-  .cart-toast { bottom: 1rem; right: 1rem; left: 1rem; text-align: center; border-radius: 10px; }
+  .cart-toast { top: 4.5rem; left: 1rem; right: 1rem; transform: none; text-align: center; border-radius: 10px; white-space: normal; }
 
   /* WhatsApp float: already handled by existing rule */
 
