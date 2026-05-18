@@ -15,10 +15,10 @@
       ]; %>
       <% for (const [q, a] of faqs) { %>
       <div class="faq-item">
-        <button class="faq-question" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none'?'block':'none'; this.classList.toggle('open')">
+        <button class="faq-question" type="button">
           <span><%= q %></span><span class="faq-icon">+</span>
         </button>
-        <div class="faq-answer" style="display:none"><p><%= a %></p></div>
+        <div class="faq-answer"><p><%= a %></p></div>
       </div>
       <% } %>
     </div>
@@ -27,4 +27,20 @@
     </div>
   </div>
 </main>
+<script>
+document.querySelectorAll('.faq-question').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var answer = this.nextElementSibling;
+    var isOpen = answer.classList.contains('open');
+    // Tümünü kapat
+    document.querySelectorAll('.faq-answer').forEach(function(a) { a.classList.remove('open'); });
+    document.querySelectorAll('.faq-question').forEach(function(b) { b.classList.remove('open'); });
+    // Tıklananı aç/kapat
+    if (!isOpen) {
+      answer.classList.add('open');
+      this.classList.add('open');
+    }
+  });
+});
+</script>
 <%- include('../partials/footer') %>
