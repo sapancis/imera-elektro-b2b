@@ -32,9 +32,11 @@
 }
 #maintenance-overlay .wa:hover { background: #1ebe5a; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+/* Scroll kilidi */
+body.overlay-active { overflow: hidden; height: 100%; touch-action: none; }
 </style>
 
-<div id="maintenance-overlay">
+<div id="maintenance-overlay" aria-hidden="true">
   <div class="logo">IMERA <span>ELEKTRO</span></div>
   <div class="icon">⚡</div>
   <h1>Wir bereiten uns für Sie vor!</h1>
@@ -48,6 +50,18 @@
     Jetzt per WhatsApp anfragen
   </a>
 </div>
+<script>
+(function() {
+  var overlay = document.getElementById('maintenance-overlay');
+  if (!overlay) return;
+  // Body scroll kilitle
+  document.body.classList.add('overlay-active');
+  // Touch scroll engelle
+  function preventDefault(e) { e.preventDefault(); }
+  overlay.addEventListener('touchmove', preventDefault, { passive: false });
+  document.addEventListener('touchmove', preventDefault, { passive: false });
+})();
+</script>
 
 <main>
   <!-- Hero -->
