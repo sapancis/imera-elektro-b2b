@@ -753,7 +753,7 @@ img { max-width: 100%; display: block; }
 .wa-float:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(37,211,102,.55); opacity: 1; color: #fff; }
 .wa-float-label { letter-spacing: .01em; }
 @media (max-width: 600px) {
-  .wa-float { padding: 13px; border-radius: 50%; bottom: 140px; right: 16px; }
+  .wa-float { padding: 13px; border-radius: 50%; bottom: 20px; right: auto; left: 16px; }
   .wa-float-label { display: none; }
 }
 
