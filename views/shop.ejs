@@ -73,6 +73,14 @@
         </select>
       </div>
 
+      <!-- Trust Strip -->
+      <div class="trust-strip">
+        <div class="trust-item"><span class="trust-icon">📄</span><span>Rechnung für Geschäftskunden</span></div>
+        <div class="trust-item"><span class="trust-icon">↩</span><span>14 Tage Rückgaberecht</span></div>
+        <div class="trust-item"><span class="trust-icon">🇦🇹</span><span>Versand aus Österreich</span></div>
+        <div class="trust-item"><span class="trust-icon">✓</span><span>CE-zertifizierte Produkte</span></div>
+      </div>
+
       <div class="product-grid">
         <% for (const p of products) { %>
         <div class="product-card <%= p.stock === 0 ? 'product-card--sold-out' : '' %>">

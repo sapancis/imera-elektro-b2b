@@ -480,6 +480,28 @@ img { max-width: 100%; display: block; }
 .error-page h1 { font-size: 28px; font-weight: 600; margin-bottom: 0.75rem; }
 .error-page p { color: var(--text-muted); margin-bottom: 1.5rem; }
 
+/* ─── Trust Strip ────────────────────────────────────────────────────────── */
+.trust-strip { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; padding: 1rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 1.5rem 0; }
+.trust-item { display: flex; align-items: center; gap: 0.5rem; font-size: 13px; font-weight: 500; color: var(--text-muted); }
+.trust-icon { font-size: 16px; }
+@media (max-width: 600px) {
+  .trust-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1rem; }
+}
+
+/* ─── Services Section ───────────────────────────────────────────────────── */
+.services-section { padding: 3rem 0; background: var(--bg-card); }
+.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; }
+.service-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; text-align: center; }
+.service-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.service-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 0.5rem; }
+.service-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 1rem; }
+@media (max-width: 768px) { .services-grid { grid-template-columns: 1fr; } }
+
+/* ─── Footer Services Strip ──────────────────────────────────────────────── */
+.footer-services { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; padding: 0.75rem 0 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; }
+.footer-service-item { display: flex; align-items: center; gap: 0.4rem; font-size: 12px; color: rgba(255,255,255,0.6); }
+.footer-service-item span:first-child { font-size: 14px; }
+
 /* ─── Footer ─────────────────────────────────────────────────────────────── */
 .footer-cta { background: var(--black); color: white; padding: 4rem 0; text-align: center; }
 .footer-cta h2 { font-size: 32px; font-weight: 700; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
