@@ -145,8 +145,11 @@
 })();
 </script>
 <% if (locals.tawktoId && tawktoId) { %>
+<% var tawkPropId = tawktoId.split('/')[0]; %>
+<div id="tawk_<%= tawkPropId %>"></div>
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+Tawk_API.embedded='tawk_<%- tawkPropId %>';
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
 s1.async=true;
