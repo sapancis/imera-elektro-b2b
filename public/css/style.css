@@ -2127,3 +2127,18 @@ img {
   .footer-grid > div:nth-child(2),
   .footer-grid > div:nth-child(5) { grid-column: auto; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PAGE-CONTENT YATAY PADDING FIX
+   Mobil CSS'de .page-content { padding: Xrem 0 } yazılıyor ve
+   .container'ın yatay padding'ini sıfırlıyor — bu kural bunu düzeltir
+   ════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .container.page-content { padding-left: 1rem; padding-right: 1rem; }
+}
+@media (max-width: 600px) {
+  .container.page-content { padding-left: 0.875rem; padding-right: 0.875rem; }
+}
+@media (max-width: 360px) {
+  .container.page-content { padding-left: 0.75rem; padding-right: 0.75rem; }
+}
