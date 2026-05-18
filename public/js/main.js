@@ -152,6 +152,39 @@ document.querySelectorAll('.btn-merken').forEach(btn => {
   });
 });
 
+// ─── Sofort kaufen ────────────────────────────────────────────────────────
+document.querySelectorAll('.btn-sofort-kaufen').forEach(btn => {
+  if (btn.disabled) return;
+  btn.addEventListener('click', function() {
+    const productId = this.dataset.productId;
+    const csrf = this.dataset.csrf;
+    const qtyId = this.dataset.qtyId;
+    const qty = parseInt(document.getElementById(qtyId)?.value || 1);
+    const originalText = this.textContent;
+    this.disabled = true;
+    this.textContent = 'Weiterleitung...';
+    fetch('/warenkorb/hinzufuegen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `product_id=${productId}&qty=${qty}&_csrf=${encodeURIComponent(csrf)}`
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        window.location.href = '/warenkorb';
+      } else {
+        showToast(d.message || 'Fehler aufgetreten.');
+        this.disabled = false;
+        this.textContent = originalText;
+      }
+    })
+    .catch(() => {
+      this.disabled = false;
+      this.textContent = originalText;
+    });
+  });
+});
+
 // ─── Vergleichen (Comparison) ─────────────────────────────────────────────
 const vergleichBar = document.getElementById('vergleichBar');
 const vergleichCount = document.getElementById('vergleichCount');

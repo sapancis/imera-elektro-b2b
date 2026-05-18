@@ -91,7 +91,7 @@
 
             <% if (product.stock > 0) { %>
             <button class="btn-add-cart-lg btn-blue-full" id="addToCartBtn" data-product-id="<%= product.id %>" data-csrf="<%= csrfToken %>">In den Warenkorb legen</button>
-            <a href="/warenkorb" class="btn-add-cart-lg btn-outline-full" style="text-align:center;display:block;margin-top:8px;padding:14px;border:2px solid #1E3A8A;border-radius:8px;color:#1E3A8A;text-decoration:none;font-weight:500">Sofort kaufen (zum Warenkorb)</a>
+            <button class="btn-add-cart-lg btn-outline-full btn-sofort-kaufen" id="sofortKaufenBtn" data-product-id="<%= product.id %>" data-csrf="<%= csrfToken %>" style="margin-top:8px;background:transparent;border:2px solid #1E3A8A;color:#1E3A8A;cursor:pointer;border-radius:8px;padding:14px;font-weight:500;width:100%;font-size:1rem">Sofort kaufen</button>
             <% } else { %>
             <button class="btn-add-cart-lg btn-disabled" disabled>Nicht auf Lager</button>
             <% } %>
@@ -348,6 +348,33 @@ document.getElementById('addToCartBtn')?.addEventListener('click', function() {
       toast.style.display = 'block';
       setTimeout(() => toast.style.display = 'none', 3000);
     }
+  });
+});
+
+document.getElementById('sofortKaufenBtn')?.addEventListener('click', function() {
+  const qty = parseInt(document.getElementById('detailQty').value) || 1;
+  const csrf = this.dataset.csrf;
+  const btn = this;
+  btn.disabled = true;
+  btn.textContent = 'Weiterleitung...';
+  fetch('/warenkorb/hinzufuegen', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `product_id=${productId}&qty=${qty}&_csrf=${encodeURIComponent(csrf)}`
+  }).then(r => r.json()).then(d => {
+    if (d.ok) {
+      window.location.href = '/warenkorb';
+    } else {
+      const toast = document.getElementById('cartToast');
+      document.getElementById('cartToastMsg').textContent = d.message || 'Fehler aufgetreten.';
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 3000);
+      btn.disabled = false;
+      btn.textContent = 'Sofort kaufen';
+    }
+  }).catch(() => {
+    btn.disabled = false;
+    btn.textContent = 'Sofort kaufen';
   });
 });
 
