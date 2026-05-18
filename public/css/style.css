@@ -1467,3 +1467,139 @@ img { max-width: 100%; display: block; }
   .empty-state { padding: 3rem 1rem; }
   .empty-state h2 { font-size: 20px; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   SHOP — MOBILE KAPSAMLI DÜZELTME
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Tablet (≤ 900px) ─────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .shop-layout { grid-template-columns: 1fr; padding-top: 1rem; }
+  .shop-sidebar { position: static; }
+
+  /* Filter toggle */
+  .filter-toggle-btn {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 0.75rem 1rem;
+    background: var(--bg-card); border: 1.5px solid var(--border);
+    border-radius: var(--radius); font-size: 14px; font-weight: 600;
+    color: var(--text); cursor: pointer;
+  }
+  .filter-toggle-btn .ft-arrow { transition: transform .2s; }
+  .filter-toggle-btn.open .ft-arrow { transform: rotate(180deg); }
+  .filter-desktop-h { display: none; }
+  .shop-filter-body { display: none; padding-top: 0.5rem; }
+  .shop-filter-body.open { display: block; }
+  .filter-box { padding: 0; background: transparent; border: none; box-shadow: none; }
+  .filter-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem; margin-bottom: 0.5rem; }
+  .filter-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .filter-option { font-size: 14px; padding: 4px 0; }
+  .btn-reset { display: block; width: 100%; text-align: center; margin-top: 0.5rem; padding: 0.6rem; background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 13px; color: var(--text-muted); text-decoration: none; }
+
+  /* Toolbar */
+  .shop-toolbar { flex-direction: row; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+  .shop-count { font-size: 13px; color: var(--text-muted); }
+  .sort-select { font-size: 13px; padding: 6px 10px; }
+
+  /* Product grid — 2 cols */
+  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+}
+
+/* ── Mobile (≤ 768px) ────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .shop-layout { padding-top: 0.75rem; padding-bottom: 1.5rem; }
+  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.625rem; }
+
+  /* Product card */
+  .product-card { display: flex; flex-direction: column; }
+  .product-card-image { height: 140px; }
+  .product-card-body { padding: 0.625rem; display: flex; flex-direction: column; gap: 0; flex: 1; }
+
+  /* Product name */
+  .product-name { font-size: 12px; font-weight: 600; line-height: 1.35; margin-bottom: 2px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .product-name a { color: var(--text); }
+
+  /* SKU + description: gizle */
+  .product-sku { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+  .product-short-desc { display: none; }
+  .product-tag { font-size: 9px; margin-bottom: 3px; }
+
+  /* Tier table — kompakt, max 2 fiyat */
+  .tier-table { padding: 6px 8px; margin-bottom: 6px; }
+  .tier-table-label { font-size: 9px; margin-bottom: 4px; }
+  .tier-table-row { display: flex; gap: 4px; }
+  .tier-table-row > div { flex: 1; text-align: center; }
+  .tier-table-row > div:nth-child(n+3) { display: none; }
+  .tier-qty { font-size: 10px; color: var(--text-muted); }
+  .tier-price { font-size: 12px; font-weight: 700; }
+
+  /* Order row: qty üstte, buton altta */
+  .product-order-row { display: flex; flex-direction: column; gap: 5px; margin-bottom: 5px; }
+  .product-order-row .qty-input { width: 100%; padding: 6px 8px; font-size: 13px; text-align: center; }
+  .product-order-row .btn-add-cart,
+  .product-order-row .btn-disabled { width: 100%; padding: 7px 4px; font-size: 11px; font-weight: 600; text-align: center; }
+
+  /* Actions row: Merken + Vergleichen yan yana */
+  .product-actions-row { display: flex; flex-direction: row; gap: 4px; margin-bottom: 5px; }
+  .btn-merken, .btn-vergleichen { flex: 1; padding: 5px 4px; font-size: 10px; text-align: center; }
+
+  /* Stock */
+  .product-stock { font-size: 10px; margin-top: auto; padding-top: 4px; }
+
+  /* Badge */
+  .product-badge { font-size: 10px; padding: 3px 7px; }
+
+  /* Sold out overlay */
+  .sold-out-overlay span { font-size: 13px; }
+
+  /* Schnellbestellung */
+  .schnell-section { margin: 1rem 0; border-radius: var(--radius); }
+  .schnell-inner { padding: 1rem; }
+  .schnell-header { gap: 0.625rem; margin-bottom: 1rem; }
+  .schnell-header h2 { font-size: 15px; }
+  .schnell-header p { font-size: 12px; }
+  .schnell-icon { width: 32px; height: 32px; font-size: 16px; }
+  .schnell-col-labels { display: none; }
+  .schnell-line { grid-template-columns: 1fr 72px 34px; gap: 6px; }
+  .schnell-sku, .schnell-qty { padding: 8px 10px; font-size: 13px; }
+  .schnell-actions { flex-direction: column; gap: 6px; margin-top: 0.75rem; }
+  .schnell-add-btn, .schnell-submit-btn { width: 100%; padding: 10px; font-size: 14px; }
+
+  /* Quickview modal */
+  .qv-modal { width: 95vw; max-height: 90vh; overflow-y: auto; border-radius: 16px; }
+  .qv-body { grid-template-columns: 1fr; }
+  .qv-image-col { min-height: 180px; border-radius: 16px 16px 0 0; }
+  .qv-info-col { padding: 1.25rem; gap: 0.6rem; }
+  .qv-name { font-size: 17px; }
+  .qv-order-row { flex-wrap: wrap; }
+  .qv-order-row .btn-add-cart { width: 100%; }
+
+  /* Pagination */
+  .pagination { gap: 4px; flex-wrap: wrap; justify-content: center; }
+  .page-btn { padding: 7px 11px; font-size: 13px; }
+}
+
+/* ── Küçük Mobil (≤ 480px) ───────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .product-card-image { height: 120px; }
+  .product-card-body { padding: 0.5rem; }
+  .product-name { font-size: 11px; }
+  .tier-price { font-size: 11px; }
+  .product-order-row .btn-add-cart,
+  .product-order-row .btn-disabled { font-size: 10px; padding: 6px 2px; }
+  .btn-merken, .btn-vergleichen { font-size: 9px; padding: 4px 2px; }
+  .shop-toolbar { gap: 0.4rem; }
+  .sort-select { font-size: 12px; padding: 5px 8px; }
+}
+
+/* ── Çok Küçük (≤ 360px) ─────────────────────────────────────────────────── */
+@media (max-width: 360px) {
+  .product-grid { grid-template-columns: 1fr; }
+  .product-card-image { height: 160px; }
+  .product-card-body { padding: 0.75rem; }
+  .product-name { font-size: 13px; -webkit-line-clamp: 3; }
+  .product-order-row .btn-add-cart { font-size: 13px; padding: 8px; }
+  .btn-merken, .btn-vergleichen { font-size: 12px; padding: 6px; }
+}
