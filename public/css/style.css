@@ -1489,13 +1489,9 @@ img { max-width: 100%; display: block; }
   .filter-toggle-btn .ft-arrow { transition: transform .2s; }
   .filter-toggle-btn.open .ft-arrow { transform: rotate(180deg); }
   .filter-desktop-h { display: none; }
-  .shop-filter-body { display: none; padding-top: 0.5rem; }
-  .shop-filter-body.open { display: block; }
-  .filter-box { padding: 0; background: transparent; border: none; box-shadow: none; }
-  .filter-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem; margin-bottom: 0.5rem; }
-  .filter-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; }
-  .filter-option { font-size: 14px; padding: 4px 0; }
-  .btn-reset { display: block; width: 100%; text-align: center; margin-top: 0.5rem; padding: 0.6rem; background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 13px; color: var(--text-muted); text-decoration: none; }
+  .shop-filter-body { display: none; }
+  .shop-filter-body.open { display: block; padding-top: 0.75rem; }
+  .filter-box { padding: 0.875rem 1rem; border-radius: var(--radius); position: static; }
 
   /* Toolbar */
   .shop-toolbar { flex-direction: row; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
