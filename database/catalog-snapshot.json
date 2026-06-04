@@ -1,0 +1,978 @@
+{
+  "version": "catalog-v1",
+  "generated": "2026-06-04T14:51:23.158Z",
+  "products": [
+    {
+      "name": "Kabelbinder 200x4.5 schwarz UV-beständig",
+      "slug": "kabelbinder-200x45-schwarz-uv",
+      "sku": "TRK-200-45B",
+      "category_id": 6,
+      "description": "UV-beständige Kabelbinder aus Polyamid 6.6 in Schwarz, Maße 200x4,5mm. Ideal für Bündelung mittlerer Kabeldurchmesser in Innen- und Außenbereichen. Hohe Zugfestigkeit und Temperaturbeständigkeit.",
+      "specs": "[[\"Material\",\"Polyamid 6.6 (PA66)\"],[\"Länge\",\"200mm\"],[\"Breite\",\"4,5mm\"],[\"Farbe\",\"Schwarz (UV-beständig)\"],[\"Zugfestigkeit\",\"22 kg (220N)\"],[\"Temperaturbereich\",\"-40°C bis +85°C\"],[\"Zertifizierung\",\"CE, RoHS konform\"]]",
+      "applications": "[\"Elektroinstallationen im Innen- und Außenbereich\",\"Kabelbündelung in Schaltschränken\",\"Befestigung von Leitungen an Kabeltrassen\",\"Automotive und Maschinenbau\"]",
+      "market_price_min": 0.09,
+      "market_price_max": 0.2,
+      "stock": 2450,
+      "image": "/uploads/prod-kb200-1.jpg",
+      "images": "[\"/uploads/prod-kb200-2.jpg\",\"/uploads/prod-kb200-3.jpg\",\"/uploads/prod-kb200-4.jpg\"]",
+      "active": 1,
+      "featured": 1,
+      "badge": "BESTSELLER",
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 99,
+          "price": 0.025,
+          "label": "1–99 Stück"
+        },
+        {
+          "min_qty": 100,
+          "max_qty": 999,
+          "price": 0.022,
+          "label": "100–999 Stück"
+        },
+        {
+          "min_qty": 1000,
+          "max_qty": null,
+          "price": 0.019,
+          "label": "Ab 1.000 Stück"
+        }
+      ]
+    },
+    {
+      "name": "Kabelbinder 300x4.8 weiß",
+      "slug": "kabelbinder-300x48-weiss",
+      "sku": "TRK-300-48W",
+      "category_id": 6,
+      "description": "Lange Kabelbinder 300x4,8mm in Weiß aus Polyamid 6.6. Naturfarbene Ausführung für Innenanwendungen wo Ästhetik wichtig ist — z.B. Innenausbau, Haustechnik und IT-Installationen.",
+      "specs": "[[\"Material\",\"Polyamid 6.6\"],[\"Länge\",\"300mm\"],[\"Breite\",\"4,8mm\"],[\"Farbe\",\"Weiß\"],[\"Zugfestigkeit\",\"22 kg\"]]",
+      "applications": "[\"Innenbereich\",\"Bürotechnik\",\"Sichtbare Kabelführungen\"]",
+      "market_price_min": 0.11,
+      "market_price_max": 0.25,
+      "stock": 1800,
+      "image": "/uploads/prod-kb300-1.jpg",
+      "images": "[\"/uploads/prod-kb300-2.jpg\",\"/uploads/prod-kb300-3.jpg\",\"/uploads/prod-kb300-4.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 99,
+          "price": 0.028,
+          "label": "1–99 Stück"
+        },
+        {
+          "min_qty": 100,
+          "max_qty": 999,
+          "price": 0.024,
+          "label": "100–999 Stück"
+        },
+        {
+          "min_qty": 1000,
+          "max_qty": null,
+          "price": 0.02,
+          "label": "Ab 1.000 Stück"
+        }
+      ]
+    },
+    {
+      "name": "Edelstahl Kabelbinder 300x4.6 W4",
+      "slug": "edelstahl-kabelbinder-300x46-w4",
+      "sku": "EDL-300-46",
+      "category_id": 6,
+      "description": "Edelstahl-Kabelbinder 300x4,6mm aus Edelstahl 304 (W2) für anspruchsvolle Umgebungen. Erhöhte Zugfestigkeit und Korrosionsbeständigkeit. Geeignet für Außenanlagen, Industrie und den maritimen Bereich.",
+      "specs": "[[\"Material\",\"Edelstahl 316L (W4)\"],[\"Länge\",\"300mm\"],[\"Breite\",\"4,6mm\"],[\"Zugfestigkeit\",\"50 kg\"]]",
+      "applications": "[\"Offshore und Marine\",\"Lebensmittelindustrie\",\"Außenbereich\"]",
+      "market_price_min": 0.95,
+      "market_price_max": 2.1,
+      "stock": 0,
+      "image": "/uploads/prod-w4-300-1.jpg",
+      "images": "[\"/uploads/prod-w4-300-2.jpg\",\"/uploads/prod-w4-300-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 49,
+          "price": 0.45,
+          "label": "1–49 Stück"
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.39,
+          "label": "50–199 Stück"
+        },
+        {
+          "min_qty": 200,
+          "max_qty": null,
+          "price": 0.34,
+          "label": "Ab 200 Stück"
+        }
+      ]
+    },
+    {
+      "name": "Kabelverschraubung M20 IP68",
+      "slug": "kabelverschraubung-m20-ip68",
+      "sku": "KV-M20-IP68",
+      "category_id": 7,
+      "description": "Metrische Kabelverschraubung M20 aus Polyamid, IP68-zertifiziert. Klemmt Kabel-Ø 6–12mm. Hermetische Abdichtung und zuverlässige Zugentlastung gemäß DIN VDE 0619. Flachdichtung und Gegenmutter inklusive.",
+      "specs": "[[\"Material\",\"Polyamid PA66\"],[\"Gewinde\",\"M20\"],[\"Schutzklasse\",\"IP68\"],[\"Kabeleinführbereich\",\"6–12mm\"],[\"Farbe\",\"Grau RAL 7035\"]]",
+      "applications": "[\"Schaltschränke\",\"Maschinen und Anlagen\",\"Industriesteuerungen\"]",
+      "market_price_min": 0.32,
+      "market_price_max": 0.75,
+      "stock": 1840,
+      "image": "/uploads/prod-kvm20-1.jpg",
+      "images": "[\"/uploads/prod-kvm20-2.jpg\",\"/uploads/prod-kvm20-3.jpg\"]",
+      "active": 1,
+      "featured": 1,
+      "badge": "-42%",
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 99,
+          "price": 0.79,
+          "label": "1–99 Stück"
+        },
+        {
+          "min_qty": 100,
+          "max_qty": 499,
+          "price": 0.69,
+          "label": "100–499 Stück"
+        },
+        {
+          "min_qty": 500,
+          "max_qty": null,
+          "price": 0.59,
+          "label": "Ab 500 Stück"
+        }
+      ]
+    },
+    {
+      "name": "Kabelverschraubung M16 IP68",
+      "slug": "kabelverschraubung-m16-ip68",
+      "sku": "KV-M16-IP68",
+      "category_id": 7,
+      "description": "Kabelverschraubung M16 aus hochwertigem Polyamid, IP68-zertifiziert. Für Kabeldurchmesser Ø 4,5–10mm. Kompakte Bauform für enge Einbausituationen. Mit Gegenmutter und Dichtring.",
+      "specs": "[[\"Material\",\"Polyamid PA66\"],[\"Gewinde\",\"M16\"],[\"Schutzklasse\",\"IP68\"],[\"Kabeleinführbereich\",\"4–8mm\"]]",
+      "applications": "[\"Schaltschränke\",\"Steuerungsanlagen\",\"Industrie\"]",
+      "market_price_min": 0.25,
+      "market_price_max": 0.58,
+      "stock": 2100,
+      "image": "/uploads/prod-kvm16-1.jpg",
+      "images": "[\"/uploads/prod-kvm16-2.jpg\",\"/uploads/prod-kvm16-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 99,
+          "price": 0.65,
+          "label": "1–99 Stück"
+        },
+        {
+          "min_qty": 100,
+          "max_qty": 499,
+          "price": 0.56,
+          "label": "100–499 Stück"
+        },
+        {
+          "min_qty": 500,
+          "max_qty": null,
+          "price": 0.48,
+          "label": "Ab 500 Stück"
+        }
+      ]
+    },
+    {
+      "name": "Reihenklemme 2,5mm² grau",
+      "slug": "reihenklemme-25mm2-grau",
+      "sku": "RK-25-GR",
+      "category_id": 8,
+      "description": "Standard-Schrauben-Reihenklemme 2,5mm² in Grau. Nennspannung 800V AC, Nennstrom 24A. Zur Montage auf 35mm DIN-Schiene (Hutschiene). Versilberte Klemmschrauben für optimale Kontaktgabe.",
+      "specs": "[[\"Anschlussquerschnitt\",\"0,5–2,5mm²\"],[\"Anschlussart\",\"Push-in\"],[\"Nennspannung\",\"500V\"],[\"Nennstrom\",\"24A\"],[\"Norm\",\"IEC 60947-7-1\"]]",
+      "applications": "[\"Schaltschränke\",\"Steuerungstechnik\",\"Gebäudeautomation\"]",
+      "market_price_min": 0.18,
+      "market_price_max": 0.45,
+      "stock": 890,
+      "image": "/uploads/prod-kl25gr-1.jpg",
+      "images": "[\"/uploads/prod-kl25gr-2.jpg\",\"/uploads/prod-kl25gr-3.jpg\"]",
+      "active": 1,
+      "featured": 1,
+      "badge": "-40%",
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 49,
+          "price": 0.82,
+          "label": "1–49 Stück"
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.72,
+          "label": "50–199 Stück"
+        },
+        {
+          "min_qty": 200,
+          "max_qty": null,
+          "price": 0.62,
+          "label": "Ab 200 Stück"
+        }
+      ]
+    },
+    {
+      "name": "Reihenklemme 4mm² grau",
+      "slug": "reihenklemme-4mm2-grau",
+      "sku": "RK-40-GR",
+      "category_id": 8,
+      "description": "Reihenklemme 4mm² in Grau für höhere Leiterquerschnitte. Nennspannung 800V, Nennstrom 32A. Kompakte Bauform für dichte Klemmblöcke. Kompatibel mit Querverbindern und Standard-Beschriftungszubehör.",
+      "specs": "[[\"Anschlussquerschnitt\",\"0,5–4mm²\"],[\"Nennspannung\",\"500V\"],[\"Nennstrom\",\"32A\"]]",
+      "applications": "[\"Schaltschränke\",\"Energieverteilung\"]",
+      "market_price_min": 0.22,
+      "market_price_max": 0.52,
+      "stock": 450,
+      "image": "/uploads/prod-kl40gr-1.jpg",
+      "images": "[\"/uploads/prod-kl40gr-2.jpg\",\"/uploads/prod-kl40gr-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 49,
+          "price": 1.05,
+          "label": "1–49 Stück"
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.92,
+          "label": "50–199 Stück"
+        },
+        {
+          "min_qty": 200,
+          "max_qty": null,
+          "price": 0.79,
+          "label": "Ab 200 Stück"
+        }
+      ]
+    },
+    {
+      "name": "DIN-Schiene 35x7,5mm galvanisiert 1m",
+      "slug": "din-schiene-35x75-galv-1m",
+      "sku": "DIN-35-1M",
+      "category_id": 9,
+      "description": "Hutschiene 35x7,5mm galvanisiert, 1 Meter Länge. Normierte Montageschiene nach DIN EN 60715 (TH 35-7,5) für alle DIN-kompatiblen Komponenten. Gelocht für einfache Schraubbefestigung.",
+      "specs": "[[\"Abmessung\",\"35x7,5mm\"],[\"Länge\",\"1000mm\"],[\"Material\",\"Stahl galvanisiert\"],[\"Norm\",\"EN 60715 (TH35-7,5)\"]]",
+      "applications": "[\"Schaltschränke\",\"Verteiler\",\"Industrie\"]",
+      "market_price_min": 1.8,
+      "market_price_max": 4.2,
+      "stock": 320,
+      "image": "/uploads/prod-din-35-2m.jpg",
+      "images": "[]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 9,
+          "price": 2.2,
+          "label": "1–9 Stück"
+        },
+        {
+          "min_qty": 10,
+          "max_qty": 49,
+          "price": 1.9,
+          "label": "10–49 Stück"
+        },
+        {
+          "min_qty": 50,
+          "max_qty": null,
+          "price": 1.6,
+          "label": "Ab 50 Stück"
+        }
+      ]
+    },
+    {
+      "name": "Kabelbinder 100x2,5mm natur (100er Pack)",
+      "slug": "kabelbinder-100x2-5mm-natur-100er-pack-kb-100-25n",
+      "sku": "KB-100-25N",
+      "category_id": 6,
+      "description": "Standard-Kabelbinder aus hochwertigem Polyamid 6.6, natur (naturfarben/transparent). Ideal für Innenanwendungen im Schaltschrankbau und der Installationstechnik. Hergestellt nach DIN EN 62275.",
+      "specs": "[[\"Material\",\"Polyamid 6.6 (PA66)\"],[\"Länge\",\"100 mm\"],[\"Breite\",\"2,5 mm\"],[\"Farbe\",\"Natur (transparent)\"],[\"Max. Bündeldurchmesser\",\"22 mm\"],[\"Max. Zugkraft\",\"80 N\"],[\"Temperaturbereich\",\"-40°C bis +85°C\"],[\"Norm\",\"DIN EN 62275\"],[\"Verpackungseinheit\",\"100 Stück\"],[\"Zertifizierung\",\"CE, UL, RoHS-konform\"]]",
+      "applications": "[\"Schaltschrankbau und Elektroinstallation\",\"Kabelmanagement in EDV und Serverräumen\",\"Befestigung von Kabelbündeln in Fahrzeugen\",\"Allgemeine Industrie- und Handwerksanwendungen\"]",
+      "market_price_min": 0.04,
+      "market_price_max": 0.09,
+      "stock": 8500,
+      "image": "/uploads/prod-kb100-1.jpg",
+      "images": "[\"/uploads/prod-kb100-2.jpg\",\"/uploads/prod-kb100-3.jpg\",\"/uploads/prod-kb100-4.jpg\"]",
+      "active": 1,
+      "featured": 1,
+      "badge": "BESTSELLER",
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 99,
+          "price": 0.042,
+          "label": "Einzelpreis"
+        },
+        {
+          "min_qty": 100,
+          "max_qty": 499,
+          "price": 0.031,
+          "label": "Kleinkauf"
+        },
+        {
+          "min_qty": 500,
+          "max_qty": 1999,
+          "price": 0.024,
+          "label": "Großkauf"
+        },
+        {
+          "min_qty": 2000,
+          "max_qty": null,
+          "price": 0.018,
+          "label": "Industriemenge"
+        }
+      ]
+    },
+    {
+      "name": "Kabelbinder-Klebesockel 25x25mm natur (100er Pack)",
+      "slug": "kabelbinder-klebesockel-25x25mm-natur-100er-pack-ks-25-n",
+      "sku": "KS-25-N",
+      "category_id": 6,
+      "description": "Selbstklebende Befestigungssockel für Kabelbinder aus Nylon. Klebefläche mit doppelseitigem Klebeband für schnelle Montage ohne Bohren. Kompatibel mit Kabelbindern bis 4,8mm Breite.",
+      "specs": "[[\"Material\",\"Polyamid 6.6 (Sockel) + Acrylkleber\"],[\"Abmessungen\",\"25 x 25 mm\"],[\"Farbe\",\"Natur (weiß)\"],[\"Max. Kabelbinderbreite\",\"4,8 mm\"],[\"Haftkraft\",\"> 35 N (auf glattem Untergrund)\"],[\"Temperaturbereich\",\"-40°C bis +85°C\"],[\"Klebstoff\",\"doppelseitig 3M-Klebeband\"],[\"Verpackungseinheit\",\"100 Stück\"]]",
+      "applications": "[\"Kabelführung in Schaltschränken ohne Bohren\",\"Montage auf glatten Metallflächen\",\"Fahrzeuginnenraum und -karosserie\",\"Kunststoff- und Acrylglasplatten\"]",
+      "market_price_min": 0.08,
+      "market_price_max": 0.18,
+      "stock": 4800,
+      "image": "/uploads/prod-kleb-1.jpg",
+      "images": "[\"/uploads/prod-kleb-2.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 99,
+          "price": 0.078,
+          "label": null
+        },
+        {
+          "min_qty": 100,
+          "max_qty": 499,
+          "price": 0.059,
+          "label": null
+        },
+        {
+          "min_qty": 500,
+          "max_qty": 1999,
+          "price": 0.045,
+          "label": null
+        },
+        {
+          "min_qty": 2000,
+          "max_qty": null,
+          "price": 0.034,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "Edelstahl-Kabelbinder 200x4,6mm W4 (50er Pack)",
+      "slug": "edelstahl-kabelbinder-200x4-6mm-w4-50er-pack-edl-200-46-w4",
+      "sku": "EDL-200-46-W4",
+      "category_id": 6,
+      "description": "Hochwertige Kabelbinder aus Edelstahl 316 (W4) für extreme Bedingungen. Ideal für Offshore, Chemie, Lebensmittelindustrie und hoch korrosive Umgebungen. Unlösbar und manipulationssicher.",
+      "specs": "[[\"Material\",\"Edelstahl 316 (1.4401 / W4)\"],[\"Länge\",\"200 mm\"],[\"Breite\",\"4,6 mm\"],[\"Oberfläche\",\"Blank (unbehandelt)\"],[\"Max. Bündeldurchmesser\",\"45 mm\"],[\"Max. Zugkraft\",\"1120 N\"],[\"Temperaturbereich\",\"-80°C bis +538°C\"],[\"Korrosionsbeständigkeit\",\"Sehr hoch (Salzwasser, Säuren)\"],[\"Verpackungseinheit\",\"50 Stück\"],[\"Zertifizierung\",\"CE, ATEX-geeignet\"]]",
+      "applications": "[\"Offshore- und Marineanwendungen\",\"Chemische und petrochemische Industrie\",\"Lebensmittel- und Pharmaindustrie\",\"Hochtemperaturanwendungen bis 538°C\",\"ATEX-Bereiche und explosionsgefährdete Zonen\"]",
+      "market_price_min": 0.65,
+      "market_price_max": 1.4,
+      "stock": 1800,
+      "image": "/uploads/prod-w4-200-1.jpg",
+      "images": "[\"/uploads/prod-w4-200-2.jpg\",\"/uploads/prod-w4-200-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 49,
+          "price": 0.62,
+          "label": null
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.48,
+          "label": null
+        },
+        {
+          "min_qty": 200,
+          "max_qty": 499,
+          "price": 0.385,
+          "label": null
+        },
+        {
+          "min_qty": 500,
+          "max_qty": null,
+          "price": 0.295,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "Kabelverschraubung M25 IP68 grau (25er Pack)",
+      "slug": "kabelverschraubung-m25-ip68-grau-25er-pack-kv-m25-ip68",
+      "sku": "KV-M25-IP68",
+      "category_id": 7,
+      "description": "Robuste Kabelverschraubung M25 aus glasfaserverstärktem Polyamid für mittlere bis schwere Kabel. Zuverlässige Zugentlastung und hermetische Abdichtung. Ideal für raue Industrieumgebungen.",
+      "specs": "[[\"Material\",\"Polyamid PA6-GF (glasfaserverstärkt)\"],[\"Gewindegröße\",\"M25 x 1,5 mm\"],[\"Kabeleinführung\",\"Ø 13 – 18 mm\"],[\"Farbe\",\"Grau (RAL 7001)\"],[\"Schutzklasse\",\"IP68 (10m / 72h nach DIN EN 60529)\"],[\"Anzugsmoment\",\"8,0 Nm\"],[\"Temperaturbereich\",\"-20°C bis +100°C\"],[\"Zugentlastung\",\"Gemäß DIN VDE 0619\"],[\"Verpackungseinheit\",\"25 Stück\"]]",
+      "applications": "[\"Industriemaschinen und Automatisierung\",\"Pumpen und Antriebssysteme\",\"Outdoor-Schaltschränke und Verteiler\",\"Schiffbau und Off-Shore (mit passenden Dichteinsätzen)\"]",
+      "market_price_min": 0.45,
+      "market_price_max": 1.05,
+      "stock": 2100,
+      "image": "/uploads/prod-kvm25-1.jpg",
+      "images": "[\"/uploads/prod-kvm25-2.jpg\",\"/uploads/prod-kvm25-3.jpg\",\"/uploads/prod-kvm25-4.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 24,
+          "price": 0.445,
+          "label": null
+        },
+        {
+          "min_qty": 25,
+          "max_qty": 99,
+          "price": 0.345,
+          "label": null
+        },
+        {
+          "min_qty": 100,
+          "max_qty": 499,
+          "price": 0.272,
+          "label": null
+        },
+        {
+          "min_qty": 500,
+          "max_qty": null,
+          "price": 0.208,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "Reihenklemme 6mm² grau (50er Pack)",
+      "slug": "reihenklemme-6mm-grau-50er-pack-rk-60-gr",
+      "sku": "RK-60-GR",
+      "category_id": 8,
+      "description": "Hochwertige Schrauben-Reihenklemme für Leiterquerschnitte bis 6mm². Geeignet für Nennspannungen bis 800V AC. Optimale Kontaktgabe durch versilberte Klemmschrauben. Zur Montage auf 35mm DIN-Schiene (Hutschiene).",
+      "specs": "[[\"Nennquerschnitt\",\"6 mm²\"],[\"Leiterquerschnitt\",\"0,5 – 6 mm²\"],[\"Nennspannung\",\"800 V AC / 1000 V DC\"],[\"Nennstrom\",\"41 A\"],[\"Schrauben-Anzugsmoment\",\"1,2 Nm\"],[\"Farbe\",\"Grau\"],[\"Montage\",\"DIN-Schiene 35mm (EN 60715)\"],[\"Material Kontakt\",\"Versilberter Kupfer-Käfig\"],[\"Temperaturbereich\",\"-50°C bis +120°C\"],[\"Verpackungseinheit\",\"50 Stück\"],[\"Norm\",\"DIN EN 60947-7-1, VDE 0611-1\"]]",
+      "applications": "[\"Schaltschränke und Steuerkästen\",\"Energieverteiler und Sicherungskästen\",\"Industrieautomation und Prozessleittechnik\",\"Gebäudeleittechnik und Smart Building\"]",
+      "market_price_min": 0.28,
+      "market_price_max": 0.68,
+      "stock": 5200,
+      "image": "/uploads/prod-kl60gr-1.jpg",
+      "images": "[\"/uploads/prod-kl60gr-2.jpg\",\"/uploads/prod-kl60gr-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 49,
+          "price": 0.275,
+          "label": null
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.215,
+          "label": null
+        },
+        {
+          "min_qty": 200,
+          "max_qty": 999,
+          "price": 0.168,
+          "label": null
+        },
+        {
+          "min_qty": 1000,
+          "max_qty": null,
+          "price": 0.128,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "DIN-Schiene 35x7,5mm galvanisiert 2m",
+      "slug": "din-schiene-35x7-5mm-galvanisiert-2m-din-35-2m",
+      "sku": "DIN-35-2M",
+      "category_id": 9,
+      "description": "Hutschiene (DIN-Schiene) 35x7,5mm aus verzinktem Stahlband, 2 Meter Länge. Genormte Befestigungsschiene für Reihenklemmen, Sicherungsautomaten und alle DIN-kompatiblen Komponenten. Werkzeuglos kürzbar.",
+      "specs": "[[\"Abmessungen\",\"35 x 7,5 mm\"],[\"Länge\",\"2000 mm\"],[\"Material\",\"Stahlband verzinkt (Fe/Zn)\"],[\"Wandstärke\",\"1,0 mm\"],[\"Oberfläche\",\"Elektrolytisch verzinkt\"],[\"Lochung\",\"gelocht\"],[\"Befestigung\",\"M5-Schrauben durch Langlöcher\"],[\"Norm\",\"DIN EN 60715 (TH 35-7,5)\"]]",
+      "applications": "[\"Montage von Reihenklemmen und Sicherungsautomaten\",\"Schaltschrankbau und Verteilerbau\",\"Motorschutzschalter und Schütze\",\"SPS- und Buskomponenten\"]",
+      "market_price_min": 3.5,
+      "market_price_max": 7.8,
+      "stock": 680,
+      "image": "/uploads/prod-din-35-2m.jpg",
+      "images": "[]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 9,
+          "price": 3.45,
+          "label": null
+        },
+        {
+          "min_qty": 10,
+          "max_qty": 49,
+          "price": 2.85,
+          "label": null
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 2.28,
+          "label": null
+        },
+        {
+          "min_qty": 200,
+          "max_qty": null,
+          "price": 1.78,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "DIN-Schienen-Endhalter Stahl (10er Pack)",
+      "slug": "din-schienen-endhalter-stahl-10er-pack-din-eh-10",
+      "sku": "DIN-EH-10",
+      "category_id": 9,
+      "description": "Endhalter und Endstücke aus verzinktem Stahl für 35mm DIN-Schienen. Verhindert das seitliche Verrutschen von Reihenklemmen und Geräten. Einfache Befestigung durch Umklappen und Einschnappen.",
+      "specs": "[[\"Material\",\"Stahl verzinkt\"],[\"Kompatibilität\",\"DIN-Schiene 35x7,5mm und 35x15mm\"],[\"Befestigung\",\"Schnappbefestigung ohne Werkzeug\"],[\"Maße (BxH)\",\"8 x 37 mm\"],[\"Verpackungseinheit\",\"10 Stück (5 Paare)\"]]",
+      "applications": "[\"Abschluss von Klemmblöcken auf DIN-Schienen\",\"Verhinderung von Verlagerung bei Vibration\",\"Schaltschrankbau und Steuerkästen\"]",
+      "market_price_min": 0.15,
+      "market_price_max": 0.45,
+      "stock": 3800,
+      "image": "/uploads/prod-endh-1.jpg",
+      "images": "[\"/uploads/prod-endh-2.jpg\",\"/uploads/prod-endh-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 9,
+          "price": 0.148,
+          "label": null
+        },
+        {
+          "min_qty": 10,
+          "max_qty": 49,
+          "price": 0.115,
+          "label": null
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.088,
+          "label": null
+        },
+        {
+          "min_qty": 200,
+          "max_qty": null,
+          "price": 0.068,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "Kabelmarkierungsclip PVC weiß beschriftbar (200er Pack)",
+      "slug": "kabelmarkierungsclip-pvc-weiss-beschriftbar-200er-pack-km-pvc-w",
+      "sku": "KM-PVC-W",
+      "category_id": 10,
+      "description": "Selbstlaminierende Kabelmarkierungsclips aus PVC für Kabel-Ø 2–8mm. Aufsteckbar, mit Beschriftungsfeld (20x8mm) — ideal für Tuschestift, Laserdrucker oder Kugelschreiber. Temperaturbeständig bis 80°C.",
+      "specs": "[[\"Material\",\"PVC weich (beschriftbar)\"],[\"Farbe\",\"Weiß (beschriftbar)\"],[\"Kabel-Ø\",\"2 – 8 mm\"],[\"Beschriftungsfeld\",\"20 x 8 mm\"],[\"Befestigung\",\"Aufsteckbar (kein Kleber)\"],[\"Temperaturbereich\",\"-20°C bis +80°C\"],[\"Verpackungseinheit\",\"200 Stück\"],[\"Beschriftung\",\"Stift, Drucker oder Lasergravur\"]]",
+      "applications": "[\"Kabelidentifikation in Schaltschränken\",\"Leitungsmarkierung in Verteilern\",\"Anlagendokumentation nach DIN EN 81346\",\"Netzwerk- und IT-Infrastruktur\"]",
+      "market_price_min": 0.08,
+      "market_price_max": 0.22,
+      "stock": 2600,
+      "image": "/uploads/prod-besch-1.jpg",
+      "images": "[\"/uploads/prod-besch-2.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": null,
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": null,
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 99,
+          "price": 0.078,
+          "label": null
+        },
+        {
+          "min_qty": 100,
+          "max_qty": 499,
+          "price": 0.058,
+          "label": null
+        },
+        {
+          "min_qty": 500,
+          "max_qty": 1999,
+          "price": 0.045,
+          "label": null
+        },
+        {
+          "min_qty": 2000,
+          "max_qty": null,
+          "price": 0.034,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "Kabelverschraubung M32 IP68 grau (25er Pack)",
+      "slug": "kabelverschraubung-m32-ip68-grau-25er-pack-kv-m32-ip68",
+      "sku": "KV-M32-IP68",
+      "category_id": 7,
+      "description": "Metrische Kabelverschraubung M32x1,5 aus Polyamid PA6, IP68-zertifiziert. Klemmt Kabeldurchmesser 18–25 mm. Lieferung inkl. O-Ring und Gegenmutter. Ideal für den professionellen Schaltschrank- und Maschinenbau.",
+      "specs": "[[\"Material\",\"Polyamid PA6\"],[\"Gewindegröße\",\"M32 x 1,5 mm\"],[\"Kabeleinführung\",\"Ø 18 – 25 mm\"],[\"Farbe\",\"Grau\"],[\"Schutzklasse\",\"IP68\"],[\"Temperaturbereich\",\"-30°C bis +80°C\"],[\"Norm\",\"EN 62444, EN 60423\"],[\"Lieferumfang\",\"inkl. O-Ring und Gegenmutter\"],[\"Verpackungseinheit\",\"25 Stück\"]]",
+      "applications": "[\"Schaltschrankbau\",\"Maschinen- und Anlagenbau\",\"Außeninstallationen\",\"Feuchte und staubige Umgebungen\"]",
+      "market_price_min": 0.65,
+      "market_price_max": 1.45,
+      "stock": 1500,
+      "image": "/uploads/prod-kvm32-1.jpg",
+      "images": "[\"/uploads/prod-kvm32-2.jpg\",\"/uploads/prod-kvm32-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": "Metrische Kabelverschraubung M32 IP68 aus Polyamid PA6, für Kabel Ø 18–25 mm. Inkl. O-Ring und Gegenmutter.",
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": "1-2 Werktage",
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 24,
+          "price": 0.62,
+          "label": null
+        },
+        {
+          "min_qty": 25,
+          "max_qty": 99,
+          "price": 0.49,
+          "label": null
+        },
+        {
+          "min_qty": 100,
+          "max_qty": 499,
+          "price": 0.39,
+          "label": null
+        },
+        {
+          "min_qty": 500,
+          "max_qty": null,
+          "price": 0.3,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "Schutzleiter-Klemme PE 4mm² grün-gelb (50er Pack)",
+      "slug": "schutzleiter-klemme-pe-4mm-gruen-gelb-50er-pack-rk-pe-40",
+      "sku": "RK-PE-40",
+      "category_id": 8,
+      "description": "Federzug-Schutzleiterklemme 4 mm² für DIN-Schiene 35 mm. Direkter Erdungskontakt zur Hutschiene, werkzeuglose Bedienung durch Federzuganschluss. TSE/CE-zertifiziert.",
+      "specs": "[[\"Nennquerschnitt\",\"4 mm²\"],[\"Leiterquerschnitt\",\"0,5 – 6 mm²\"],[\"Nennspannung\",\"800 V AC\"],[\"Farbe\",\"Grün-Gelb (PE-Kennzeichnung)\"],[\"Montage\",\"DIN-Schiene 35mm, direkte Erdung\"],[\"Schutzfunktion\",\"Direktkontakt zur Hutschiene\"],[\"Material\",\"PA6.6 / Edelstahlfeder\"],[\"Temperaturbereich\",\"-40°C bis +140°C\"],[\"Verpackungseinheit\",\"50 Stück\"],[\"Norm\",\"DIN EN 60947-7-2, VDE 0611-1\"]]",
+      "applications": "[\"Schutzleiteranschluss in Schaltschränken\",\"Erdungsverbindungen in Verteilern\",\"Maschinen- und Anlagenbau (Sicherheitskreise)\",\"Erneuerbare Energieanlagen\"]",
+      "market_price_min": 0.26,
+      "market_price_max": 0.62,
+      "stock": 3500,
+      "image": "/uploads/prod-kl40pe-1.jpg",
+      "images": "[\"/uploads/prod-kl40pe-2.jpg\",\"/uploads/prod-kl40pe-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": "Schutzleiterklemme 4 mm² grün-gelb für DIN-Schiene, direkte Erdung über die Hutschiene.",
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": "1-2 Werktage",
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 49,
+          "price": 0.258,
+          "label": null
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.198,
+          "label": null
+        },
+        {
+          "min_qty": 200,
+          "max_qty": 999,
+          "price": 0.156,
+          "label": null
+        },
+        {
+          "min_qty": 1000,
+          "max_qty": null,
+          "price": 0.118,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "Reihenklemme 6mm² blau (N-Leiter) (50er Pack)",
+      "slug": "reihenklemme-6mm-blau-n-leiter-50er-pack-rk-60-bl",
+      "sku": "RK-60-BL",
+      "category_id": 8,
+      "description": "Federzugklemme 6 mm² für DIN-Schiene, blau gekennzeichnet für Neutralleiter (N). Werkzeuglose Bedienung durch Federzuganschluss. TSE/CE-zertifiziert.",
+      "specs": "[[\"Nennquerschnitt\",\"6 mm²\"],[\"Leiterquerschnitt\",\"0,5 – 6 mm²\"],[\"Nennspannung\",\"800 V AC / 1000 V DC\"],[\"Nennstrom\",\"41 A\"],[\"Farbe\",\"Blau (N-Leiter)\"],[\"Montage\",\"DIN-Schiene 35mm (EN 60715)\"],[\"Material\",\"PA6.6 / Edelstahlfeder\"],[\"Temperaturbereich\",\"-50°C bis +120°C\"],[\"Verpackungseinheit\",\"50 Stück\"],[\"Norm\",\"DIN EN 60947-7-1, VDE 0611-1\"]]",
+      "applications": "[\"N-Leiter-Anschlüsse in Schaltschränken\",\"Energieverteiler und Sicherungskästen\",\"Industrieautomation\",\"Gebäudeleittechnik\"]",
+      "market_price_min": 0.28,
+      "market_price_max": 0.68,
+      "stock": 3000,
+      "image": "/uploads/prod-kl60bl-1.jpg",
+      "images": "[\"/uploads/prod-kl60bl-2.jpg\",\"/uploads/prod-kl60bl-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": "Federzug-Reihenklemme 6 mm² in Blau für N-Leiter-Anschlüsse, DIN-Schiene 35 mm.",
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": "1-2 Werktage",
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 49,
+          "price": 0.275,
+          "label": null
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.215,
+          "label": null
+        },
+        {
+          "min_qty": 200,
+          "max_qty": 999,
+          "price": 0.168,
+          "label": null
+        },
+        {
+          "min_qty": 1000,
+          "max_qty": null,
+          "price": 0.128,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "Trennklemme 4mm² grau mit Trennmesser (50er Pack)",
+      "slug": "trennklemme-4mm-grau-mit-trennmesser-50er-pack-tk-4-gr",
+      "sku": "TK-4-GR",
+      "category_id": 8,
+      "description": "Reihen-Trennklemme 4 mm² mit Trennmesser zum einfachen Auftrennen von Stromkreisen für Messung und Wartung. Für DIN-Schiene 35 mm, TSE/CE-zertifiziert.",
+      "specs": "[[\"Nennquerschnitt\",\"4 mm²\"],[\"Leiterquerschnitt\",\"0,5 – 4 mm²\"],[\"Nennspannung\",\"800 V AC\"],[\"Nennstrom\",\"32 A\"],[\"Funktion\",\"Trennmesser / Messertrennung\"],[\"Farbe\",\"Grau\"],[\"Montage\",\"DIN-Schiene 35mm (EN 60715)\"],[\"Material\",\"PA6.6\"],[\"Temperaturbereich\",\"-40°C bis +120°C\"],[\"Verpackungseinheit\",\"50 Stück\"],[\"Norm\",\"DIN EN 60947-7-1\"]]",
+      "applications": "[\"Mess- und Prüfstellen in Schaltschränken\",\"Trennstellen für Wartung\",\"Signal- und Steuerkreise\",\"Prüf- und Servicepunkte\"]",
+      "market_price_min": 0.55,
+      "market_price_max": 1.3,
+      "stock": 1200,
+      "image": "/uploads/prod-trenn-1.jpg",
+      "images": "[\"/uploads/prod-trenn-2.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": "Trennklemme 4 mm² mit integriertem Trennmesser zur Stromkreis-Unterbrechung, DIN-Schiene 35 mm.",
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": "1-2 Werktage",
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 49,
+          "price": 0.54,
+          "label": null
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.42,
+          "label": null
+        },
+        {
+          "min_qty": 200,
+          "max_qty": 999,
+          "price": 0.33,
+          "label": null
+        },
+        {
+          "min_qty": 1000,
+          "max_qty": null,
+          "price": 0.25,
+          "label": null
+        }
+      ]
+    }
+  ]
+}

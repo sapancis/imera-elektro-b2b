@@ -157,6 +157,15 @@ app.use((err, req, res, next) => {
   }
 })();
 
+// ─── Katalog Migration: snapshot'a göre ürünleri senkronize et (tek seferlik) ──
+(async function runCatalogMigration() {
+  try {
+    await require('./database/migrate-catalog')();
+  } catch (e) {
+    console.error('Katalog migration Fehler:', e.message);
+  }
+})();
+
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`\n✓ Imera Elektro läuft auf http://localhost:${PORT}`);
