@@ -10,15 +10,17 @@ const COLS = ['name','slug','sku','category_id','description','specs','applicati
   'market_price_min','market_price_max','stock','image','images','active','featured','badge',
   'short_description','weight','dimensions','min_order_qty','delivery_time','meta_title','meta_description','size'];
 
-async function migrateCatalog() {
+async function migrateCatalog(opts = {}) {
   const snapPath = path.join(__dirname, 'catalog-snapshot.json');
-  if (!fs.existsSync(snapPath)) return;
+  if (!fs.existsSync(snapPath)) return { skipped: 'snapshot yok' };
   const snap = JSON.parse(fs.readFileSync(snapPath, 'utf-8'));
-  if (!snap.products || !snap.products.length) return;
+  if (!snap.products || !snap.products.length) return { skipped: 'ürün yok' };
 
-  // Sürüm bayrağı — bu sürüm zaten uygulanmışsa atla
-  const flag = await db.prepare('SELECT value FROM settings WHERE key=?').get('catalog_version');
-  if (flag && flag.value === snap.version) return;
+  // Sürüm bayrağı — bu sürüm zaten uygulanmışsa atla (force ile baypas)
+  if (!opts.force) {
+    const flag = await db.prepare('SELECT value FROM settings WHERE key=?').get('catalog_version');
+    if (flag && flag.value === snap.version) return { skipped: 'zaten uygulanmış', version: snap.version };
+  }
 
   console.log('⏳ Katalog migration başlıyor:', snap.version);
 
@@ -79,6 +81,7 @@ async function migrateCatalog() {
     .run('catalog_version', snap.version);
 
   console.log(`✓ Katalog migration tamam: ${inserted} eklendi, ${updated} güncellendi, ${deleted} silindi`);
+  return { inserted, updated, deleted, version: snap.version };
 }
 
 module.exports = migrateCatalog;

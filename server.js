@@ -104,6 +104,21 @@ app.use('/merkliste', require('./routes/merkliste'));
 app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
+// ─── Tek seferlik katalog migration endpoint'i (token korumalı) ─────────────
+// Serverless'ta arka plan işi donduğu için migration'ı istek içinde await ederek
+// güvenilir şekilde tamamlar. Çalıştır: /__migrate-catalog?token=imera-cat-sync-7h3k9
+app.get('/__migrate-catalog', async (req, res) => {
+  if (req.query.token !== 'imera-cat-sync-7h3k9') return res.status(403).json({ ok: false });
+  try {
+    const result = await require('./database/migrate-catalog')({ force: req.query.force === '1' });
+    const db = require('./database/db');
+    const cnt = await db.prepare('SELECT COUNT(*) c FROM products').get();
+    res.json({ ok: true, result, productCount: cnt.c });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message, stack: e.stack });
+  }
+});
+
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.locals.currentPath = res.locals.currentPath || req.path;
@@ -157,14 +172,8 @@ app.use((err, req, res, next) => {
   }
 })();
 
-// ─── Katalog Migration: snapshot'a göre ürünleri senkronize et (tek seferlik) ──
-(async function runCatalogMigration() {
-  try {
-    await require('./database/migrate-catalog')();
-  } catch (e) {
-    console.error('Katalog migration Fehler:', e.message);
-  }
-})();
+// Not: Katalog migration artık /__migrate-catalog endpoint'i ile çalışıyor
+// (serverless'ta module-load arka plan işi donduğu için istek içinde await edilir).
 
 if (require.main === module) {
   app.listen(PORT, () => {
