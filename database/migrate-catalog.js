@@ -46,11 +46,14 @@ async function migrateCatalog(opts = {}) {
     if (await safeRun('DELETE FROM products WHERE id=?', [r.id])) deleted++;
   }
 
-  // 2) Snapshot'taki her ürünü upsert et (sku'ya göre) + tier'ları yeniden kur
+  // 2) Snapshot'taki her ürünü upsert et (sku'ya göre)
+  // Tier'lar yalnızca YENİ eklenen ürünler için kurulur — mevcut ürünlerin tier'ları
+  // zaten orijinal seed'den doğru (round-trip sayısını azaltır, timeout'tan kaçınır).
   let inserted = 0, updated = 0;
   for (const p of snap.products) {
     const vals = COLS.map(c => (p[c] === undefined ? null : p[c]));
     let pid = bySku.get(p.sku);
+    let isNew = false;
     if (pid != null) {
       const setStr = COLS.map(c => c + '=?').join(', ');
       await safeRun(`UPDATE products SET ${setStr}, updated_at=datetime('now') WHERE id=?`, [...vals, pid]);
@@ -61,18 +64,21 @@ async function migrateCatalog(opts = {}) {
         const ph = COLS.map(() => '?').join(',');
         const r = await db.prepare(`INSERT INTO products (${colStr}) VALUES (${ph})`).run(...vals);
         pid = Number(r.lastInsertRowid);
-        inserted++;
+        inserted++; isNew = true;
       } catch (e) {
-        // Muhtemelen eşzamanlı insert (UNIQUE) — mevcut id'yi al
+        // Muhtemelen eşzamanlı insert (UNIQUE) — mevcut id'yi al + tier'ları kur
         const row = await db.prepare('SELECT id FROM products WHERE sku=?').get(p.sku);
-        pid = row ? Number(row.id) : null;
+        pid = row ? Number(row.id) : null; isNew = true;
       }
     }
     if (pid == null) continue;
-    await safeRun('DELETE FROM product_tiers WHERE product_id=?', [pid]);
-    for (const t of (p.tiers || [])) {
-      await safeRun('INSERT INTO product_tiers (product_id, min_qty, max_qty, price, label) VALUES (?,?,?,?,?)',
-        [pid, t.min_qty, t.max_qty, t.price, t.label]);
+    // Tier kontrolü: yeni üründe ya da tier'ı hiç yoksa kur
+    if (isNew || opts.rebuildAllTiers) {
+      await safeRun('DELETE FROM product_tiers WHERE product_id=?', [pid]);
+      for (const t of (p.tiers || [])) {
+        await safeRun('INSERT INTO product_tiers (product_id, min_qty, max_qty, price, label) VALUES (?,?,?,?,?)',
+          [pid, t.min_qty, t.max_qty, t.price, t.label]);
+      }
     }
   }
 
