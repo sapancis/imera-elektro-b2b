@@ -1,6 +1,6 @@
 {
-  "version": "catalog-v2",
-  "generated": "2026-06-04T14:51:23.158Z",
+  "version": "catalog-v3",
+  "generated": "2026-06-04T18:18:03.589Z",
   "products": [
     {
       "name": "Kabelbinder 200x4.5 schwarz UV-beständig",
@@ -669,10 +669,10 @@
       ]
     },
     {
-      "name": "DIN-Schienen-Endhalter Stahl (10er Pack)",
-      "slug": "din-schienen-endhalter-stahl-10er-pack-din-eh-10",
+      "name": "Reihenklemmen-Endhalter Stahl (10er Pack)",
+      "slug": "reihenklemmen-endhalter-stahl-10er-pack-din-eh-10",
       "sku": "DIN-EH-10",
-      "category_id": 9,
+      "category_id": 8,
       "description": "Endhalter und Endstücke aus verzinktem Stahl für 35mm DIN-Schienen. Verhindert das seitliche Verrutschen von Reihenklemmen und Geräten. Einfache Befestigung durch Umklappen und Einschnappen.",
       "specs": "[[\"Material\",\"Stahl verzinkt\"],[\"Kompatibilität\",\"DIN-Schiene 35x7,5mm und 35x15mm\"],[\"Befestigung\",\"Schnappbefestigung ohne Werkzeug\"],[\"Maße (BxH)\",\"8 x 37 mm\"],[\"Verpackungseinheit\",\"10 Stück (5 Paare)\"]]",
       "applications": "[\"Abschluss von Klemmblöcken auf DIN-Schienen\",\"Verhinderung von Verlagerung bei Vibration\",\"Schaltschrankbau und Steuerkästen\"]",
@@ -970,6 +970,57 @@
           "min_qty": 1000,
           "max_qty": null,
           "price": 0.25,
+          "label": null
+        }
+      ]
+    },
+    {
+      "name": "Schutzleiter-Klemme PE 6mm² grün-gelb (50er Pack)",
+      "slug": "schutzleiter-klemme-pe-6mm-gruen-gelb-50er-pack-rk-pe-60",
+      "sku": "RK-PE-60",
+      "category_id": 8,
+      "description": "Federzug-Schutzleiterklemme 6 mm² für DIN-Schiene 35 mm. Direkter Erdungskontakt zur Hutschiene, werkzeuglose Bedienung. TSE/CE-zertifiziert.",
+      "specs": "[[\"Nennquerschnitt\",\"6 mm²\"],[\"Leiterquerschnitt\",\"0,5 – 10 mm²\"],[\"Nennspannung\",\"800 V AC\"],[\"Farbe\",\"Grün-Gelb (PE-Kennzeichnung)\"],[\"Montage\",\"DIN-Schiene 35mm, direkte Erdung\"],[\"Schutzfunktion\",\"Direktkontakt zur Hutschiene\"],[\"Material\",\"PA6.6 / Edelstahlfeder\"],[\"Temperaturbereich\",\"-40°C bis +140°C\"],[\"Verpackungseinheit\",\"50 Stück\"],[\"Norm\",\"DIN EN 60947-7-2, VDE 0611-1\"]]",
+      "applications": "[\"Schutzleiteranschluss in Schaltschränken\",\"Erdungsverbindungen in Verteilern\",\"Maschinen- und Anlagenbau (Sicherheitskreise)\",\"Erneuerbare Energieanlagen\"]",
+      "market_price_min": 0.3,
+      "market_price_max": 0.72,
+      "stock": 3000,
+      "image": "/uploads/prod-kl60gr-1.jpg",
+      "images": "[\"/uploads/prod-kl60gr-2.jpg\",\"/uploads/prod-kl60gr-3.jpg\"]",
+      "active": 1,
+      "featured": 0,
+      "badge": null,
+      "short_description": "Schutzleiterklemme 6 mm² grün-gelb für DIN-Schiene, direkte Erdung über die Hutschiene.",
+      "weight": null,
+      "dimensions": null,
+      "min_order_qty": 1,
+      "delivery_time": "1-2 Werktage",
+      "meta_title": null,
+      "meta_description": null,
+      "size": null,
+      "tiers": [
+        {
+          "min_qty": 1,
+          "max_qty": 49,
+          "price": 0.295,
+          "label": null
+        },
+        {
+          "min_qty": 50,
+          "max_qty": 199,
+          "price": 0.232,
+          "label": null
+        },
+        {
+          "min_qty": 200,
+          "max_qty": 999,
+          "price": 0.182,
+          "label": null
+        },
+        {
+          "min_qty": 1000,
+          "max_qty": null,
+          "price": 0.138,
           "label": null
         }
       ]

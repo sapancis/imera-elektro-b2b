@@ -104,6 +104,19 @@ app.use('/merkliste', require('./routes/merkliste'));
 app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
+// ─── Tek seferlik katalog migration endpoint'i (token korumalı) ─────────────
+app.get('/__migrate-catalog', async (req, res) => {
+  if (req.query.token !== 'imera-cat-sync-7h3k9') return res.status(403).json({ ok: false });
+  try {
+    const result = await require('./database/migrate-catalog')({ force: req.query.force === '1' });
+    const db = require('./database/db');
+    const cnt = await db.prepare('SELECT COUNT(*) c FROM products').get();
+    res.json({ ok: true, result, productCount: cnt.c });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.locals.currentPath = res.locals.currentPath || req.path;
