@@ -26,17 +26,22 @@ async function migrateCatalog() {
   const existing = await db.prepare('SELECT id, sku FROM products').all();
   const bySku = new Map(existing.map(r => [r.sku, r.id]));
 
+  // Yardımcı: hata olursa yoksay (Turso şemasında eksik tablo/kolon olabilir)
+  async function safeRun(sql, args) {
+    try { await db.prepare(sql).run(...args); return true; }
+    catch (e) { console.warn('  (atlandı) ' + sql.slice(0, 40) + ' → ' + e.message); return false; }
+  }
+
   // 1) Snapshot'ta olmayan ürünleri sil (sipariş geçmişi product_name/sku'da korunur)
   let deleted = 0;
   for (const r of existing) {
     if (snapSkus.has(r.sku)) continue;
-    await db.prepare('UPDATE order_items SET product_id=NULL WHERE product_id=?').run(r.id);
-    await db.prepare('DELETE FROM cart_items WHERE product_id=?').run(r.id);
-    await db.prepare('DELETE FROM merkliste WHERE product_id=?').run(r.id);
-    await db.prepare('DELETE FROM reviews WHERE product_id=?').run(r.id);
-    await db.prepare('DELETE FROM product_tiers WHERE product_id=?').run(r.id);
-    await db.prepare('DELETE FROM products WHERE id=?').run(r.id);
-    deleted++;
+    await safeRun('UPDATE order_items SET product_id=NULL WHERE product_id=?', [r.id]);
+    await safeRun('DELETE FROM cart_items WHERE product_id=?', [r.id]);
+    await safeRun('DELETE FROM merkliste WHERE product_id=?', [r.id]);
+    await safeRun('DELETE FROM reviews WHERE product_id=?', [r.id]);
+    await safeRun('DELETE FROM product_tiers WHERE product_id=?', [r.id]);
+    if (await safeRun('DELETE FROM products WHERE id=?', [r.id])) deleted++;
   }
 
   // 2) Snapshot'taki her ürünü upsert et (sku'ya göre) + tier'ları yeniden kur
@@ -46,19 +51,26 @@ async function migrateCatalog() {
     let pid = bySku.get(p.sku);
     if (pid != null) {
       const setStr = COLS.map(c => c + '=?').join(', ');
-      await db.prepare(`UPDATE products SET ${setStr}, updated_at=datetime('now') WHERE id=?`).run(...vals, pid);
+      await safeRun(`UPDATE products SET ${setStr}, updated_at=datetime('now') WHERE id=?`, [...vals, pid]);
       updated++;
     } else {
-      const colStr = COLS.join(', ');
-      const ph = COLS.map(() => '?').join(',');
-      const r = await db.prepare(`INSERT INTO products (${colStr}) VALUES (${ph})`).run(...vals);
-      pid = Number(r.lastInsertRowid);
-      inserted++;
+      try {
+        const colStr = COLS.join(', ');
+        const ph = COLS.map(() => '?').join(',');
+        const r = await db.prepare(`INSERT INTO products (${colStr}) VALUES (${ph})`).run(...vals);
+        pid = Number(r.lastInsertRowid);
+        inserted++;
+      } catch (e) {
+        // Muhtemelen eşzamanlı insert (UNIQUE) — mevcut id'yi al
+        const row = await db.prepare('SELECT id FROM products WHERE sku=?').get(p.sku);
+        pid = row ? Number(row.id) : null;
+      }
     }
-    await db.prepare('DELETE FROM product_tiers WHERE product_id=?').run(pid);
+    if (pid == null) continue;
+    await safeRun('DELETE FROM product_tiers WHERE product_id=?', [pid]);
     for (const t of (p.tiers || [])) {
-      await db.prepare('INSERT INTO product_tiers (product_id, min_qty, max_qty, price, label) VALUES (?,?,?,?,?)')
-        .run(pid, t.min_qty, t.max_qty, t.price, t.label);
+      await safeRun('INSERT INTO product_tiers (product_id, min_qty, max_qty, price, label) VALUES (?,?,?,?,?)',
+        [pid, t.min_qty, t.max_qty, t.price, t.label]);
     }
   }
 
