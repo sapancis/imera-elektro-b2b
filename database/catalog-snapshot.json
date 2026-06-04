@@ -1,6 +1,6 @@
 {
-  "version": "catalog-v5",
-  "generated": "2026-06-04T20:04:26.327Z",
+  "version": "catalog-v6",
+  "generated": "2026-06-04T20:08:20.787Z",
   "products": [
     {
       "name": "Kabelbinder 200x4.5 schwarz UV-beständig",
@@ -50,7 +50,7 @@
     {
       "name": "Kabelbinder 300x4.8 schwarz",
       "slug": "kabelbinder-300x48-schwarz",
-      "sku": "TRK-300-48W",
+      "sku": "TRK-300-48B",
       "category_id": 6,
       "description": "Lange Kabelbinder 300x4,8mm in Schwarz aus Polyamid 6.6, UV-beständig. Für Innen- und Außenanwendungen — z.B. Elektroinstallation, Schaltschrankbau und IT-Installationen.",
       "specs": "[[\"Material\",\"Polyamid 6.6\"],[\"Länge\",\"300mm\"],[\"Breite\",\"4,8mm\"],[\"Farbe\",\"Schwarz (UV-beständig)\"],[\"Zugfestigkeit\",\"22 kg\"]]",
@@ -364,8 +364,8 @@
     },
     {
       "name": "Kabelbinder 100x2,5mm schwarz (100er Pack)",
-      "slug": "kabelbinder-100x2-5mm-schwarz-100er-pack-kb-100-25n",
-      "sku": "KB-100-25N",
+      "slug": "kabelbinder-100x2-5mm-schwarz-100er-pack-kb-100-25b",
+      "sku": "KB-100-25B",
       "category_id": 6,
       "description": "Standard-Kabelbinder aus hochwertigem Polyamid 6.6, schwarz und UV-beständig. Ideal für Innen- und Außenanwendungen im Schaltschrankbau und der Installationstechnik. Hergestellt nach DIN EN 62275.",
       "specs": "[[\"Material\",\"Polyamid 6.6 (PA66)\"],[\"Länge\",\"100 mm\"],[\"Breite\",\"2,5 mm\"],[\"Farbe\",\"Schwarz (UV-beständig)\"],[\"Max. Bündeldurchmesser\",\"22 mm\"],[\"Max. Zugkraft\",\"80 N\"],[\"Temperaturbereich\",\"-40°C bis +85°C\"],[\"Norm\",\"DIN EN 62275\"],[\"Verpackungseinheit\",\"100 Stück\"],[\"Zertifizierung\",\"CE, UL, RoHS-konform\"]]",
