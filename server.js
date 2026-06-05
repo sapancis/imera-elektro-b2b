@@ -26,6 +26,9 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://embed.tawk.to', 'https://*.tawk.to'],
+      // Inline event handler'lara (onchange/onclick — filtreler, galeri, sort) izin ver.
+      // Helmet varsayılanı script-src-attr 'none' bunları bloklar.
+      scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com', 'https://*.tawk.to'],
       fontSrc: ["'self'", 'fonts.gstatic.com', 'https://*.tawk.to'],
       imgSrc: ["'self'", 'data:', 'blob:', 'https://www.google-analytics.com', 'https://www.googletagmanager.com', 'https://*.tawk.to'],
