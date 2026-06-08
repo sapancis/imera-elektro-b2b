@@ -78,12 +78,16 @@ router.get('/', async (req, res) => {
     const totalPages = Math.ceil(total / perPage);
     const sizesRows = await db.prepare("SELECT DISTINCT size FROM products WHERE active=1 AND size IS NOT NULL AND size != '' ORDER BY size").all();
     const sizes = sizesRows.map(r => r.size);
+    // "Alle" sayısı: filtreden bağımsız tüm aktif ürün sayısı (kategori sayılarıyla tutarlı)
+    const allRow = await db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get();
+    const allCount = allRow.n;
 
     res.render('shop', {
       title: 'Shop',
       products,
       categories,
       sizes,
+      allCount,
       filters: { kategorie, preis, sort, verfuegbar, groesse },
       pagination: { page: parseInt(page), totalPages, total },
     });
