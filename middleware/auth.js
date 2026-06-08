@@ -25,16 +25,16 @@ async function setLocals(req, res, next) {
   res.locals.flash = req.session.flash || null;
   delete req.session.flash;
 
-  // Tawk.to & Merkliste count
+  // Tawk.to, GA, Social & Merkliste count — settings TEK cache'li sorguda
   try {
     const db = require('../database/db');
-    const tawkId = await db.prepare("SELECT value FROM settings WHERE key='tawkto_property_id'").get();
-    res.locals.tawktoId = tawkId?.value || '';
-    const gaRow = await db.prepare("SELECT value FROM settings WHERE key='google_analytics_id'").get();
-    res.locals.gaId = gaRow?.value || '';
-    res.locals.socialInstagram = (await db.prepare("SELECT value FROM settings WHERE key='social_instagram'").get())?.value || '';
-    res.locals.socialTiktok    = (await db.prepare("SELECT value FROM settings WHERE key='social_tiktok'").get())?.value || '';
-    res.locals.socialLinkedin  = (await db.prepare("SELECT value FROM settings WHERE key='social_linkedin'").get())?.value || '';
+    const { settingsMap } = require('../utils/perf');
+    const s = await settingsMap(db);
+    res.locals.tawktoId        = s.tawkto_property_id || '';
+    res.locals.gaId            = s.google_analytics_id || '';
+    res.locals.socialInstagram = s.social_instagram || '';
+    res.locals.socialTiktok    = s.social_tiktok || '';
+    res.locals.socialLinkedin  = s.social_linkedin || '';
     if (req.session.userId) {
       const mc = await db.prepare('SELECT COUNT(*) as c FROM merkliste WHERE user_id=?').get(req.session.userId);
       res.locals.merklisteCount = mc?.c || 0;

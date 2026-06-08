@@ -75,11 +75,14 @@ if (!process.env.VERCEL) {
   const uploadsDir = path.join(__dirname, 'public/uploads');
   if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 }
-app.use(express.static(path.join(__dirname, 'public')));
+// Görseller stabil → uzun cache (CDN + tarayıcı). CSS/JS → kısa cache (deploy'da hızlı yansır).
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads'), { maxAge: '7d' }));
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: '10m' }));
 
 // ─── View Engine ──────────────────────────────────────────────────────────
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('view cache', true); // EJS şablonlarını derlenmiş halde önbellekle (her render'da disk okuma yok)
 
 // ─── CSRF & Locals ────────────────────────────────────────────────────────
 const csrfMiddleware = require('./middleware/csrf');

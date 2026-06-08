@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
 const cache = require('../utils/cache');
+const { attachTiers } = require('../utils/perf');
 
 router.get('/', async (req, res) => {
   try {
@@ -49,26 +50,29 @@ router.get('/', async (req, res) => {
     const orderBy = orderMap[sort] || orderMap.popular;
     const whereStr = where.join(' AND ');
 
-    const totalRow = await db.prepare(`
-      SELECT COUNT(*) as cnt FROM products p
-      LEFT JOIN categories c ON p.category_id=c.id
-      WHERE ${whereStr}
-    `).get(...params);
+    // Bağımsız sorguları paralel çalıştır (Turso round-trip'lerini azaltır)
+    const [totalRow, products, sizesRows, allRow] = await Promise.all([
+      db.prepare(`
+        SELECT COUNT(*) as cnt FROM products p
+        LEFT JOIN categories c ON p.category_id=c.id
+        WHERE ${whereStr}
+      `).get(...params),
+      db.prepare(`
+        SELECT p.*, c.name as cat_name, c.slug as cat_slug,
+          (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
+        FROM products p
+        LEFT JOIN categories c ON p.category_id=c.id
+        WHERE ${whereStr}
+        ORDER BY ${orderBy}
+        LIMIT ? OFFSET ?
+      `).all(...params, perPage, offset),
+      db.prepare("SELECT DISTINCT size FROM products WHERE active=1 AND size IS NOT NULL AND size != '' ORDER BY size").all(),
+      db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get(),
+    ]);
     const total = totalRow.cnt;
 
-    const products = await db.prepare(`
-      SELECT p.*, c.name as cat_name, c.slug as cat_slug,
-        (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
-      FROM products p
-      LEFT JOIN categories c ON p.category_id=c.id
-      WHERE ${whereStr}
-      ORDER BY ${orderBy}
-      LIMIT ? OFFSET ?
-    `).all(...params, perPage, offset);
-
-    for (const p of products) {
-      p.tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(p.id);
-    }
+    // Tier'ları TEK sorguda yükle (N+1 yerine)
+    await attachTiers(db, products);
 
     let categories = cache.get('shop_categories');
     if (!categories) {
@@ -76,10 +80,8 @@ router.get('/', async (req, res) => {
       cache.set('shop_categories', categories, 120_000);
     }
     const totalPages = Math.ceil(total / perPage);
-    const sizesRows = await db.prepare("SELECT DISTINCT size FROM products WHERE active=1 AND size IS NOT NULL AND size != '' ORDER BY size").all();
     const sizes = sizesRows.map(r => r.size);
     // "Alle" sayısı: filtreden bağımsız tüm aktif ürün sayısı (kategori sayılarıyla tutarlı)
-    const allRow = await db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get();
     const allCount = allRow.n;
 
     res.render('shop', {
@@ -114,9 +116,7 @@ router.get('/produkt/:slug', async (req, res) => {
       SELECT p.*, (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
       FROM products p WHERE p.category_id=? AND p.id!=? AND p.active=1 LIMIT 4
     `).all(product.category_id, product.id);
-    for (const rp of related) {
-      rp.tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(rp.id);
-    }
+    await attachTiers(db, related);
 
     const reviews = await db.prepare(`
       SELECT r.*, u.name as user_display_name

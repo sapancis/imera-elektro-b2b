@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
 const cache = require('../utils/cache');
+const { attachTiers, settingsMap } = require('../utils/perf');
 
 router.get('/', async (req, res) => {
   try {
@@ -22,9 +23,7 @@ router.get('/', async (req, res) => {
         WHERE p.active=1 AND p.featured=1
         ORDER BY p.id LIMIT 3
       `).all();
-      for (const p of featured) {
-        p.tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(p.id);
-      }
+      await attachTiers(db, featured);
       const [statsRow, newProducts] = await Promise.all([
         db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get(),
         db.prepare(`
@@ -101,8 +100,7 @@ router.post('/preisliste', async (req, res) => {
 });
 
 async function getSettings() {
-  const rows = await db.prepare('SELECT key, value FROM settings').all();
-  return Object.fromEntries(rows.map(r => [r.key, r.value]));
+  return settingsMap(db);
 }
 
 module.exports = router;

@@ -455,6 +455,7 @@ router.post('/einstellungen', async (req, res) => {
         await db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run(key, value);
       }
     }
+    try { require('../utils/cache').del('settings_map'); } catch {}
     flash(req, 'success', 'Einstellungen gespeichert.');
     res.redirect('/admin/einstellungen');
   } catch (e) {
