@@ -16,12 +16,14 @@
               <div class="filter-label">Kategorie</div>
               <label class="filter-option">
                 <input type="radio" name="kategorie" value="" <%= !filters.kategorie ? 'checked' : '' %> onchange="this.form.submit()">
-                Alle (<%= pagination.total %>)
+                <span class="filter-text">Alle</span>
+                <span class="filter-count">(<%= pagination.total %>)</span>
               </label>
               <% for (const cat of categories) { %>
               <label class="filter-option">
                 <input type="radio" name="kategorie" value="<%= cat.slug %>" <%= filters.kategorie === cat.slug ? 'checked' : '' %> onchange="this.form.submit()">
-                <%= cat.name %> (<%= cat.cnt %>)
+                <span class="filter-text"><%= cat.name %></span>
+                <span class="filter-count">(<%= cat.cnt %>)</span>
               </label>
               <% } %>
             </div>
