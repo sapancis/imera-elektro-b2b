@@ -32,7 +32,6 @@
 
       <!-- Product Info -->
       <div class="product-info">
-        <% if (product.badge) { %><div class="product-badge-detail badge-green"><%= product.badge %></div><% } %>
         <h1 class="product-detail-title"><%= product.name %></h1>
         <% if (product.short_description) { %><p class="product-short-desc"><%= product.short_description %></p><% } %>
         <p class="product-detail-meta">
@@ -41,16 +40,6 @@
           Lagerbestand: <strong class="<%= product.stock > 0 ? 'text-green' : 'text-red' %>"><%= product.stock > 0 ? product.stock + ' Stück verfügbar' : 'Nicht auf Lager' %></strong>
           <% if (product.min_order_qty > 1) { %> &nbsp;|&nbsp; Min. Bestellung: <strong><%= product.min_order_qty %> Stk.</strong><% } %>
         </p>
-
-        <% if (product.market_price_min && product.market_price_max) { %>
-        <div class="market-price-box">
-          <div class="market-price-label">Marktpreis in Österreich</div>
-          <div class="market-price-row">
-            <span class="price-red price-strikethrough"><%= formatPrice(product.market_price_min) %> – <%= formatPrice(product.market_price_max) %></span>
-            <span class="savings-text">Sie sparen bis zu <%= savings(product.tiers[0]?.price, product.market_price_max) %>%</span>
-          </div>
-        </div>
-        <% } %>
 
         <!-- Tier Price Box -->
         <div class="tier-box">

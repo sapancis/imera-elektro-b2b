@@ -60,29 +60,22 @@
   <section class="section section-white">
     <div class="container">
       <div class="section-header">
-        <div class="section-tag">PREISVERGLEICH</div>
-        <h2>Bis zu 72% günstiger als der Markt</h2>
-        <p>Vergleichen Sie selbst – gleiche Qualität, deutlich niedrigere Preise</p>
+        <div class="section-tag">AUSGEWÄHLTE PRODUKTE</div>
+        <h2>Beliebte Komponenten zu Direktpreisen</h2>
+        <p>Gleiche Qualität, deutlich niedrigere Preise – direkt vom Hersteller</p>
       </div>
       <div class="comparison-grid">
         <% for (const p of featured) { %>
-        <div class="comparison-card <%= p.badge === 'BESTSELLER' ? 'comparison-card--featured' : '' %>">
-          <% if (p.badge) { %><div class="card-badge card-badge--<%= p.badge === 'BESTSELLER' ? 'green' : 'blue' %>"><%= p.badge %></div><% } %>
+        <div class="comparison-card">
           <div class="text-center">
             <p class="product-cat-label"><%= p.cat_name %></p>
             <h3 class="comparison-product-name"><%= p.name %></h3>
             <div class="price-compare">
               <div class="price-ours">
-                <div class="price-label">Bei uns</div>
+                <div class="price-label">Preis pro Stück</div>
                 <div class="price-value price-green"><%= formatPrice(p.tiers[0]?.price) %></div>
               </div>
-              <div class="price-arrow">→</div>
-              <div class="price-market">
-                <div class="price-label">Markt AT</div>
-                <div class="price-value price-red price-strikethrough"><%= formatPrice(p.market_price_min) %>–<%= formatPrice(p.market_price_max) %></div>
-              </div>
             </div>
-            <div class="savings-badge">Sie sparen bis zu <%= savings(p.tiers[0]?.price, p.market_price_max) %>%</div>
             <% if (p.tiers.length > 1) { %>
             <div class="tier-hint">
               <div class="tier-hint-label">Staffelpreise verfügbar</div>
@@ -136,7 +129,7 @@
             <% } else { %>
             <div class="product-img-placeholder">📦</div>
             <% } %>
-            <% if (p.stock <= 0) { %><span class="product-badge product-badge--out">Ausverkauft</span><% } else if (p.featured) { %><span class="product-badge product-badge--hot">Bestseller</span><% } %>
+            <% if (p.stock <= 0) { %><span class="product-badge product-badge--out">Ausverkauft</span><% } %>
           </div>
           <div class="product-info">
             <div class="product-cat"><%= p.cat_name %></div>
