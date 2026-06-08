@@ -107,23 +107,26 @@ router.get('/produkt/:slug', async (req, res) => {
 
     if (!product) return res.status(404).render('error', { title: 'Nicht gefunden', message: 'Produkt nicht gefunden.', code: 404 });
 
-    product.tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(product.id);
     product.specsArr = product.specs ? JSON.parse(product.specs) : [];
     product.appsArr = product.applications ? JSON.parse(product.applications) : [];
     product.imagesArr = product.images ? JSON.parse(product.images) : [];
 
-    const related = await db.prepare(`
-      SELECT p.*, (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
-      FROM products p WHERE p.category_id=? AND p.id!=? AND p.active=1 LIMIT 4
-    `).all(product.category_id, product.id);
+    // Bağımsız sorgular paralel (tier + ilgili ürünler + yorumlar aynı anda)
+    const [tiers, related, reviews] = await Promise.all([
+      db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(product.id),
+      db.prepare(`
+        SELECT p.*, (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
+        FROM products p WHERE p.category_id=? AND p.id!=? AND p.active=1 LIMIT 4
+      `).all(product.category_id, product.id),
+      db.prepare(`
+        SELECT r.*, u.name as user_display_name
+        FROM reviews r LEFT JOIN users u ON u.id=r.user_id
+        WHERE r.product_id=? AND r.approved=1
+        ORDER BY r.created_at DESC
+      `).all(product.id),
+    ]);
+    product.tiers = tiers;
     await attachTiers(db, related);
-
-    const reviews = await db.prepare(`
-      SELECT r.*, u.name as user_display_name
-      FROM reviews r LEFT JOIN users u ON u.id=r.user_id
-      WHERE r.product_id=? AND r.approved=1
-      ORDER BY r.created_at DESC
-    `).all(product.id);
     const reviewStats = {
       count: reviews.length,
       avg: reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : 0,
