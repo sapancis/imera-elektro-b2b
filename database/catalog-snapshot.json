@@ -1,6 +1,6 @@
 {
-  "version": "catalog-v7",
-  "generated": "2026-06-07T16:14:14.846Z",
+  "version": "catalog-v8",
+  "generated": "2026-06-08T15:21:54.797Z",
   "products": [
     {
       "name": "Kabelbinder 200x4.5 schwarz UV-beständig",
@@ -808,90 +808,6 @@
           "min_qty": 75,
           "max_qty": null,
           "price": 1.49,
-          "label": null
-        }
-      ]
-    },
-    {
-      "name": "Reihenklemme 6mm² blau (N-Leiter) (50er Pack)",
-      "slug": "reihenklemme-6mm-blau-n-leiter-50er-pack-rk-60-bl",
-      "sku": "RK-60-BL",
-      "category_id": 8,
-      "description": "Federzugklemme 6 mm² für DIN-Schiene, blau gekennzeichnet für Neutralleiter (N). Werkzeuglose Bedienung durch Federzuganschluss. TSE/CE-zertifiziert.",
-      "specs": "[[\"Nennquerschnitt\",\"6 mm²\"],[\"Leiterquerschnitt\",\"0,5 – 6 mm²\"],[\"Nennspannung\",\"800 V AC / 1000 V DC\"],[\"Nennstrom\",\"41 A\"],[\"Farbe\",\"Blau (N-Leiter)\"],[\"Montage\",\"DIN-Schiene 35mm (EN 60715)\"],[\"Material\",\"PA6.6 / Edelstahlfeder\"],[\"Temperaturbereich\",\"-50°C bis +120°C\"],[\"Verpackungseinheit\",\"50 Stück\"],[\"Norm\",\"DIN EN 60947-7-1, VDE 0611-1\"]]",
-      "applications": "[\"N-Leiter-Anschlüsse in Schaltschränken\",\"Energieverteiler und Sicherungskästen\",\"Industrieautomation\",\"Gebäudeleittechnik\"]",
-      "market_price_min": 0,
-      "market_price_max": 0,
-      "stock": 0,
-      "image": "/uploads/prod-kl60bl-1.jpg",
-      "images": "[\"/uploads/prod-kl60bl-2.jpg\",\"/uploads/prod-kl60bl-3.jpg\"]",
-      "active": 1,
-      "featured": 0,
-      "badge": null,
-      "short_description": "Federzug-Reihenklemme 6 mm² in Blau für N-Leiter-Anschlüsse, DIN-Schiene 35 mm.",
-      "weight": null,
-      "dimensions": null,
-      "min_order_qty": 1,
-      "delivery_time": "1-2 Werktage",
-      "meta_title": null,
-      "meta_description": null,
-      "size": null,
-      "tiers": [
-        {
-          "min_qty": 1,
-          "max_qty": null,
-          "price": 0,
-          "label": null
-        }
-      ]
-    },
-    {
-      "name": "Trennklemme 4mm² grau mit Trennmesser (50er Pack)",
-      "slug": "trennklemme-4mm-grau-mit-trennmesser-50er-pack-tk-4-gr",
-      "sku": "TK-4-GR",
-      "category_id": 8,
-      "description": "Reihen-Trennklemme 4 mm² mit Trennmesser zum einfachen Auftrennen von Stromkreisen für Messung und Wartung. Für DIN-Schiene 35 mm, TSE/CE-zertifiziert.",
-      "specs": "[[\"Nennquerschnitt\",\"4 mm²\"],[\"Leiterquerschnitt\",\"0,5 – 4 mm²\"],[\"Nennspannung\",\"800 V AC\"],[\"Nennstrom\",\"32 A\"],[\"Funktion\",\"Trennmesser / Messertrennung\"],[\"Farbe\",\"Grau\"],[\"Montage\",\"DIN-Schiene 35mm (EN 60715)\"],[\"Material\",\"PA6.6\"],[\"Temperaturbereich\",\"-40°C bis +120°C\"],[\"Verpackungseinheit\",\"50 Stück\"],[\"Norm\",\"DIN EN 60947-7-1\"]]",
-      "applications": "[\"Mess- und Prüfstellen in Schaltschränken\",\"Trennstellen für Wartung\",\"Signal- und Steuerkreise\",\"Prüf- und Servicepunkte\"]",
-      "market_price_min": 0.55,
-      "market_price_max": 1.3,
-      "stock": 1200,
-      "image": "/uploads/prod-trenn-1.jpg",
-      "images": "[\"/uploads/prod-trenn-2.jpg\"]",
-      "active": 1,
-      "featured": 0,
-      "badge": null,
-      "short_description": "Trennklemme 4 mm² mit integriertem Trennmesser zur Stromkreis-Unterbrechung, DIN-Schiene 35 mm.",
-      "weight": null,
-      "dimensions": null,
-      "min_order_qty": 1,
-      "delivery_time": "1-2 Werktage",
-      "meta_title": null,
-      "meta_description": null,
-      "size": null,
-      "tiers": [
-        {
-          "min_qty": 1,
-          "max_qty": 49,
-          "price": 0.54,
-          "label": null
-        },
-        {
-          "min_qty": 50,
-          "max_qty": 199,
-          "price": 0.42,
-          "label": null
-        },
-        {
-          "min_qty": 200,
-          "max_qty": 999,
-          "price": 0.33,
-          "label": null
-        },
-        {
-          "min_qty": 1000,
-          "max_qty": null,
-          "price": 0.25,
           "label": null
         }
       ]
