@@ -7,24 +7,16 @@ const path = require('path');
 const fs = require('fs');
 const { requireAdmin, flash } = require('../middleware/auth');
 const { sendStatusUpdate } = require('../utils/mailer');
+const { saveUpload } = require('../utils/upload');
 
-const uploadDir = path.join(__dirname, '../public/uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `product-${Date.now()}${ext}`);
-  },
-});
+// Vercel salt-okunur → diske yazılamaz. Bellek depolama + Cloudinary'ye yükle.
+const storage = multer.memoryStorage();
 const fileFilter = (req, file, cb) => {
   const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
   if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
   else cb(new Error('Nur Bilder erlaubt (jpg, png, webp, gif)'));
 };
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter });
-const uploadMulti = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter });
+const uploadMulti = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 }, fileFilter });
 
 router.use(requireAdmin);
 
@@ -96,8 +88,8 @@ router.post('/produkte/neu', uploadMulti.fields([{name:'image',maxCount:1},{name
     const { name, slug, sku, category_id, short_description, description, specs_raw, apps_raw,
             market_price_min, market_price_max, stock, min_order_qty, delivery_time,
             weight, dimensions, size, meta_title, meta_description, featured, badge, active } = req.body;
-    const image = req.files?.image?.[0] ? '/uploads/' + req.files.image[0].filename : null;
-    const extraImages = (req.files?.images || []).map(f => '/uploads/' + f.filename);
+    const image = await saveUpload(req.files?.image?.[0]);
+    const extraImages = (await Promise.all((req.files?.images || []).map(saveUpload))).filter(Boolean);
     const specsArr = parseTableInput(specs_raw);
     const appsArr = parseListInput(apps_raw);
 
@@ -147,13 +139,13 @@ router.post('/produkte/:id/bearbeiten', uploadMulti.fields([{name:'image',maxCou
 
     // Ana görsel: yeni yüklendi → yeni, remove işaretlendi → null, yoksa mevcut
     let image = product.image;
-    if (req.files?.image?.[0]) image = '/uploads/' + req.files.image[0].filename;
+    if (req.files?.image?.[0]) image = await saveUpload(req.files.image[0]);
     else if (remove_image) image = null;
 
     // Galeri: mevcut listeden işaretlenenleri çıkar, yenileri ekle
     const toRemove = Array.isArray(remove_gallery_image) ? remove_gallery_image : (remove_gallery_image ? [remove_gallery_image] : []);
     const existingImages = (product.images ? JSON.parse(product.images) : []).filter(img => !toRemove.includes(img));
-    const newImages = (req.files?.images || []).map(f => '/uploads/' + f.filename);
+    const newImages = (await Promise.all((req.files?.images || []).map(saveUpload))).filter(Boolean);
     const extraImages = [...existingImages, ...newImages];
 
     const specsArr = parseTableInput(specs_raw);

@@ -10,9 +10,10 @@
     "create-admin": "node scripts/create-admin.js"
   },
   "dependencies": {
+    "@libsql/client": "^0.14.0",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^12.10.0",
-    "node-sqlite3-wasm": "^0.8.57",
+    "cloudinary": "^2.10.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
@@ -20,11 +21,11 @@
     "express-session": "^1.18.0",
     "helmet": "^7.1.0",
     "multer": "^2.0.0",
+    "node-sqlite3-wasm": "^0.8.57",
     "nodemailer": "^6.9.13",
     "pdfkit": "^0.18.0",
     "session-file-store": "^1.5.0",
-    "stripe": "^22.1.1",
-    "@libsql/client": "^0.14.0"
+    "stripe": "^22.1.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
