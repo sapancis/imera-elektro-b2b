@@ -110,6 +110,19 @@ app.use('/merkliste', require('./routes/merkliste'));
 app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
+// ─── Geçici: Cloudinary canlı yükleme testi (token korumalı, sonra kaldırılacak) ─
+app.get('/__upload-test', async (req, res) => {
+  if (req.query.token !== 'imera-cat-sync-7h3k9') return res.status(403).json({ ok: false });
+  try {
+    const { saveUpload, cloudinaryConfigured } = require('./utils/upload');
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+    const url = await saveUpload({ buffer: png, originalname: 'livetest.png' });
+    res.json({ ok: true, cloudinaryConfigured, url });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.locals.currentPath = res.locals.currentPath || req.path;
