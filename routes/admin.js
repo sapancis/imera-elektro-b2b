@@ -18,7 +18,8 @@ const fileFilter = (req, file, cb) => {
 };
 const uploadMulti = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 }, fileFilter });
 
-// Multer hatalarını (dosya boyutu/tip) 500 yerine nazik mesaja çevirir.
+// Multipart upload: multer (bellek) + multer sonrası CSRF doğrulaması.
+// CSRF global middleware multipart'ı atlar (body henüz parse edilmemiş), burada doğrularız.
 function handleUpload(req, res, next) {
   uploadMulti.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 5 }])(req, res, (err) => {
     if (err) {
@@ -27,9 +28,16 @@ function handleUpload(req, res, next) {
       if (err.code === 'LIMIT_FILE_SIZE') msg = 'Bild zu groß. Bitte kleineres Bild verwenden (oder Seite neu laden, damit die automatische Verkleinerung greift).';
       else if (err.message) msg = err.message;
       flash(req, 'error', msg);
-      const back = req.get('referer') || '/admin/produkte';
-      return res.redirect(back);
+      return res.redirect(req.get('referer') || '/admin/produkte');
     }
+    // CSRF doğrulaması (artık req.body._csrf parse edildi)
+    const token = req.body && req.body._csrf;
+    const tokens = req.session.csrfTokens || [];
+    if (!token || !tokens.includes(token)) {
+      flash(req, 'error', 'Sicherheitstoken abgelaufen. Bitte Seite neu laden und erneut versuchen.');
+      return res.redirect(req.get('referer') || '/admin/produkte');
+    }
+    req.session.csrfTokens = tokens.filter(t => t !== token);
     next();
   });
 }
