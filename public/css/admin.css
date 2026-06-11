@@ -32,7 +32,7 @@ a { color: var(--text); text-decoration: none; }
 .admin-topbar { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 40; }
 .admin-page-title { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
 .admin-topbar-right { display: flex; align-items: center; gap: 1rem; font-size: 13px; color: var(--text-muted); }
-.admin-content { padding: 1.5rem; flex: 1; min-width: 0; max-width: 100%; }
+.admin-content { padding: 1.5rem; flex: 1; min-width: 0; max-width: 100%; overflow-x: hidden; }
 
 /* Flash */
 .admin-flash { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1.5rem; font-size: 14px; position: sticky; top: 0; z-index: 60; }
