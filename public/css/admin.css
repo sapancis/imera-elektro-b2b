@@ -144,7 +144,7 @@ a { color: var(--text); text-decoration: none; }
 .quick-actions { margin-top: 1.25rem; }
 .quick-actions h3 { font-size: 15px; font-weight: 600; margin-bottom: 0.75rem; }
 .quick-action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; }
-.quick-action-btn { display: block; padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; text-align: center; font-size: 13px; font-weight: 500; color: var(--text-muted); transition: all .2s; }
+.quick-action-btn { display: block; min-width: 0; padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; text-align: center; font-size: 13px; font-weight: 500; color: var(--text-muted); transition: all .2s; }
 .quick-action-btn:hover { background: var(--black); color: white; border-color: var(--black); }
 
 /* Detail rows */
@@ -210,7 +210,8 @@ code { font-family: "SF Mono","Fira Code","Consolas",monospace; }
   .admin-main { margin-left: 0; }
   .admin-topbar { padding: 0.75rem 1rem; }
   .admin-content { padding: 1rem; }
-  .stats-grid { gap: 0.75rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .quick-action-grid { grid-template-columns: 1fr 1fr; }
   .stat-value { font-size: 22px; }
   .tier-header-row, .tier-row { grid-template-columns: 1fr 1fr 1fr; }
   .admin-card { padding: 1rem; }
