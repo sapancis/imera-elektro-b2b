@@ -25,16 +25,11 @@ const uploadDir = path.join(__dirname, '../public/uploads');
 
 function uploadBufferToCloudinary(buffer) {
   return new Promise((resolve, reject) => {
+    // Resim tarayıcıda zaten küçültülüp JPEG'e çevriliyor; upload'ta transformation YOK
+    // (fetch_format gibi delivery parametreleri upload'ta hataya yol açabilir).
+    // Web optimizasyonu istenirse delivery URL'inde yapılır.
     const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: 'imera-products',
-        resource_type: 'image',
-        // Web için optimize: max 1400px, otomatik kalite + format (WebP/AVIF)
-        transformation: [
-          { width: 1400, height: 1400, crop: 'limit' },
-          { quality: 'auto', fetch_format: 'auto' },
-        ],
-      },
+      { folder: 'imera-products', resource_type: 'image' },
       (err, result) => (err ? reject(err) : resolve(result))
     );
     stream.end(buffer);

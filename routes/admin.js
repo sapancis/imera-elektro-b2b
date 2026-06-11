@@ -18,6 +18,22 @@ const fileFilter = (req, file, cb) => {
 };
 const uploadMulti = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 }, fileFilter });
 
+// Multer hatalarını (dosya boyutu/tip) 500 yerine nazik mesaja çevirir.
+function handleUpload(req, res, next) {
+  uploadMulti.fields([{ name: 'image', maxCount: 1 }, { name: 'images', maxCount: 5 }])(req, res, (err) => {
+    if (err) {
+      console.error('Upload (multer) Fehler:', err.code || '', err.message);
+      let msg = 'Fehler beim Hochladen des Bildes.';
+      if (err.code === 'LIMIT_FILE_SIZE') msg = 'Bild zu groß. Bitte kleineres Bild verwenden (oder Seite neu laden, damit die automatische Verkleinerung greift).';
+      else if (err.message) msg = err.message;
+      flash(req, 'error', msg);
+      const back = req.get('referer') || '/admin/produkte';
+      return res.redirect(back);
+    }
+    next();
+  });
+}
+
 router.use(requireAdmin);
 
 // Dashboard
@@ -83,7 +99,7 @@ router.get('/produkte/neu', async (req, res) => {
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
-router.post('/produkte/neu', uploadMulti.fields([{name:'image',maxCount:1},{name:'images',maxCount:5}]), async (req, res) => {
+router.post('/produkte/neu', handleUpload, async (req, res) => {
   try {
     const { name, slug, sku, category_id, short_description, description, specs_raw, apps_raw,
             market_price_min, market_price_max, stock, min_order_qty, delivery_time,
@@ -128,7 +144,7 @@ router.get('/produkte/:id/bearbeiten', async (req, res) => {
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
-router.post('/produkte/:id/bearbeiten', uploadMulti.fields([{name:'image',maxCount:1},{name:'images',maxCount:5}]), async (req, res) => {
+router.post('/produkte/:id/bearbeiten', handleUpload, async (req, res) => {
   try {
     const { name, slug, sku, category_id, short_description, description, specs_raw, apps_raw,
             market_price_min, market_price_max, stock, min_order_qty, delivery_time,
@@ -170,7 +186,11 @@ router.post('/produkte/:id/bearbeiten', uploadMulti.fields([{name:'image',maxCou
     await saveTiers(req.params.id, req.body);
     flash(req, 'success', 'Produkt wurde aktualisiert.');
     res.redirect('/admin/produkte');
-  } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
+  } catch (e) {
+    console.error('Produkt bearbeiten Fehler:', e);
+    flash(req, 'error', 'Fehler: ' + (e.message || 'Serverfehler'));
+    res.redirect('/admin/produkte/' + req.params.id + '/bearbeiten');
+  }
 });
 
 router.post('/produkte/:id/loeschen', async (req, res) => {
