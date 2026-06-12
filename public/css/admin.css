@@ -19,7 +19,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI"
 a { color: var(--text); text-decoration: none; }
 
 /* Layout */
-.admin-body { display: flex; min-height: 100vh; }
+.admin-body { display: flex; min-height: 100vh; overflow-x: hidden; max-width: 100%; }
 .admin-sidebar { width: var(--sidebar-w); background: var(--black); min-height: 100vh; position: fixed; left: 0; top: 0; bottom: 0; overflow-y: auto; z-index: 50; }
 .admin-brand { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
 .admin-brand a { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; color: white; }
