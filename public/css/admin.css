@@ -202,9 +202,14 @@ a { color: var(--text); text-decoration: none; }
 code { font-family: "SF Mono","Fira Code","Consolas",monospace; }
 
 /* Responsive */
-/* NOT: stats/quick-action HER ZAMAN 2 kolon (base'de sabit). Mobil tarayıcılarda layout
-   viewport esneyip width-based query'ler (media/container) yanlış tetiklendiği için
-   masaüstü 4-kolon kuralı KASITLI OLARAK yok — 2x2 her ekranda güvenli ve temiz. */
+/* NOT: stats/quick-action base'de 2 kolon (mobil). Masaüstünde (>=1025px) 4/6 kolona çıkar.
+   ESKİ HATA: dashboard.ejs'te inline style="grid-template-columns:repeat(4/6,1fr)" vardı;
+   inline style CSS'i ezdiği için mobilde de hep 4/6 kolon kalıyordu. Inline style'lar kaldırıldı,
+   kolon sayısı artık SADECE buradan kontrol ediliyor. */
+@media (min-width: 1025px) {
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .quick-action-grid { grid-template-columns: repeat(6, 1fr); }
+}
 @media (max-width: 1024px) {
   .admin-two-col, .admin-form-grid { grid-template-columns: 1fr; }
 }

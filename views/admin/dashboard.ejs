@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard – Imera Elektro Admin</title>
-  <link rel="stylesheet" href="/css/admin.css?v=6">
+  <link rel="stylesheet" href="/css/admin.css?v=7">
 </head>
 <body class="admin-body">
 <% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
@@ -20,7 +20,7 @@
   <div class="admin-content">
 
     <!-- KPI Stats -->
-    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stats-grid">
       <div class="stat-card stat-card--green">
         <div class="stat-icon">💰</div>
         <div class="stat-info">
@@ -218,7 +218,7 @@
     <!-- Quick Actions -->
     <div class="quick-actions" style="margin-top:1.25rem">
       <h3>Schnellzugriff</h3>
-      <div class="quick-action-grid" style="grid-template-columns:repeat(6,1fr)">
+      <div class="quick-action-grid">
         <a href="/admin/produkte/neu" class="quick-action-btn">➕ Neues Produkt</a>
         <a href="/admin/bestellungen?status=pending" class="quick-action-btn">📋 Offene Bestellungen</a>
         <a href="/admin/kuponlar" class="quick-action-btn">🎟 Kuponlar</a>
