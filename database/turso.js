@@ -28,7 +28,12 @@ class Statement {
   constructor(sql) { this.sql = sql; }
   async run(...args) {
     const r = await getClient().execute({ sql: this.sql, args: normalize(args) });
-    return { changes: r.rowsAffected, lastInsertRowid: r.lastInsertRowid };
+    // libsql lastInsertRowid'i BigInt döndürür. BigInt session'a (JSON.stringify) konunca
+    // patlar ve genel olarak better-sqlite3 (number) ile tutarsızlık yaratır → Number'a çevir.
+    return {
+      changes: Number(r.rowsAffected || 0),
+      lastInsertRowid: r.lastInsertRowid == null ? undefined : Number(r.lastInsertRowid),
+    };
   }
   async get(...args) {
     const r = await getClient().execute({ sql: this.sql, args: normalize(args) });
