@@ -202,11 +202,9 @@ a { color: var(--text); text-decoration: none; }
 code { font-family: "SF Mono","Fira Code","Consolas",monospace; }
 
 /* Responsive */
-/* Masaüstü: stats/quick-action 4 kolon (mobil-önce base 2 kolon). min-width kullanır
-   çünkü mobilde viewport esneyebiliyor; min-width sadece gerçekten geniş ekranda tetiklenir. */
-@media (min-width: 900px) {
-  .stats-grid, .quick-action-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
+/* NOT: stats/quick-action HER ZAMAN 2 kolon (base'de sabit). Mobil tarayıcılarda layout
+   viewport esneyip width-based query'ler (media/container) yanlış tetiklendiği için
+   masaüstü 4-kolon kuralı KASITLI OLARAK yok — 2x2 her ekranda güvenli ve temiz. */
 @media (max-width: 1024px) {
   .admin-two-col, .admin-form-grid { grid-template-columns: 1fr; }
 }
