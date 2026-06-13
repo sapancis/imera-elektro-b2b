@@ -233,3 +233,48 @@ code { font-family: "SF Mono","Fira Code","Consolas",monospace; }
   .tier-header-row, .tier-row { grid-template-columns: 1fr 1fr; }
   .tier-row input { padding: 6px; font-size: 12px; }
 }
+
+/* Geniş tablolar mobilde KART düzenine geçer (.admin-table--cards).
+   Yana kaydırma yerine her satır bir kart; her hücre "ETİKET ........ değer". */
+@media (max-width: 768px) {
+  .admin-table--cards { display: block; width: 100%; }
+  .admin-table--cards thead { display: none; }
+  .admin-table--cards tbody { display: block; width: 100%; }
+  .admin-table--cards tr {
+    display: block;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 6px 14px;
+    margin-bottom: 12px;
+  }
+  .admin-table--cards tr:hover { background: var(--bg-card); }
+  .admin-table--cards td {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    font-size: 13px;
+  }
+  .admin-table--cards td:last-child { border-bottom: none; }
+  .admin-table--cards td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: left;
+    flex-shrink: 0;
+  }
+  /* Boş-durum satırı (colspan) kart düzeninde etiketsiz, ortalı kalsın */
+  .admin-table--cards td[colspan]::before { content: none; }
+  .admin-table--cards td[colspan] { justify-content: center; text-align: center; }
+  .pcell-name { text-align: right; }
+  .pcell-name small { display: block; margin-top: 2px; }
+}
