@@ -110,7 +110,7 @@ async function sendOrderConfirmation({ order, items, customerEmail, customerName
       <table style="width:100%;font-size:14px;color:#6E6E73;margin-bottom:4px">
         <tr><td style="padding:4px 0;font-weight:600;color:#1D1D1F">Zahlungsart:</td><td>${paymentLabel}</td></tr>
         <tr><td style="padding:4px 0;font-weight:600;color:#1D1D1F">Lieferadresse:</td><td>${(order.shipping_address || '').replace(/\n/g,'<br>')}</td></tr>
-        <tr><td style="padding:4px 0;font-weight:600;color:#1D1D1F">Lieferzeit:</td><td>2–5 Werktage nach Zahlungseingang</td></tr>
+        <tr><td style="padding:4px 0;font-weight:600;color:#1D1D1F">Lieferzeit:</td><td>1–2 Werktage nach Zahlungseingang</td></tr>
       </table>
 
       ${bankInfo}

@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
     const settings = await getSettings();
     res.render('index', {
       title: 'CE-zertifizierte Elektrokomponenten – 40-60% günstiger',
-      metaDesc: 'Kabelbinder, Kabelverschraubungen & Reihenklemmen direkt vom Hersteller. CE-zertifiziert, Direktimport Türkei. Bis zu 72% günstiger als der österreichische Markt.',
+      metaDesc: 'Kabelbinder, Kabelverschraubungen & Reihenklemmen direkt vom Hersteller. CE-zertifiziert, Direktimport. 40-60% günstiger als der österreichische Markt.',
       ogTitle: 'Imera Elektro – Elektrokomponenten 40-60% unter Marktpreis',
       categories, featured: homeData.featured, newProducts: homeData.newProducts, stats: homeData.stats, settings,
     });

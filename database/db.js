@@ -189,7 +189,7 @@ const defaultSettings = [
   ['shipping_info', '2-5 Werktage'],
   ['free_shipping_threshold', '200'],
   ['company_legal', 'Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG'],
-  ['meta_description', 'CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt. Direktimport Türkei. Kabelbinder, Kabelverschraubungen, Reihenklemmen.'],
+  ['meta_description', 'CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt. Direktimport. Kabelbinder, Kabelverschraubungen, Reihenklemmen.'],
 ];
 
 const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
