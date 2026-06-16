@@ -110,19 +110,6 @@ app.use('/merkliste', require('./routes/merkliste'));
 app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
-// ─── Geçici: tek seferlik ürün açıklaması düzeltmesi (EDL-300-46 → Edelstahl 316/W4) ──
-// Turso'da sadece bu ürünün description'ını günceller (stok vb. dokunmaz). İşlem sonrası kaldırılır.
-app.get('/__fix-edl-desc', async (req, res) => {
-  if (req.query.token !== 'imera-cat-sync-7h3k9') return res.status(403).send('forbidden');
-  try {
-    const dbx = require('./database/db');
-    const desc = 'Edelstahl-Kabelbinder 300x4,6mm aus Edelstahl 316 (W4) für anspruchsvolle Umgebungen. Erhöhte Zugfestigkeit und Korrosionsbeständigkeit. Geeignet für Außenanlagen, Industrie und den maritimen Bereich.';
-    const r = await dbx.prepare('UPDATE products SET description=? WHERE sku=?').run(desc, 'EDL-300-46');
-    const row = await dbx.prepare('SELECT sku, description FROM products WHERE sku=?').get('EDL-300-46');
-    res.json({ ok: true, changes: r.changes, row });
-  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
-});
-
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.locals.currentPath = res.locals.currentPath || req.path;
