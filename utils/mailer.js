@@ -304,4 +304,87 @@ async function sendStatusUpdate({ order, items, customerEmail, customerName }) {
   });
 }
 
-module.exports = { sendOrderConfirmation, sendAdminOrderNotification, sendStatusUpdate };
+/**
+ * Kontaktformular → Nachricht an info@imeragroup.com weiterleiten
+ */
+async function sendContactNotification({ name, email, phone, subject, message }) {
+  if (!process.env.SMTP_PASS) return; // SMTP ayarlanmamışsa sessizce geç
+  const to = process.env.CONTACT_EMAIL || 'info@imeragroup.com';
+  const esc = (s) => String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const html = `
+<!DOCTYPE html><html lang="de"><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#F5F5F7;margin:0;padding:20px">
+  <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+    <div style="background:#1D1D1F;padding:20px 28px"><h2 style="margin:0;color:#fff;font-size:18px">✉ Neue Kontaktanfrage</h2></div>
+    <div style="padding:24px 28px">
+      <table style="width:100%;font-size:14px;border-collapse:collapse">
+        <tr><td style="padding:6px 0;color:#6E6E73;width:120px">Name:</td><td style="font-weight:600">${esc(name)}</td></tr>
+        <tr><td style="padding:6px 0;color:#6E6E73">E-Mail:</td><td><a href="mailto:${esc(email)}">${esc(email)}</a></td></tr>
+        ${phone ? `<tr><td style="padding:6px 0;color:#6E6E73">Telefon:</td><td>${esc(phone)}</td></tr>` : ''}
+        ${subject ? `<tr><td style="padding:6px 0;color:#6E6E73">Betreff:</td><td>${esc(subject)}</td></tr>` : ''}
+      </table>
+      <div style="background:#F5F5F7;border-radius:8px;padding:14px 16px;margin-top:16px;font-size:14px;white-space:pre-wrap">${esc(message)}</div>
+    </div>
+  </div>
+</body></html>`;
+  const transporter = createTransport();
+  await transporter.sendMail({
+    from:    `"Imera Elektro Website" <${process.env.SMTP_USER || process.env.MAIL_FROM}>`,
+    to,
+    replyTo: email,
+    subject: `✉ Kontaktanfrage von ${name}${subject ? ' – ' + subject : ''}`,
+    html,
+  });
+}
+
+/**
+ * Preislisten-Anfrage → Bestätigungs-/Antwortmail an den Interessenten + Admin-Hinweis
+ */
+async function sendPriceListReply({ email }) {
+  if (!process.env.SMTP_PASS) return;
+  const transporter = createTransport();
+  const from = `"Imera Elektro" <${process.env.SMTP_USER || process.env.MAIL_FROM}>`;
+
+  // 1) Antwort an den Interessenten
+  const html = `
+<!DOCTYPE html><html lang="de"><body style="margin:0;padding:0;background:#F5F5F7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
+  <div style="max-width:600px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)">
+    <div style="background:#1D1D1F;padding:28px 32px;text-align:center">
+      <h1 style="color:#fff;margin:0;font-size:22px;letter-spacing:-0.5px">IMERA ELEKTRO</h1>
+      <p style="color:#A1A1A6;margin:4px 0 0;font-size:13px">Elektrokomponenten 40–60% unter Marktpreis</p>
+    </div>
+    <div style="padding:32px">
+      <h2 style="margin:0 0 12px;color:#166534;font-size:18px">✓ Vielen Dank für Ihr Interesse!</h2>
+      <p style="color:#1D1D1F;font-size:15px;margin:0 0 16px">
+        Wir haben Ihre Anfrage für unsere Preisliste erhalten. Unser Team sendet Ihnen die vollständige
+        Preisliste mit allen Artikeln und Staffelpreisen in Kürze persönlich zu.
+      </p>
+      <p style="color:#1D1D1F;font-size:15px;margin:0 0 16px">
+        In der Zwischenzeit können Sie unser Sortiment direkt im Shop entdecken:
+      </p>
+      <p style="margin:0 0 24px"><a href="https://www.imeragroup.com/shop" style="display:inline-block;background:#34C759;color:#fff;padding:12px 28px;border-radius:980px;text-decoration:none;font-weight:600;font-size:14px">Zum Shop →</a></p>
+      <p style="color:#6E6E73;font-size:13px;border-top:1px solid #E5E7EB;padding-top:16px">
+        📞 <a href="tel:+436608514467" style="color:#1D1D1F">+43 660 8514467</a> &nbsp;|&nbsp;
+        ✉ <a href="mailto:info@imeragroup.com" style="color:#1D1D1F">info@imeragroup.com</a>
+      </p>
+    </div>
+    <div style="background:#F5F5F7;padding:16px 32px;text-align:center;font-size:12px;color:#6E6E73">
+      <p style="margin:0">Imera Elektro · www.imeragroup.com · Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG</p>
+    </div>
+  </div>
+</body></html>`;
+  await transporter.sendMail({
+    from, to: email,
+    subject: '✓ Ihre Preislisten-Anfrage – Imera Elektro',
+    html,
+  });
+
+  // 2) Admin-Hinweis (Preisliste manuell versenden)
+  const adminEmail = process.env.CONTACT_EMAIL || process.env.ADMIN_EMAIL || 'info@imeragroup.com';
+  await transporter.sendMail({
+    from, to: adminEmail, replyTo: email,
+    subject: `📋 Neue Preislisten-Anfrage – ${email}`,
+    html: `<p style="font-family:Arial,sans-serif;font-size:14px">Neue Preislisten-Anfrage von <strong>${email}</strong>.<br>Bitte die vollständige Preisliste an diese Adresse senden.</p>`,
+  });
+}
+
+module.exports = { sendOrderConfirmation, sendAdminOrderNotification, sendStatusUpdate, sendContactNotification, sendPriceListReply };

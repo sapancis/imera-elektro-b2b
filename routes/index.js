@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../database/db');
 const cache = require('../utils/cache');
 const { attachTiers, settingsMap } = require('../utils/perf');
+const { sendPriceListReply } = require('../utils/mailer');
 
 router.get('/', async (req, res) => {
   try {
@@ -93,6 +94,9 @@ router.post('/preisliste', async (req, res) => {
       return res.json({ ok: false, message: 'Ungültige E-Mail-Adresse.' });
     }
     await db.prepare('INSERT OR IGNORE INTO price_list_requests (email) VALUES (?)').run(email.trim().toLowerCase());
+    // Antwort-/Bestätigungsmail an Interessent + Admin-Hinweis (async)
+    sendPriceListReply({ email: email.trim().toLowerCase() })
+      .catch(e => console.error('Preisliste-Mail Fehler:', e.message));
     res.json({ ok: true, message: 'Danke! Sie erhalten unsere Preisliste in Kürze.' });
   } catch {
     res.json({ ok: false, message: 'Ein Fehler ist aufgetreten.' });
