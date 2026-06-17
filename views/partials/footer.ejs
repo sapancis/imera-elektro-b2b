@@ -122,9 +122,13 @@
   </div>
 </div>
 
+<% if (locals.tawktoId && tawktoId) { %>
+<script>window._tawkId = '<%- tawktoId %>';</script>
+<% } %>
 <script>
 (function() {
   var consent = localStorage.getItem('cookieConsent');
+  var tawkLoaded = false;
 
   function loadGA() {
     if (!window._gaId) return;
@@ -139,10 +143,28 @@
     gtag('config', window._gaId, { anonymize_ip: true });
   }
 
+  // Tawk-Chat erst NACH der Cookie-Entscheidung laden — sonst überlappt das
+  // Chat-Widget den Cookie-Banner (besonders auf Mobilgeräten).
+  function loadTawk() {
+    if (tawkLoaded || !window._tawkId) return;
+    tawkLoaded = true;
+    window.Tawk_API = window.Tawk_API || {};
+    window.Tawk_LoadStart = new Date();
+    var s1 = document.createElement('script'), s0 = document.getElementsByTagName('script')[0];
+    s1.async = true;
+    s1.src = 'https://embed.tawk.to/' + window._tawkId;
+    s1.charset = 'UTF-8';
+    s1.setAttribute('crossorigin', '*');
+    s0.parentNode.insertBefore(s1, s0);
+  }
+
   if (consent === 'accepted') {
     loadGA();
-  } else if (consent === null) {
-    // Henüz karar verilmemiş — banner'ı göster
+    loadTawk();
+  } else if (consent === 'declined') {
+    loadTawk();
+  } else {
+    // Henüz karar verilmemiş — banner'ı göster; sohbet/analytics yüklenmez (çakışma önlenir)
     document.getElementById('cookieBanner').style.display = 'block';
   }
 
@@ -150,26 +172,15 @@
     localStorage.setItem('cookieConsent', 'accepted');
     document.getElementById('cookieBanner').style.display = 'none';
     loadGA();
+    loadTawk();
   });
 
   document.getElementById('cookieDecline').addEventListener('click', function() {
     localStorage.setItem('cookieConsent', 'declined');
     document.getElementById('cookieBanner').style.display = 'none';
+    loadTawk();
   });
 })();
 </script>
-<% if (locals.tawktoId && tawktoId) { %>
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/<%- tawktoId %>';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<% } %>
 </body>
 </html>
