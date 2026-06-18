@@ -122,7 +122,8 @@
   </div>
 </div>
 
-<% if (locals.tawktoId && tawktoId) { %>
+<%# Tawk-Chat GEÇİCİ OLARAK GİZLENDİ. Geri açmak için aşağıdaki "false &&" kısmını sil. Ayar (property id) DB'de korunuyor. %>
+<% if (false && locals.tawktoId && tawktoId) { %>
 <script>window._tawkId = '<%- tawktoId %>';</script>
 <% } %>
 <script>
