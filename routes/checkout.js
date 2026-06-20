@@ -72,7 +72,8 @@ router.post('/bestellung', async (req, res) => {
     const cart = req.session.cart || {};
     if (!Object.keys(cart).length) return res.redirect('/warenkorb');
 
-    const { name, email, company, phone, address, payment_method, notes, coupon_code } = req.body;
+    const { vorname, nachname, email, company, phone, address, payment_method, notes, coupon_code } = req.body;
+    const name = `${(vorname || '').trim()} ${(nachname || '').trim()}`.trim();
     if (!name || !email || !address) {
       flash(req, 'error', 'Bitte füllen Sie alle Pflichtfelder aus.');
       return res.redirect('/kasse');

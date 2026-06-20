@@ -178,10 +178,13 @@ router.get('/bestellungen/:number/rechnung.pdf', requireAuth, async (req, res) =
 
 router.post('/profil', requireAuth, async (req, res) => {
   try {
-    const { name, company, phone, address } = req.body;
-    await db.prepare('UPDATE users SET name=?, company=?, phone=?, address=? WHERE id=?')
-      .run(name, company, phone, address, req.session.userId);
-    req.session.userName = name;
+    const { vorname, nachname, company, phone, address } = req.body;
+    const firstName = (vorname || '').trim();
+    const lastName  = (nachname || '').trim();
+    const fullName  = `${firstName} ${lastName}`.trim();
+    await db.prepare('UPDATE users SET name=?, first_name=?, last_name=?, company=?, phone=?, address=? WHERE id=?')
+      .run(fullName, firstName || null, lastName || null, company, phone, address, req.session.userId);
+    req.session.userName = fullName;
     flash(req, 'success', 'Profil wurde aktualisiert.');
     res.redirect('/konto');
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }

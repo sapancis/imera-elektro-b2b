@@ -79,6 +79,8 @@ db.exec(`
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     name TEXT,
+    first_name TEXT,
+    last_name TEXT,
     company TEXT,
     phone TEXT,
     address TEXT,
@@ -175,6 +177,20 @@ db.exec(`
     UNIQUE(user_id, product_id)
   );
 `);
+
+// ── first_name / last_name kolonları (eski DB'lerde yoksa ekle) + eski 'name'i böl ──
+for (const col of ['first_name', 'last_name']) {
+  try { db.exec(`ALTER TABLE users ADD COLUMN ${col} TEXT`); } catch (_) { /* zaten var */ }
+}
+try {
+  const rows = db.prepare("SELECT id, name FROM users WHERE (first_name IS NULL OR first_name = '') AND name IS NOT NULL AND TRIM(name) != ''").all();
+  const upd = db.prepare('UPDATE users SET first_name = ?, last_name = ? WHERE id = ?');
+  for (const u of rows) {
+    const parts = String(u.name).trim().split(/\s+/);
+    const fn = parts.shift() || '';
+    upd.run(fn, parts.join(' '), u.id);
+  }
+} catch (_) {}
 
 const defaultSettings = [
   ['site_name', 'Imera Elektro'],

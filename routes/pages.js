@@ -15,7 +15,8 @@ router.get('/kontakt', (req, res) => res.render('pages/contact', { title: 'Konta
 
 router.post('/kontakt', async (req, res) => {
   try {
-    const { name, email, phone, subject, message } = req.body;
+    const { vorname, nachname, email, phone, subject, message } = req.body;
+    const name = `${(vorname || '').trim()} ${(nachname || '').trim()}`.trim();
     if (!name || !email || !message) {
       flash(req, 'error', 'Bitte füllen Sie alle Pflichtfelder aus.');
       return res.redirect('/kontakt');
@@ -25,9 +26,9 @@ router.post('/kontakt', async (req, res) => {
       return res.redirect('/kontakt');
     }
     await db.prepare('INSERT INTO contact_messages (name, email, phone, subject, message) VALUES (?,?,?,?,?)')
-      .run(name.trim(), email.trim(), phone || null, subject || null, message.trim());
+      .run(name, email.trim(), phone || null, subject || null, message.trim());
     // E-Mail-Weiterleitung an info@imeragroup.com (async, blockiert die Antwort nicht)
-    sendContactNotification({ name: name.trim(), email: email.trim(), phone, subject, message: message.trim() })
+    sendContactNotification({ name, email: email.trim(), phone, subject, message: message.trim() })
       .catch(e => console.error('Kontakt-Mail Fehler:', e.message));
     flash(req, 'success', 'Ihre Nachricht wurde gesendet. Wir melden uns so schnell wie möglich!');
     res.redirect('/kontakt');

@@ -110,6 +110,28 @@ app.use('/merkliste', require('./routes/merkliste'));
 app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
+// ─── Geçici: users tablosuna first_name/last_name ekle + mevcut 'name'i böl (Turso) ──
+// İşlem sonrası kaldırılır. Stok/diğer veriye dokunmaz.
+app.get('/__migrate-names', async (req, res) => {
+  if (req.query.token !== 'imera-cat-sync-7h3k9') return res.status(403).send('forbidden');
+  try {
+    const dbx = require('./database/db');
+    const out = { added: [], skipped: {}, backfilled: 0 };
+    for (const col of ['first_name', 'last_name']) {
+      try { await dbx.prepare(`ALTER TABLE users ADD COLUMN ${col} TEXT`).run(); out.added.push(col); }
+      catch (e) { out.skipped[col] = e.message; }
+    }
+    const rows = await dbx.prepare("SELECT id, name FROM users WHERE (first_name IS NULL OR first_name = '') AND name IS NOT NULL AND TRIM(name) != ''").all();
+    for (const u of rows) {
+      const parts = String(u.name).trim().split(/\s+/);
+      const fn = parts.shift() || '';
+      await dbx.prepare('UPDATE users SET first_name=?, last_name=? WHERE id=?').run(fn, parts.join(' '), u.id);
+      out.backfilled++;
+    }
+    res.json({ ok: true, ...out });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.locals.currentPath = res.locals.currentPath || req.path;

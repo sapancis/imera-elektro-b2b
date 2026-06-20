@@ -54,7 +54,10 @@ router.post('/login', loginLimiter, async (req, res) => {
 
 router.post('/registrieren', async (req, res) => {
   try {
-    const { name, email, company, phone, password, password2, datenschutz } = req.body;
+    const { vorname, nachname, email, company, phone, password, password2, datenschutz } = req.body;
+    const firstName = (vorname || '').trim();
+    const lastName  = (nachname || '').trim();
+    const fullName  = `${firstName} ${lastName}`.trim();
     if (!email || !password) {
       flash(req, 'error', 'Bitte füllen Sie alle Pflichtfelder aus.');
       return res.redirect('/konto/registrieren');
@@ -80,11 +83,11 @@ router.post('/registrieren', async (req, res) => {
 
     const hash = bcrypt.hashSync(password, 12);
     const r = await db.prepare(`
-      INSERT INTO users (email, password_hash, name, company, phone) VALUES (?,?,?,?,?)
-    `).run(email.toLowerCase().trim(), hash, name || null, company || null, phone || null);
+      INSERT INTO users (email, password_hash, name, first_name, last_name, company, phone) VALUES (?,?,?,?,?,?,?)
+    `).run(email.toLowerCase().trim(), hash, fullName || null, firstName || null, lastName || null, company || null, phone || null);
 
     req.session.userId = r.lastInsertRowid;
-    req.session.userName = name;
+    req.session.userName = fullName;
     req.session.userEmail = email;
     req.session.userRole = 'customer';
 

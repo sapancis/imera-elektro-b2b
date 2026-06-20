@@ -52,7 +52,8 @@
           <form action="/konto/profil" method="POST">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="form-grid">
-              <div class="form-group"><label>Name</label><input type="text" name="name" value="<%= user.name || '' %>"></div>
+              <div class="form-group"><label>Vorname</label><input type="text" name="vorname" value="<%= user.first_name || '' %>"></div>
+              <div class="form-group"><label>Nachname</label><input type="text" name="nachname" value="<%= user.last_name || '' %>"></div>
               <div class="form-group"><label>Unternehmen</label><input type="text" name="company" value="<%= user.company || '' %>"></div>
               <div class="form-group"><label>Telefon</label><input type="tel" name="phone" value="<%= user.phone || '' %>"></div>
             </div>

@@ -11,8 +11,12 @@
           <h2>Kontaktdaten</h2>
           <div class="form-grid">
             <div class="form-group">
-              <label>Name *</label>
-              <input type="text" name="name" value="<%= user?.name || '' %>" required placeholder="Vor- und Nachname">
+              <label>Vorname *</label>
+              <input type="text" name="vorname" value="<%= user?.first_name || '' %>" required placeholder="Vorname">
+            </div>
+            <div class="form-group">
+              <label>Nachname *</label>
+              <input type="text" name="nachname" value="<%= user?.last_name || '' %>" required placeholder="Nachname">
             </div>
             <div class="form-group">
               <label>E-Mail *</label>
