@@ -22,6 +22,57 @@
           <div class="account-stat"><div class="stat-num"><%= orders.length %></div><div class="stat-label">Bestellungen</div></div>
         </div>
 
+        <style>
+          .gutschein { display:flex; align-items:center; justify-content:space-between; gap:1rem; border:1.5px dashed #34C759; border-radius:12px; padding:14px 18px; margin-bottom:12px; background:#F0FDF4; }
+          .gutschein--used { border-style:solid; border-color:#E5E7EB; background:#F9FAFB; opacity:.7; }
+          .gutschein-value { font-size:18px; font-weight:700; color:#166534; }
+          .gutschein--used .gutschein-value { color:#6B7280; }
+          .gutschein-code { margin-top:5px; }
+          .gutschein-code span { font-family:"SF Mono","Fira Code","Consolas",monospace; font-size:15px; font-weight:600; letter-spacing:.5px; background:#fff; border:1px solid #D1FAE5; border-radius:6px; padding:3px 10px; display:inline-block; color:#1D1D1F; }
+          .gutschein-meta { font-size:12px; color:#6B7280; margin-top:6px; }
+          .gutschein-copy { background:#34C759; color:#fff; border:none; border-radius:980px; padding:9px 18px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+          .gutschein-copy:hover { background:#16a34a; }
+          .gutschein-badge { font-size:12px; font-weight:600; color:#6B7280; background:#fff; border:1px solid #E5E7EB; border-radius:980px; padding:4px 12px; white-space:nowrap; }
+          @media (max-width:480px){ .gutschein{flex-direction:column;align-items:stretch;text-align:center;} .gutschein-copy{width:100%;} }
+        </style>
+        <div class="section-card">
+          <h2>🎟 Meine Gutscheine</h2>
+          <%
+            const _now = new Date();
+            const _isActive = (c) => c.active && c.used_count < c.max_uses && (!c.expires_at || new Date(c.expires_at) >= _now);
+            const _coupons = locals.coupons || [];
+            const _active = _coupons.filter(_isActive);
+            const _inactive = _coupons.filter(c => !_isActive(c));
+          %>
+          <% if (!_coupons.length) { %>
+            <p class="text-gray">Sie haben aktuell keine Gutscheine. Bei Ihrer Registrierung erhalten Neukunden automatisch einen Willkommensrabatt.</p>
+          <% } else { %>
+            <% for (const c of _active) { %>
+            <div class="gutschein gutschein--active">
+              <div class="gutschein-left">
+                <div class="gutschein-value"><%= c.type === 'percent' ? c.value + '% Rabatt' : formatEuro(c.value) + ' Rabatt' %></div>
+                <div class="gutschein-code"><span><%= c.code %></span></div>
+                <div class="gutschein-meta">
+                  <% if (c.min_order > 0) { %>Ab <%= formatEuro(c.min_order) %> Bestellwert · <% } %>
+                  <% if (c.expires_at) { %>Gültig bis <%= formatDate(c.expires_at) %><% } else { %>Unbegrenzt gültig<% } %>
+                </div>
+              </div>
+              <button type="button" class="gutschein-copy" data-code="<%= c.code %>">Code kopieren</button>
+            </div>
+            <% } %>
+            <% if (!_active.length) { %><p class="text-gray">Aktuell keine aktiven Gutscheine.</p><% } %>
+            <% for (const c of _inactive) { %>
+            <div class="gutschein gutschein--used">
+              <div class="gutschein-left">
+                <div class="gutschein-value"><%= c.type === 'percent' ? c.value + '%' : formatEuro(c.value) %></div>
+                <div class="gutschein-code"><span><%= c.code %></span></div>
+              </div>
+              <span class="gutschein-badge"><%= (c.used_count >= c.max_uses) ? '✓ Eingelöst' : 'Abgelaufen' %></span>
+            </div>
+            <% } %>
+          <% } %>
+        </div>
+
         <div class="section-card">
           <h2>Letzte Bestellungen</h2>
           <% if (orders.length === 0) { %>
@@ -84,5 +135,21 @@
     </div>
   </div>
 </main>
+
+<script>
+document.querySelectorAll('.gutschein-copy').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var code = btn.getAttribute('data-code');
+    function done() { var o = btn.textContent; btn.textContent = '✓ Kopiert'; setTimeout(function(){ btn.textContent = o; }, 1500); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code).then(done).catch(done);
+    } else {
+      var t = document.createElement('textarea'); t.value = code; document.body.appendChild(t); t.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(t); done();
+    }
+  });
+});
+</script>
 
 <%- include('../partials/footer') %>

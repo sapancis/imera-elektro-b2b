@@ -9,7 +9,8 @@ router.get('/', requireAuth, async (req, res) => {
   try {
     const user = await db.prepare('SELECT * FROM users WHERE id=?').get(req.session.userId);
     const orders = await db.prepare('SELECT * FROM orders WHERE user_id=? ORDER BY created_at DESC LIMIT 5').all(req.session.userId);
-    res.render('account/dashboard', { title: 'Mein Konto', user, orders });
+    const coupons = await db.prepare('SELECT * FROM coupons WHERE user_id=? ORDER BY created_at DESC').all(req.session.userId);
+    res.render('account/dashboard', { title: 'Mein Konto', user, orders, coupons });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
