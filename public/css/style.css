@@ -2152,3 +2152,16 @@ img {
 @media (max-width: 360px) {
   .container.page-content { padding-left: 0.75rem; padding-right: 0.75rem; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ÜRÜN DETAY — Staffelpreis satırları + miktar butonları mobilde kaymasın
+   number input'un min-width:auto'su (~245px) küçülmeyi engelliyordu → +100 alt
+   satıra düşüyor, uzun tier etiketi fiyatı aşağı itiyordu. Esnek öğelere
+   min-width:0 + flex-wrap:nowrap ile tek satırda, hizalı tutuyoruz.
+   ════════════════════════════════════════════════════════════════════════════ */
+.tier-option-row { flex-wrap: nowrap; }
+.tier-option-info { min-width: 0; }
+.tier-option-price { flex-shrink: 0; white-space: nowrap; }
+.qty-row { flex-wrap: nowrap; }
+.qty-input-lg { min-width: 0; }
+.btn-qty-adj { flex-shrink: 0; white-space: nowrap; }
