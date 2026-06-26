@@ -81,8 +81,9 @@
           <div class="shipping-bar"><div class="shipping-bar-fill" style="width:<%= Math.min(100, subtotal/freeShippingThreshold*100) %>%"></div></div>
         </div>
         <% } %>
-        <div class="summary-total"><span>Gesamt</span><span><%= formatEuro(total) %></span></div>
-        <div class="summary-vat">Alle Preise netto exkl. MwSt. (Kleinunternehmer)</div>
+        <div class="summary-row"><span>zzgl. 20% MwSt.</span><span><%= formatEuro(tax) %></span></div>
+        <div class="summary-total"><span>Gesamt (inkl. MwSt.)</span><span><%= formatEuro(total) %></span></div>
+        <div class="summary-vat">Preise netto; inkl. 20% MwSt.</div>
         <a href="/kasse" class="btn-green btn-full">Zur Kasse →</a>
         <div class="payment-icons">
           <span>💳 Überweisung</span><span>📄 Auf Rechnung</span>

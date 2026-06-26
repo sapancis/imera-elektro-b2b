@@ -81,13 +81,13 @@
           <% } else { %>
           <div class="table-scroll">
           <table class="data-table">
-            <thead><tr><th>Bestellnummer</th><th>Datum</th><th>Gesamt</th><th>Status</th><th></th></tr></thead>
+            <thead><tr><th>Bestellnummer</th><th>Datum</th><th>Gesamt (inkl. MwSt.)</th><th>Status</th><th></th></tr></thead>
             <tbody>
               <% for (const o of orders) { %>
               <tr>
                 <td><%= o.order_number %></td>
                 <td><%= formatDate(o.created_at) %></td>
-                <td><%= formatEuro(o.total) %></td>
+                <td><%= formatEuro(grossAmount(o.total)) %></td>
                 <td><span class="status-badge status-<%= orderStatusClass(o.status) %>"><%= orderStatusLabel(o.status) %></span></td>
                 <td><a href="/konto/bestellungen/<%= o.order_number %>" class="btn-sm btn-outline">Details</a></td>
               </tr>

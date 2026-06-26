@@ -3,6 +3,7 @@
  * Nodemailer ile sipariş onay ve admin bildirim mailleri
  */
 const nodemailer = require('nodemailer');
+const { VAT_RATE, vatAmount, grossAmount } = require('./vat');
 
 function createTransport() {
   // .env'den SMTP ayarları okunur
@@ -53,7 +54,7 @@ async function sendOrderConfirmation({ order, items, customerEmail, customerName
         <tr><td style="padding:2px 12px 2px 0;font-weight:600">Empfänger:</td><td>Imera Elektro</td></tr>
         <tr><td style="padding:2px 12px 2px 0;font-weight:600">IBAN:</td><td>${process.env.BANK_IBAN || 'Bitte beim Support erfragen'}</td></tr>
         <tr><td style="padding:2px 12px 2px 0;font-weight:600">Verwendungszweck:</td><td>${order.order_number}</td></tr>
-        <tr><td style="padding:2px 12px 2px 0;font-weight:600">Betrag:</td><td>${fmt2(order.total)}</td></tr>
+        <tr><td style="padding:2px 12px 2px 0;font-weight:600">Betrag:</td><td>${fmt2(grossAmount(order.total))} <span style="font-weight:400">(inkl. ${Math.round(VAT_RATE*100)}% MwSt.)</span></td></tr>
       </table>
     </div>` : '';
 
@@ -97,12 +98,13 @@ async function sendOrderConfirmation({ order, items, customerEmail, customerName
 
       <!-- Totals -->
       <table style="width:100%;margin-bottom:24px">
-        <tr><td style="padding:4px 12px;color:#6E6E73;font-size:14px">Zwischensumme</td><td style="padding:4px 12px;text-align:right;font-size:14px">${fmt2(order.subtotal)}</td></tr>
+        <tr><td style="padding:4px 12px;color:#6E6E73;font-size:14px">Zwischensumme (netto)</td><td style="padding:4px 12px;text-align:right;font-size:14px">${fmt2(order.subtotal)}</td></tr>
         <tr><td style="padding:4px 12px;color:#6E6E73;font-size:14px">Versand</td><td style="padding:4px 12px;text-align:right;font-size:14px">${order.shipping === 0 ? '<span style="color:#34C759">Kostenlos</span>' : fmt2(order.shipping)}</td></tr>
         ${order.total < order.subtotal + order.shipping ? `<tr><td style="padding:4px 12px;color:#34C759;font-size:14px">Rabatt</td><td style="padding:4px 12px;text-align:right;font-size:14px;color:#34C759">-${fmt2(order.subtotal + order.shipping - order.total)}</td></tr>` : ''}
+        <tr><td style="padding:4px 12px;color:#6E6E73;font-size:14px">zzgl. ${Math.round(VAT_RATE*100)}% MwSt.</td><td style="padding:4px 12px;text-align:right;font-size:14px">${fmt2(vatAmount(order.total))}</td></tr>
         <tr style="border-top:2px solid #1D1D1F">
-          <td style="padding:10px 12px;font-weight:700;font-size:16px">Gesamtbetrag</td>
-          <td style="padding:10px 12px;text-align:right;font-weight:700;font-size:16px">${fmt2(order.total)}</td>
+          <td style="padding:10px 12px;font-weight:700;font-size:16px">Gesamtbetrag (inkl. MwSt.)</td>
+          <td style="padding:10px 12px;text-align:right;font-weight:700;font-size:16px">${fmt2(grossAmount(order.total))}</td>
         </tr>
       </table>
 
@@ -124,7 +126,7 @@ async function sendOrderConfirmation({ order, items, customerEmail, customerName
 
     <!-- Footer -->
     <div style="background:#F5F5F7;padding:16px 32px;text-align:center;font-size:12px;color:#6E6E73">
-      <p style="margin:0">Imera Elektro · www.imeragroup.com · Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG</p>
+      <p style="margin:0">Imera Elektro · www.imeragroup.com · UID: ATU82785639 · Preise inkl. 20% MwSt.</p>
     </div>
   </div>
 </body>
@@ -163,7 +165,8 @@ async function sendAdminOrderNotification({ order, items, customerName, customer
       <table style="width:100%;font-size:14px;border-collapse:collapse">
         <tr><td style="padding:6px 0;color:#6E6E73;width:140px">Kunde:</td><td style="font-weight:600">${customerName}</td></tr>
         <tr><td style="padding:6px 0;color:#6E6E73">E-Mail:</td><td>${customerEmail}</td></tr>
-        <tr><td style="padding:6px 0;color:#6E6E73">Betrag:</td><td style="font-weight:700;font-size:16px;color:#34C759">${fmt2(order.total)}</td></tr>
+        <tr><td style="padding:6px 0;color:#6E6E73">Betrag (brutto):</td><td style="font-weight:700;font-size:16px;color:#34C759">${fmt2(grossAmount(order.total))}</td></tr>
+        <tr><td style="padding:6px 0;color:#6E6E73">davon ${Math.round(VAT_RATE*100)}% MwSt.:</td><td>${fmt2(vatAmount(order.total))} (netto ${fmt2(order.total)})</td></tr>
         <tr><td style="padding:6px 0;color:#6E6E73">Zahlung:</td><td>${order.payment_method}</td></tr>
         <tr><td style="padding:6px 0;color:#6E6E73">Adresse:</td><td>${(order.shipping_address || '').replace(/\n/g,'<br>')}</td></tr>
       </table>
@@ -175,7 +178,7 @@ async function sendAdminOrderNotification({ order, items, customerName, customer
           <span style="font-weight:600">${fmt2(i.total_price)}</span>
         </div>`).join('')}
         <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;padding:10px 0 0">
-          <span>Gesamt</span><span style="color:#34C759">${fmt2(order.total)}</span>
+          <span>Gesamt (brutto)</span><span style="color:#34C759">${fmt2(grossAmount(order.total))}</span>
         </div>
       </div>
 
@@ -194,7 +197,7 @@ async function sendAdminOrderNotification({ order, items, customerName, customer
   await transporter.sendMail({
     from:    `"Imera Elektro System" <${process.env.SMTP_USER || process.env.MAIL_FROM}>`,
     to:      adminEmail,
-    subject: `🛒 Neue Bestellung ${order.order_number} – ${fmt2(order.total)} – ${customerName}`,
+    subject: `🛒 Neue Bestellung ${order.order_number} – ${fmt2(grossAmount(order.total))} – ${customerName}`,
     html,
   });
 }
@@ -279,7 +282,7 @@ async function sendStatusUpdate({ order, items, customerEmail, customerName }) {
       </table>
 
       <div style="text-align:right;padding:8px 12px;font-weight:700;font-size:16px;border-top:2px solid #1D1D1F">
-        Gesamtbetrag: ${fmt2(order.total)}
+        Gesamtbetrag (inkl. ${Math.round(VAT_RATE*100)}% MwSt.): ${fmt2(grossAmount(order.total))}
       </div>
 
       <p style="color:#6E6E73;font-size:13px;margin-top:24px;border-top:1px solid #E5E7EB;padding-top:16px">
@@ -289,7 +292,7 @@ async function sendStatusUpdate({ order, items, customerEmail, customerName }) {
       </p>
     </div>
     <div style="background:#F5F5F7;padding:16px 32px;text-align:center;font-size:12px;color:#6E6E73">
-      <p style="margin:0">Imera Elektro · www.imeragroup.com · Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG</p>
+      <p style="margin:0">Imera Elektro · www.imeragroup.com · UID: ATU82785639 · Preise inkl. 20% MwSt.</p>
     </div>
   </div>
 </body>
@@ -368,7 +371,7 @@ async function sendPriceListReply({ email }) {
       </p>
     </div>
     <div style="background:#F5F5F7;padding:16px 32px;text-align:center;font-size:12px;color:#6E6E73">
-      <p style="margin:0">Imera Elektro · www.imeragroup.com · Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG</p>
+      <p style="margin:0">Imera Elektro · www.imeragroup.com · UID: ATU82785639 · Preise inkl. 20% MwSt.</p>
     </div>
   </div>
 </body></html>`;

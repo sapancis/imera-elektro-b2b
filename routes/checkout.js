@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
 const { flash } = require('../middleware/auth');
+const { VAT_RATE, vatAmount, grossAmount } = require('../utils/vat');
 const { sendOrderConfirmation, sendAdminOrderNotification } = require('../utils/mailer');
 
 async function calcItemPrice(productId, qty) {
@@ -47,12 +48,14 @@ router.get('/', async (req, res) => {
     const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
     const freeThreshold = parseFloat(freeThresholdRow?.value || 200);
     const shipping = subtotal >= freeThreshold ? 0 : 7.90;
-    const total = subtotal + shipping;
+    const net = subtotal + shipping;
+    const tax = vatAmount(net);
+    const gross = grossAmount(net);
     const user = req.session.userId ? await db.prepare('SELECT * FROM users WHERE id=?').get(req.session.userId) : null;
     const isStammkunde = user?.stammkunde === 1;
     const stripeKeyRow = await db.prepare("SELECT value FROM settings WHERE key='stripe_publishable_key'").get();
     const stripeKey = stripeKeyRow?.value || '';
-    res.render('checkout', { title: 'Kasse', items, subtotal, shipping, total, user, stripeKey, isStammkunde });
+    res.render('checkout', { title: 'Kasse', items, subtotal, shipping, net, tax, gross, user, stripeKey, isStammkunde });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
@@ -174,6 +177,11 @@ router.post('/stripe-session', async (req, res) => {
     }));
     if (shipping > 0) {
       lineItems.push({ price_data: { currency: 'eur', product_data: { name: 'Versandkosten' }, unit_amount: Math.round(shipping * 100) }, quantity: 1 });
+    }
+    // 20% MwSt. (Regelbesteuerung) als eigene Position
+    const taxAmount = vatAmount(subtotal + shipping);
+    if (taxAmount > 0) {
+      lineItems.push({ price_data: { currency: 'eur', product_data: { name: `${Math.round(VAT_RATE * 100)}% MwSt.` }, unit_amount: Math.round(taxAmount * 100) }, quantity: 1 });
     }
 
     const base = `${req.protocol}://${req.get('host')}`;

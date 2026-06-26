@@ -86,7 +86,7 @@
 
         <input type="hidden" name="coupon_code" id="couponCodeInput">
         <button type="submit" class="btn-green btn-full btn-lg">Bestellung kostenpflichtig aufgeben →</button>
-        <p style="font-size:12px;color:#6B7280;text-align:center;margin-top:8px">Alle Preise netto exkl. MwSt. | Kleinunternehmer gem. § 6 Abs. 1 Z 27 UStG</p>
+        <p style="font-size:12px;color:#6B7280;text-align:center;margin-top:8px">Alle Preise netto zzgl. 20% MwSt. (Regelbesteuerung)</p>
       </form>
 
       <% if (locals.stripeKey) { %>
@@ -106,10 +106,11 @@
         </div>
         <% } %>
         <hr>
-        <div class="summary-row"><span>Zwischensumme</span><span><%= formatEuro(subtotal) %></span></div>
+        <div class="summary-row"><span>Zwischensumme (netto)</span><span><%= formatEuro(subtotal) %></span></div>
         <div class="summary-row"><span>Versand</span><span><%= shipping > 0 ? formatEuro(shipping) : 'Kostenlos' %></span></div>
         <div class="summary-row" id="discountRow" style="display:none;color:#10B981"><span>Rabatt (<span id="discountLabel"></span>)</span><span id="discountAmt"></span></div>
-        <div class="summary-total"><span>Gesamt (netto)</span><span id="totalDisplay"><%= formatEuro(total) %></span></div>
+        <div class="summary-row"><span>zzgl. <%= vatPercent %>% MwSt.</span><span id="taxDisplay"><%= formatEuro(tax) %></span></div>
+        <div class="summary-total"><span>Gesamt (inkl. MwSt.)</span><span id="totalDisplay"><%= formatEuro(gross) %></span></div>
 
         <!-- Gutschein -->
         <div class="coupon-box">
@@ -152,8 +153,11 @@ document.getElementById('couponApply')?.addEventListener('click', () => {
       document.getElementById('discountRow').style.display = 'flex';
       document.getElementById('discountLabel').textContent = d.type === 'percent' ? d.value + '%' : d.value.toFixed(2) + '€';
       document.getElementById('discountAmt').textContent = '-' + d.discount.toFixed(2).replace('.', ',') + '€';
-      const newTotal = Math.max(0, subtotal + <%= shipping %> - d.discount);
-      document.getElementById('totalDisplay').textContent = newTotal.toFixed(2).replace('.', ',') + '€';
+      const newNet = Math.max(0, subtotal + <%= shipping %> - d.discount);
+      const newTax = Math.round(newNet * <%= VAT_RATE %> * 100) / 100;
+      const newGross = Math.round((newNet + newTax) * 100) / 100;
+      document.getElementById('taxDisplay').textContent = newTax.toFixed(2).replace('.', ',') + '€';
+      document.getElementById('totalDisplay').textContent = newGross.toFixed(2).replace('.', ',') + '€';
       msg.style.color = '#10B981';
     } else {
       msg.style.color = '#EF4444';

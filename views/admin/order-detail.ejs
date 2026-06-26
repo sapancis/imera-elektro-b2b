@@ -66,9 +66,14 @@
           </table>
           </div>
           <div class="order-totals">
-            <div class="summary-row"><span>Zwischensumme</span><span><%= formatEuro(order.subtotal) %></span></div>
+            <div class="summary-row"><span>Zwischensumme (netto)</span><span><%= formatEuro(order.subtotal) %></span></div>
             <div class="summary-row"><span>Versand</span><span><%= order.shipping > 0 ? formatEuro(order.shipping) : 'Kostenlos' %></span></div>
-            <div class="summary-total"><span>Gesamt</span><span><%= formatEuro(order.total) %></span></div>
+            <% if (order.total < order.subtotal + order.shipping) { %>
+            <div class="summary-row" style="color:#10B981"><span>Rabatt</span><span>-<%= formatEuro(order.subtotal + order.shipping - order.total) %></span></div>
+            <% } %>
+            <div class="summary-row"><span>Nettobetrag</span><span><%= formatEuro(order.total) %></span></div>
+            <div class="summary-row"><span>20% MwSt.</span><span><%= formatEuro(vatAmount(order.total)) %></span></div>
+            <div class="summary-total"><span>Gesamt (brutto)</span><span><%= formatEuro(grossAmount(order.total)) %></span></div>
           </div>
         </div>
       </div>

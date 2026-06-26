@@ -97,6 +97,11 @@ app.locals.formatDate = (d) => d ? new Date(d).toLocaleDateString('de-AT', { day
 app.locals.orderStatusLabel = (s) => ({ pending: 'Offen', processing: 'In Bearbeitung', shipped: 'Versandt', delivered: 'Geliefert', cancelled: 'Storniert' }[s] || s);
 app.locals.orderStatusClass = (s) => ({ pending: 'warning', processing: 'info', shipped: 'primary', delivered: 'success', cancelled: 'danger' }[s] || 'secondary');
 app.locals.savings = (our, mktMax) => mktMax > our ? Math.round((1 - our / mktMax) * 100) : 0;
+const { VAT_RATE, vatAmount, grossAmount } = require('./utils/vat');
+app.locals.VAT_RATE = VAT_RATE;
+app.locals.vatPercent = Math.round(VAT_RATE * 100);
+app.locals.vatAmount = vatAmount;     // netto → USt-Betrag
+app.locals.grossAmount = grossAmount; // netto → brutto
 
 // ─── Routes ───────────────────────────────────────────────────────────────
 app.use('/', require('./routes/index'));

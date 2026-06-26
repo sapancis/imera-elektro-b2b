@@ -204,7 +204,7 @@ const defaultSettings = [
   ['contact_website', 'www.imeragroup.com'],
   ['shipping_info', '2-5 Werktage'],
   ['free_shipping_threshold', '200'],
-  ['company_legal', 'Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG'],
+  ['company_legal', 'Imera Elektro unterliegt der Regelbesteuerung · UID: ATU82785639 · Alle Preise netto zzgl. 20% MwSt.'],
   ['meta_description', 'CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt. Direktimport. Kabelbinder, Kabelverschraubungen, Reihenklemmen.'],
 ];
 

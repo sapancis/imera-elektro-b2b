@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const PDFDocument = require('pdfkit');
 const db = require('../database/db');
 const { requireAuth, flash } = require('../middleware/auth');
+const { VAT_RATE, vatAmount, grossAmount } = require('../utils/vat');
 
 router.get('/', requireAuth, async (req, res) => {
   try {
@@ -147,24 +148,39 @@ router.get('/bestellungen/:number/rechnung.pdf', requireAuth, async (req, res) =
     y += 16;
 
     // ── Summen ──────────────────────────────────────────────────────
+    const eur = (n) => n.toFixed(2).replace('.', ',') + ' €';
+    const taxTotal = vatAmount(order.total);
+    const grossTotal = grossAmount(order.total);
+    const discount = (order.subtotal + order.shipping) - order.total;
     const summaryX = 360;
     doc.fontSize(9).font('Helvetica').fillColor(gray);
     doc.text('Zwischensumme:', summaryX, y, { width: 120 });
-    doc.fillColor(black).text(order.subtotal.toFixed(2).replace('.', ',') + ' €', summaryX, y, { width: 185, align: 'right' });
+    doc.fillColor(black).text(eur(order.subtotal), summaryX, y, { width: 185, align: 'right' });
     y += 16;
     doc.fillColor(gray).text('Versandkosten:', summaryX, y, { width: 120 });
-    doc.fillColor(black).text(order.shipping > 0 ? order.shipping.toFixed(2).replace('.', ',') + ' €' : 'Kostenlos', summaryX, y, { width: 185, align: 'right' });
+    doc.fillColor(black).text(order.shipping > 0 ? eur(order.shipping) : 'Kostenlos', summaryX, y, { width: 185, align: 'right' });
+    y += 16;
+    if (discount > 0.005) {
+      doc.fillColor(gray).text('Rabatt:', summaryX, y, { width: 120 });
+      doc.fillColor(black).text('-' + eur(discount), summaryX, y, { width: 185, align: 'right' });
+      y += 16;
+    }
+    doc.fillColor(gray).text('Nettobetrag:', summaryX, y, { width: 120 });
+    doc.fillColor(black).text(eur(order.total), summaryX, y, { width: 185, align: 'right' });
+    y += 16;
+    doc.fillColor(gray).text(`zzgl. ${Math.round(VAT_RATE * 100)}% USt.:`, summaryX, y, { width: 120 });
+    doc.fillColor(black).text(eur(taxTotal), summaryX, y, { width: 185, align: 'right' });
     y += 20;
 
     doc.rect(summaryX, y-4, 185, 26).fill('#1D1D1F');
     doc.fontSize(11).font('Helvetica-Bold').fillColor('white');
-    doc.text('GESAMT (NETTO)', summaryX+8, y+3);
-    doc.text(order.total.toFixed(2).replace('.', ',') + ' €', summaryX, y+3, { width: 180, align: 'right' });
+    doc.text('GESAMT (BRUTTO)', summaryX+8, y+3);
+    doc.text(eur(grossTotal), summaryX, y+3, { width: 180, align: 'right' });
     y += 38;
 
     // ── Footer ──────────────────────────────────────────────────────
     doc.fontSize(7.5).font('Helvetica').fillColor(gray)
-      .text(settings.company_legal || 'Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG – keine MwSt. ausgewiesen', 50, y+10, { align: 'center', width: 495 });
+      .text(`Imera Elektro unterliegt der Regelbesteuerung. Alle Beträge in EUR inkl. ${Math.round(VAT_RATE * 100)}% MwSt. · UID: ATU82785639`, 50, y+10, { align: 'center', width: 495 });
 
     if (order.payment_method === 'transfer') {
       doc.moveDown().fontSize(8).fillColor(black).font('Helvetica-Bold')
