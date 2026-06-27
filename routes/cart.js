@@ -21,17 +21,24 @@ router.get('/', async (req, res) => {
     const cart = getCart(req);
     const items = [];
     let subtotal = 0;
+    const staleKeys = []; // çözülemeyen kalemler (silinmiş/pasif ürün veya eski seed ID'leri)
 
     for (const [productId, qty] of Object.entries(cart)) {
       const product = await db.prepare('SELECT * FROM products WHERE id=? AND active=1').get(productId);
-      if (!product) continue;
+      if (!product) { staleKeys.push(productId); continue; }
       const unitPrice = await calcItemPrice(parseInt(productId), qty);
-      if (!unitPrice) continue;
+      if (!unitPrice) { staleKeys.push(productId); continue; }
       const lineTotal = unitPrice * qty;
       subtotal += lineTotal;
       const tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(productId);
       const nextTier = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? AND min_qty>? ORDER BY min_qty ASC LIMIT 1').get(productId, qty);
       items.push({ product, qty, unitPrice, lineTotal, tiers, nextTier });
+    }
+
+    // Çözülemeyen kalemleri sepetten temizle — aksi halde sepet rozeti (cartCount)
+    // içerikten kalıcı olarak sapar (ör. ürün re-seed sonrası ID değişmişse).
+    if (staleKeys.length && req.session.cart) {
+      for (const k of staleKeys) delete req.session.cart[k];
     }
 
     const freeShippingThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
