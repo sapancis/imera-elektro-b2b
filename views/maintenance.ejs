@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Wartungsarbeiten – Imera Elektro</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #0f1115;
+      color: #1d1d1f;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    .card-top {
+      background: #1d1d1f;
+      padding: 34px 32px 28px;
+      color: #fff;
+    }
+    .logo { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+    .logo span { color: #34C759; }
+    .tagline { color: #a1a1a6; font-size: 13px; margin-top: 6px; }
+    .card-body { padding: 40px 32px 36px; }
+    .icon { font-size: 56px; line-height: 1; margin-bottom: 18px; }
+    h1 { font-size: 24px; letter-spacing: -0.3px; margin-bottom: 12px; }
+    p.lead { font-size: 15px; color: #6e6e73; line-height: 1.6; margin-bottom: 8px; }
+    .contact {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid #ececf0;
+      font-size: 14px;
+      color: #6e6e73;
+    }
+    .contact a { color: #1d1d1f; text-decoration: none; font-weight: 600; }
+    .contact .row { margin: 6px 0; }
+    .footer-note { margin-top: 22px; font-size: 12px; color: #a1a1a6; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-top">
+      <div class="logo">IMERA <span>ELEKTRO</span></div>
+      <div class="tagline">Elektrokomponenten 40–60% unter Marktpreis</div>
+    </div>
+    <div class="card-body">
+      <div class="icon">🛠️</div>
+      <h1>Wir sind gleich wieder da</h1>
+      <p class="lead">Unser Shop wird gerade gewartet, damit wir Ihnen einen noch besseren Service bieten können.</p>
+      <p class="lead">Bitte schauen Sie in Kürze wieder vorbei – vielen Dank für Ihr Verständnis.</p>
+
+      <div class="contact">
+        <div class="row">📞 <a href="tel:+436608514467">+43 660 8514467</a></div>
+        <div class="row">✉ <a href="mailto:info@imeragroup.com">info@imeragroup.com</a></div>
+      </div>
+
+      <div class="footer-note">© <%= new Date().getFullYear() %> Imera Elektro</div>
+    </div>
+  </div>
+</body>
+</html>
