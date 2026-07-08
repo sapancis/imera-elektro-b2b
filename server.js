@@ -171,11 +171,14 @@ app.use((err, req, res, next) => {
 // Not: Katalog migration artık /__migrate-catalog endpoint'i ile çalışıyor
 // (serverless'ta module-load arka plan işi donduğu için istek içinde await edilir).
 
-if (require.main === module) {
+// Vercel serverless'ta app.listen ÇAĞIRMA (fonksiyon olarak export edilir).
+// Diğer her yerde — Hostinger/Passenger, lokal `node server.js` — PORT'ta dinle.
+// (Passenger, server.js'i kendi loader'ıyla yüklediği için require.main === module
+//  güvenilir değil; VERCEL env'i yoksa her zaman dinliyoruz.)
+if (!process.env.VERCEL) {
   app.listen(PORT, () => {
-    console.log(`\n✓ Imera Elektro läuft auf http://localhost:${PORT}`);
-    console.log(`  Admin: http://localhost:${PORT}/admin`);
-    console.log(`  Shop:  http://localhost:${PORT}/shop\n`);
+    console.log(`\n✓ Imera Elektro läuft auf Port ${PORT}`);
+    console.log(`  Admin: /admin   Shop: /shop\n`);
   });
 }
 
