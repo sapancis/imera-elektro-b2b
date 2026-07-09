@@ -103,20 +103,6 @@ app.locals.vatPercent = Math.round(VAT_RATE * 100);
 app.locals.vatAmount = vatAmount;     // netto → USt-Betrag
 app.locals.grossAmount = grossAmount; // netto → brutto
 
-// ─── Wartungsmodus (Maintenance) ──────────────────────────────────────────
-// GEÇİCİ OLARAK AÇIK. Kapatmak için: aşağıdaki 'on' → 'off' yap ve deploy et,
-// ya da Hostinger'da MAINTENANCE_MODE=off ortam değişkeni ile geçersiz kıl.
-// İstisnalar: /admin ve /konto (giriş) her zaman açık; admin oturumu siteyi
-// normal görebilir (önizleme). Statik dosyalar zaten yukarıda servis edildi.
-const MAINTENANCE_MODE = process.env.MAINTENANCE_MODE || 'on';
-app.use((req, res, next) => {
-  if (MAINTENANCE_MODE !== 'on') return next();
-  if (req.path.startsWith('/admin') || req.path.startsWith('/konto')) return next();
-  if (req.session && req.session.userRole === 'admin') return next();
-  res.set('Retry-After', '3600');
-  return res.status(503).render('maintenance', { title: 'Wartungsarbeiten' });
-});
-
 // ─── Routes ───────────────────────────────────────────────────────────────
 app.use('/', require('./routes/index'));
 app.use('/shop', require('./routes/shop'));
