@@ -22,17 +22,19 @@
             <% for (const item of items) { %>
             <tr>
               <td>
+                <% const _pk = item.product.sell_as_pack == 1; const _un = _pk ? 'Paket' : 'Stk'; %>
                 <div class="cart-product">
                   <a href="/shop/produkt/<%= item.product.slug %>" class="cart-product-name"><%= item.product.name %></a>
                   <% if (item.product.sku) { %><small>Art.-Nr.: <%= item.product.sku %></small><% } %>
+                  <% if (_pk) { %><small style="color:#166534;font-weight:600">📦 1 Paket = <%= item.product.pack_size || 1 %> Stück</small><% } %>
                   <div class="tier-hint-sm">
                     <% for (const t of item.tiers) { %>
-                    <span class="<%= item.qty >= t.min_qty && (!t.max_qty || item.qty <= t.max_qty) ? 'tier-active' : '' %>"><%= t.min_qty %>–<%= t.max_qty||'∞' %> Stk: <%= formatPrice(t.price) %></span>
+                    <span class="<%= item.qty >= t.min_qty && (!t.max_qty || item.qty <= t.max_qty) ? 'tier-active' : '' %>"><%= t.min_qty %>–<%= t.max_qty||'∞' %> <%= _un %>: <%= formatPrice(t.price) %></span>
                     <% } %>
                   </div>
                   <% if (item.nextTier) { %>
                   <div class="cart-tier-nudge">
-                    💡 Noch <strong><%= item.nextTier.min_qty - item.qty %> Stk.</strong> bis zum nächsten Rabatt – dann nur <strong><%= formatPrice(item.nextTier.price) %>/Stk.</strong>
+                    💡 Noch <strong><%= item.nextTier.min_qty - item.qty %> <%= _pk ? 'Paket' : 'Stk.' %></strong> bis zum nächsten Rabatt – dann nur <strong><%= formatPrice(item.nextTier.price) %>/<%= _un %></strong>
                   </div>
                   <% } %>
                 </div>

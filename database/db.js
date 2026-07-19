@@ -61,6 +61,8 @@ db.exec(`
     active INTEGER DEFAULT 1,
     featured INTEGER DEFAULT 0,
     badge TEXT,
+    sell_as_pack INTEGER DEFAULT 0,
+    pack_size INTEGER DEFAULT 1,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
   );
@@ -191,6 +193,10 @@ try {
     upd.run(fn, parts.join(' '), u.id);
   }
 } catch (_) {}
+
+// ── Paket satışı kolonları (eski DB'lerde yoksa ekle) ──
+try { db.exec('ALTER TABLE products ADD COLUMN sell_as_pack INTEGER DEFAULT 0'); } catch (_) {}
+try { db.exec('ALTER TABLE products ADD COLUMN pack_size INTEGER DEFAULT 1'); } catch (_) {}
 
 const defaultSettings = [
   ['site_name', 'Imera Elektro'],

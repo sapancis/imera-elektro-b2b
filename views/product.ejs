@@ -42,30 +42,37 @@
         </p>
 
         <!-- Tier Price Box -->
+        <% const _pack = product.sell_as_pack == 1; const _unit = _pack ? 'Paket' : 'Stück'; const _psize = product.pack_size || 1; %>
         <div class="tier-box">
           <h3>Staffelpreise – Je mehr, desto günstiger</h3>
+          <% if (_pack) { %><p style="margin:-6px 0 12px;font-size:13px;color:#166534;font-weight:600">📦 1 Paket = <%= _psize %> Stück · Preise pro Paket</p><% } %>
           <div class="tier-options" id="tierOptions">
             <% for (let i = 0; i < product.tiers.length; i++) { %>
             <label class="tier-option-row <%= i === 0 ? 'selected' : '' %>" data-tier-idx="<%= i %>">
               <input type="radio" name="tier" value="<%= i %>" <%= i === 0 ? 'checked' : '' %> style="margin-right:10px">
               <div class="tier-option-info">
-                <div class="tier-option-range"><%= product.tiers[i].label || product.tiers[i].min_qty + '–' + (product.tiers[i].max_qty || '∞') + ' Stück' %></div>
+                <div class="tier-option-range"><%= product.tiers[i].label || product.tiers[i].min_qty + '–' + (product.tiers[i].max_qty || '∞') + ' ' + _unit %></div>
                 <div class="tier-option-sub"><%= i === 0 ? 'Ideal für Kleinbedarf' : i === 1 ? 'Beliebteste Option' : 'Bester Preis für Großabnehmer' %></div>
               </div>
               <div class="tier-option-price">
                 <span class="tier-price-val" style="color:<%= i === 0 ? '#1E3A8A' : '#10B981' %>"><%= formatPrice(product.tiers[i].price) %></span>
-                <small>pro Stück</small>
+                <small>pro <%= _unit %></small>
               </div>
             </label>
             <% } %>
           </div>
 
           <div class="qty-section">
-            <div class="qty-label">Bestellmenge eingeben</div>
+            <div class="qty-label"><%= _pack ? 'Anzahl Pakete' : 'Bestellmenge eingeben' %></div>
             <div class="qty-row">
               <input type="number" id="detailQty" value="1" min="1" class="qty-input-lg">
+              <% if (_pack) { %>
+              <button onclick="adjustQty(1)" class="btn-qty-adj">+1</button>
+              <button onclick="adjustQty(5)" class="btn-qty-adj">+5</button>
+              <% } else { %>
               <button onclick="adjustQty(10)" class="btn-qty-adj">+10</button>
               <button onclick="adjustQty(100)" class="btn-qty-adj">+100</button>
+              <% } %>
             </div>
 
             <div class="price-summary" id="priceSummary">
@@ -73,7 +80,7 @@
                 <span>Gesamtpreis</span>
                 <span class="price-total-big" id="totalPrice"><%= formatPrice(product.tiers[0]?.price) %></span>
               </div>
-              <div class="price-summary-note" id="priceNote">1 Stück × <%= formatPrice(product.tiers[0]?.price) %></div>
+              <div class="price-summary-note" id="priceNote">1 <%= _unit %> × <%= formatPrice(product.tiers[0]?.price) %><% if (_pack) { %> <span style="color:#9CA3AF">(<%= _psize %> Stück)</span><% } %></div>
             </div>
 
             <div class="tip-box" id="tipBox" style="display:none"></div>
@@ -287,6 +294,9 @@
 <script>
 const productId = '<%= product.id %>';
 const tiers = <%- JSON.stringify(product.tiers) %>;
+const sellAsPack = <%= product.sell_as_pack == 1 ? 'true' : 'false' %>;
+const packSize = <%= product.pack_size || 1 %>;
+const unitLabel = sellAsPack ? 'Paket' : 'Stück';
 
 function adjustQty(n) {
   const inp = document.getElementById('detailQty');
@@ -302,12 +312,12 @@ function updatePrice() {
     .then(r => r.json()).then(data => {
       if (!data.ok) return;
       document.getElementById('totalPrice').textContent = data.total.toString().replace('.', ',') + '€';
-      document.getElementById('priceNote').textContent = qty + ' Stück × ' + data.unitPrice.toString().replace('.', ',') + '€';
+      document.getElementById('priceNote').textContent = qty + ' ' + unitLabel + ' × ' + data.unitPrice.toString().replace('.', ',') + '€' + (sellAsPack ? ' (' + (qty*packSize) + ' Stück)' : '');
       const tip = document.getElementById('tipBox');
       if (data.nextTier) {
         tip.style.display = 'block';
         const diff = data.nextTier.min_qty - qty;
-        tip.textContent = `💡 Tipp: Bestellen Sie ${diff} weitere Stück und sparen Sie zusätzlich – dann nur ${data.nextTier.price.toFixed(3).replace('.',',')}€/Stk`;
+        tip.textContent = `💡 Tipp: Bestellen Sie ${diff} weitere ${unitLabel} und sparen Sie zusätzlich – dann nur ${data.nextTier.price.toFixed(3).replace('.',',')}€/${sellAsPack ? 'Paket' : 'Stk'}`;
       } else { tip.style.display = 'none'; }
       highlightTier(qty);
     });

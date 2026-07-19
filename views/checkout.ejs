@@ -101,7 +101,7 @@
         <% for (const item of items) { %>
         <div class="checkout-item">
           <div class="checkout-item-name"><%= item.product.name %></div>
-          <div class="checkout-item-qty"><%= item.qty %> × <%= formatPrice(item.unitPrice) %></div>
+          <div class="checkout-item-qty"><%= item.qty %> <%= item.product.sell_as_pack == 1 ? 'Paket' : 'Stück' %> × <%= formatPrice(item.unitPrice) %></div>
           <div class="checkout-item-total"><%= formatEuro(item.lineTotal) %></div>
         </div>
         <% } %>
