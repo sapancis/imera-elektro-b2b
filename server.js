@@ -168,6 +168,20 @@ app.use((err, req, res, next) => {
   }
 })();
 
+// ─── Auto-Migration: Paket satışı kolonları (Turso'da yoksa ekle) ─────────────
+// Kalıcı sunucuda (Hostinger) açılışta güvenilir çalışır; kolon varsa hata yutulur.
+(async function ensurePackColumns() {
+  try {
+    const db = require('./database/db');
+    for (const sql of [
+      'ALTER TABLE products ADD COLUMN sell_as_pack INTEGER DEFAULT 0',
+      'ALTER TABLE products ADD COLUMN pack_size INTEGER DEFAULT 1',
+    ]) {
+      try { await db.prepare(sql).run(); } catch (_) { /* zaten var */ }
+    }
+  } catch (e) { console.error('Pack-Spalten Migration:', e.message); }
+})();
+
 // Not: Katalog migration artık /__migrate-catalog endpoint'i ile çalışıyor
 // (serverless'ta module-load arka plan işi donduğu için istek içinde await edilir).
 
