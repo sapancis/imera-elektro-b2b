@@ -27,7 +27,7 @@
             <% for (const item of items) { %>
             <tr>
               <td><%= item.product_name %><% if (item.product_sku) { %><br><small>Art.-Nr.: <%= item.product_sku %></small><% } %></td>
-              <td><%= item.quantity %></td>
+              <td><%= item.quantity %> <%= item.is_pack ? 'Paket' : 'Stück' %></td>
               <td><%= formatPrice(item.unit_price) %></td>
               <td><%= formatEuro(item.total_price) %></td>
             </tr>

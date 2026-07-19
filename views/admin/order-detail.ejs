@@ -57,7 +57,7 @@
               <% for (const item of items) { %>
               <tr>
                 <td><strong><%= item.product_name %></strong><br><small><%= item.product_sku %></small></td>
-                <td><%= item.quantity %></td>
+                <td><%= item.quantity %> <%= item.is_pack ? 'Paket' : 'Stück' %></td>
                 <td><%= formatPrice(item.unit_price) %></td>
                 <td><%= formatEuro(item.total_price) %></td>
               </tr>

@@ -176,6 +176,8 @@ app.use((err, req, res, next) => {
     for (const sql of [
       'ALTER TABLE products ADD COLUMN sell_as_pack INTEGER DEFAULT 0',
       'ALTER TABLE products ADD COLUMN pack_size INTEGER DEFAULT 1',
+      'ALTER TABLE order_items ADD COLUMN is_pack INTEGER DEFAULT 0',
+      'ALTER TABLE order_items ADD COLUMN pack_size INTEGER DEFAULT 1',
     ]) {
       try { await db.prepare(sql).run(); } catch (_) { /* zaten var */ }
     }

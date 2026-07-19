@@ -26,7 +26,7 @@
         <h3>Bestellübersicht</h3>
         <% for (const item of items) { %>
         <div class="confirm-item">
-          <span><%= item.product_name %> × <%= item.quantity %></span>
+          <span><%= item.product_name %> × <%= item.quantity %> <%= item.is_pack ? 'Paket' : 'Stück' %></span>
           <span><%= formatEuro(item.total_price) %></span>
         </div>
         <% } %>

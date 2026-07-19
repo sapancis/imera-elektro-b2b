@@ -42,7 +42,7 @@ async function sendOrderConfirmation({ order, items, customerEmail, customerName
   const itemsHtml = items.map(item => `
     <tr>
       <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB">${item.product_name}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;text-align:center">${item.quantity}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;text-align:center">${item.quantity} ${item.is_pack ? 'Paket' : 'Stück'}</td>
       <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;text-align:right">${fmt(item.unit_price)}</td>
       <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;text-align:right;font-weight:600">${fmt2(item.total_price)}</td>
     </tr>`).join('');
@@ -149,7 +149,7 @@ async function sendAdminOrderNotification({ order, items, customerName, customer
 
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@imeraelektro.at';
   const itemsText = items.map(i =>
-    `  • ${i.product_name} × ${i.quantity} = ${fmt2(i.total_price)}`
+    `  • ${i.product_name} × ${i.quantity} ${i.is_pack ? 'Paket' : 'Stück'} = ${fmt2(i.total_price)}`
   ).join('\n');
 
   const html = `
@@ -174,7 +174,7 @@ async function sendAdminOrderNotification({ order, items, customerName, customer
       <div style="background:#F5F5F7;border-radius:8px;padding:14px 16px;margin-top:16px">
         <div style="font-size:12px;font-weight:600;color:#6E6E73;text-transform:uppercase;margin-bottom:8px">Bestellte Artikel</div>
         ${items.map(i => `<div style="display:flex;justify-content:space-between;font-size:14px;padding:4px 0;border-bottom:1px solid #E5E7EB">
-          <span>${i.product_name} <span style="color:#6E6E73">×${i.quantity}</span></span>
+          <span>${i.product_name} <span style="color:#6E6E73">×${i.quantity} ${i.is_pack ? 'Paket' : 'Stk'}</span></span>
           <span style="font-weight:600">${fmt2(i.total_price)}</span>
         </div>`).join('')}
         <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;padding:10px 0 0">
@@ -247,7 +247,7 @@ async function sendStatusUpdate({ order, items, customerEmail, customerName }) {
   const itemsHtml = items.map(item => `
     <tr>
       <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB">${item.product_name}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;text-align:center">${item.quantity}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;text-align:center">${item.quantity} ${item.is_pack ? 'Paket' : 'Stück'}</td>
       <td style="padding:8px 12px;border-bottom:1px solid #E5E7EB;text-align:right;font-weight:600">${fmt2(item.total_price)}</td>
     </tr>`).join('');
 

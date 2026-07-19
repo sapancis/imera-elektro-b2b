@@ -136,7 +136,7 @@ router.get('/bestellungen/:number/rechnung.pdf', requireAuth, async (req, res) =
       doc.fontSize(9).font('Helvetica').fillColor(black);
       doc.text(item.product_name, colPos[0]+5, y, { width: 210 });
       doc.text(item.product_sku || '–',       colPos[1], y, { width: 80 });
-      doc.text(String(item.quantity),          colPos[2], y, { width: 60, align: 'right' });
+      doc.text(item.is_pack ? item.quantity + ' Pkt' : String(item.quantity), colPos[2], y, { width: 60, align: 'right' });
       doc.text(item.unit_price.toFixed(3).replace('.', ',') + ' €', colPos[3], y, { width: 55, align: 'right' });
       doc.fillColor(green).text(item.total_price.toFixed(2).replace('.', ',') + ' €', colPos[4], y, { width: 55, align: 'right' });
 

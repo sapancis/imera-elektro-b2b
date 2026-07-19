@@ -118,7 +118,9 @@ db.exec(`
     product_sku TEXT,
     quantity INTEGER NOT NULL,
     unit_price REAL NOT NULL,
-    total_price REAL NOT NULL
+    total_price REAL NOT NULL,
+    is_pack INTEGER DEFAULT 0,
+    pack_size INTEGER DEFAULT 1
   );
 
   CREATE TABLE IF NOT EXISTS cart_items (
@@ -197,6 +199,8 @@ try {
 // ── Paket satışı kolonları (eski DB'lerde yoksa ekle) ──
 try { db.exec('ALTER TABLE products ADD COLUMN sell_as_pack INTEGER DEFAULT 0'); } catch (_) {}
 try { db.exec('ALTER TABLE products ADD COLUMN pack_size INTEGER DEFAULT 1'); } catch (_) {}
+try { db.exec('ALTER TABLE order_items ADD COLUMN is_pack INTEGER DEFAULT 0'); } catch (_) {}
+try { db.exec('ALTER TABLE order_items ADD COLUMN pack_size INTEGER DEFAULT 1'); } catch (_) {}
 
 const defaultSettings = [
   ['site_name', 'Imera Elektro'],

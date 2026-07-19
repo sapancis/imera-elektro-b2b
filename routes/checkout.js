@@ -125,8 +125,8 @@ router.post('/bestellung', async (req, res) => {
     const orderId = r.lastInsertRowid;
 
     for (const item of items) {
-      await db.prepare(`INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, total_price) VALUES (?,?,?,?,?,?,?)`)
-        .run(orderId, item.product.id, item.product.name, item.product.sku, item.qty, item.unitPrice, item.lineTotal);
+      await db.prepare(`INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, total_price, is_pack, pack_size) VALUES (?,?,?,?,?,?,?,?,?)`)
+        .run(orderId, item.product.id, item.product.name, item.product.sku, item.qty, item.unitPrice, item.lineTotal, item.product.sell_as_pack ? 1 : 0, item.product.pack_size || 1);
       await db.prepare('UPDATE products SET stock = MAX(0, stock - ?) WHERE id=?')
         .run(item.qty, item.product.id);
     }

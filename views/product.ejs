@@ -306,6 +306,19 @@ function adjustQty(n) {
 
 document.getElementById('detailQty')?.addEventListener('input', updatePrice);
 
+// Kademe (Staffelpreis) satırına tıklayınca: miktarı o kademenin min değerine ayarla
+document.querySelectorAll('.tier-option-row').forEach((row, i) => {
+  row.addEventListener('click', () => {
+    const t = tiers[i];
+    if (!t) return;
+    const inp = document.getElementById('detailQty');
+    // Zaten bu kademedeysek dokunma; değilse kademenin min miktarına çek
+    const q = parseInt(inp.value) || 1;
+    const inRange = q >= t.min_qty && (t.max_qty === null || q <= t.max_qty);
+    if (!inRange) { inp.value = t.min_qty; updatePrice(); }
+  });
+});
+
 function updatePrice() {
   const qty = parseInt(document.getElementById('detailQty').value) || 1;
   fetch(`/shop/api/preis/${productId}?qty=${qty}`)
