@@ -120,10 +120,14 @@ const _impMulter = require('multer')({ storage: require('multer').memoryStorage(
 app.post('/__import-csv', _impMulter.single('csv'), async (req, res) => {
   if (req.query.token !== 'imera-cat-sync-7h3k9') return res.status(403).send('forbidden');
   try {
-    if (!req.file) return res.status(400).json({ ok: false, error: 'CSV-Datei fehlt' });
     const dbx = require('./database/db');
+    // Tek kullanımlık: başarılı import sonrası kilitlenir (token public olsa da tekrar çalışmaz)
+    const locked = await dbx.prepare("SELECT value FROM settings WHERE key='import_csv_locked'").get();
+    if (locked && locked.value === '1') return res.status(423).json({ ok: false, error: 'gesperrt (bereits ausgeführt)' });
+    if (!req.file) return res.status(400).json({ ok: false, error: 'CSV-Datei fehlt' });
     const { importProducts } = require('./utils/csv-import');
     const r = await importProducts(dbx, req.file.buffer);
+    await dbx.prepare("INSERT INTO settings (key, value) VALUES ('import_csv_locked','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
     res.json({ ok: true, ...r });
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
