@@ -27,6 +27,15 @@ try {
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
+// Turso ile aynı arayüz: statement dizisini transaction içinde çalıştır (toplu import).
+db.batch = (statements) => {
+  const tx = db.transaction((stmts) => {
+    for (const s of stmts) db.prepare(s.sql).run(...(s.args || []));
+  });
+  tx(statements);
+  return { count: statements.length };
+};
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,

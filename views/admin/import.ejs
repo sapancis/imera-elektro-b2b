@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Toplu Import – Admin</title><link rel="stylesheet" href="/css/admin.css?v=8"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar"><div class="admin-page-title">📥 Toplu CSV Import</div></div>
+  <div class="admin-content">
+    <div class="admin-card" style="max-width:680px">
+      <p>CSV yükle → ürünler <strong>SKU'ya göre eklenir/güncellenir</strong> (mevcut ürünler silinmez). Kategoriler yoksa otomatik oluşur.</p>
+      <p style="margin-top:.75rem"><strong>Gerekli kolonlar:</strong> <code>sku, name, price</code></p>
+      <p><strong>Opsiyonel:</strong> <code>category, short_description, description, image_url, gallery, stock, specs</code></p>
+
+      <form action="/admin/import" method="POST" enctype="multipart/form-data" style="margin-top:1.25rem">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="form-group">
+          <label>CSV-Datei</label>
+          <input type="file" name="csv" accept=".csv,text/csv" required class="file-input">
+        </div>
+        <button type="submit" class="btn-blue btn-lg" onclick="this.disabled=false;this.form.querySelector('button').textContent='Import läuft… bitte warten'">Import starten</button>
+      </form>
+
+      <div style="font-size:12px;color:#6B7280;margin-top:1.25rem;line-height:1.7;border-top:1px solid var(--border);padding-top:1rem">
+        <strong>Notlar:</strong><br>
+        • <code>image_url</code> = ana görsel (dış link olabilir), <code>gallery</code> = <code>|</code> ile ayrılmış ekstra görseller<br>
+        • <code>specs</code> = <code>Anahtar: Değer; Anahtar: Değer</code> formatı (teknik özellik tablosu)<br>
+        • Fiyat tek kademe (min 1) olarak eklenir. <strong>Paket satışı</strong> istediğin ürün için sonra "Produkt bearbeiten"den açılır.<br>
+        • Büyük dosyalarda import birkaç saniye sürebilir.
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

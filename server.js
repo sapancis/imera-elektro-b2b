@@ -31,7 +31,7 @@ app.use(helmet({
       scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com', 'https://*.tawk.to'],
       fontSrc: ["'self'", 'fonts.gstatic.com', 'https://*.tawk.to'],
-      imgSrc: ["'self'", 'data:', 'blob:', 'https://www.google-analytics.com', 'https://www.googletagmanager.com', 'https://*.tawk.to', 'https://res.cloudinary.com'],
+      imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
       connectSrc: ["'self'", 'https://www.google-analytics.com', 'https://region1.google-analytics.com', 'https://*.tawk.to', 'wss://*.tawk.to', 'https://api.cloudinary.com'],
       frameSrc: ["'self'", 'https://*.tawk.to'],
     },

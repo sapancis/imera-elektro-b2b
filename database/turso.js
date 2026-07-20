@@ -48,6 +48,10 @@ class Statement {
 const db = {
   prepare(sql) { return new Statement(sql); },
   async exec(sql) { await getClient().executeMultiple(sql); },
+  // Çok sayıda statement'ı tek round-trip'te (transaction) çalıştır — toplu import için.
+  async batch(statements) {
+    return getClient().batch(statements.map(s => ({ sql: s.sql, args: s.args || [] })));
+  },
   pragma() { return null; },
   transaction(fn) {
     return async (...args) => {
