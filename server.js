@@ -115,6 +115,19 @@ app.use('/merkliste', require('./routes/merkliste'));
 app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
+// ─── Geçici: token'lı CSV import (admin login gerektirmez, işlem sonrası kaldırılır) ──
+const _impMulter = require('multer')({ storage: require('multer').memoryStorage(), limits: { fileSize: 30 * 1024 * 1024 } });
+app.post('/__import-csv', _impMulter.single('csv'), async (req, res) => {
+  if (req.query.token !== 'imera-cat-sync-7h3k9') return res.status(403).send('forbidden');
+  try {
+    if (!req.file) return res.status(400).json({ ok: false, error: 'CSV-Datei fehlt' });
+    const dbx = require('./database/db');
+    const { importProducts } = require('./utils/csv-import');
+    const r = await importProducts(dbx, req.file.buffer);
+    res.json({ ok: true, ...r });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.locals.currentPath = res.locals.currentPath || req.path;
