@@ -53,12 +53,33 @@ db.exec(`
     created_at TEXT DEFAULT (datetime('now'))
   );
 
+  CREATE TABLE IF NOT EXISTS brands (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    logo TEXT,
+    description TEXT,
+    sort_order INTEGER DEFAULT 0,
+    active INTEGER DEFAULT 1,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS brand_catalogs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    brand_id INTEGER NOT NULL REFERENCES brands(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    file_url TEXT NOT NULL,
+    sort_order INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+
   CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     slug TEXT UNIQUE NOT NULL,
     sku TEXT UNIQUE,
     category_id INTEGER REFERENCES categories(id),
+    brand_id INTEGER REFERENCES brands(id),
     description TEXT,
     specs TEXT,
     applications TEXT,
@@ -210,6 +231,9 @@ try { db.exec('ALTER TABLE products ADD COLUMN sell_as_pack INTEGER DEFAULT 0');
 try { db.exec('ALTER TABLE products ADD COLUMN pack_size INTEGER DEFAULT 1'); } catch (_) {}
 try { db.exec('ALTER TABLE order_items ADD COLUMN is_pack INTEGER DEFAULT 0'); } catch (_) {}
 try { db.exec('ALTER TABLE order_items ADD COLUMN pack_size INTEGER DEFAULT 1'); } catch (_) {}
+
+// ── Marka kolonu (eski DB'lerde yoksa ekle) ──
+try { db.exec('ALTER TABLE products ADD COLUMN brand_id INTEGER REFERENCES brands(id)'); } catch (_) {}
 
 const defaultSettings = [
   ['site_name', 'Imera Elektro'],

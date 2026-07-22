@@ -168,9 +168,9 @@ app.use((err, req, res, next) => {
   }
 })();
 
-// ─── Auto-Migration: Paket satışı kolonları (Turso'da yoksa ekle) ─────────────
-// Kalıcı sunucuda (Hostinger) açılışta güvenilir çalışır; kolon varsa hata yutulur.
-(async function ensurePackColumns() {
+// ─── Auto-Migration: yeni tablo/kolonlar (Turso'da yoksa ekle) ───────────────
+// Kalıcı sunucuda (Hostinger) açılışta güvenilir çalışır; zaten varsa hata yutulur.
+(async function ensureSchema() {
   try {
     const db = require('./database/db');
     for (const sql of [
@@ -178,10 +178,37 @@ app.use((err, req, res, next) => {
       'ALTER TABLE products ADD COLUMN pack_size INTEGER DEFAULT 1',
       'ALTER TABLE order_items ADD COLUMN is_pack INTEGER DEFAULT 0',
       'ALTER TABLE order_items ADD COLUMN pack_size INTEGER DEFAULT 1',
+      // Marka mimarisi
+      `CREATE TABLE IF NOT EXISTS brands (
+         id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, slug TEXT UNIQUE NOT NULL,
+         logo TEXT, description TEXT, sort_order INTEGER DEFAULT 0, active INTEGER DEFAULT 1,
+         created_at TEXT DEFAULT (datetime('now')))`,
+      `CREATE TABLE IF NOT EXISTS brand_catalogs (
+         id INTEGER PRIMARY KEY AUTOINCREMENT, brand_id INTEGER NOT NULL REFERENCES brands(id) ON DELETE CASCADE,
+         title TEXT NOT NULL, file_url TEXT NOT NULL, sort_order INTEGER DEFAULT 0,
+         created_at TEXT DEFAULT (datetime('now')))`,
+      'ALTER TABLE products ADD COLUMN brand_id INTEGER REFERENCES brands(id)',
     ]) {
       try { await db.prepare(sql).run(); } catch (_) { /* zaten var */ }
     }
-  } catch (e) { console.error('Pack-Spalten Migration:', e.message); }
+    // Bilinen markaları oluştur (idempotent) — logo/açıklama sonradan admin'den
+    const seed = [['Onka', 'onka', 1], ['Tork', 'tork', 2], ['Tracon', 'tracon', 3],
+                  ['Karlik', 'karlik', 4], ['Kopos', 'kopos', 5], ['ETI', 'eti', 6]];
+    for (const [name, slug, ord] of seed) {
+      try { await db.prepare('INSERT INTO brands (name, slug, sort_order) VALUES (?,?,?)').run(name, slug, ord); } catch (_) { /* var */ }
+    }
+    // Mevcut ürünlere marka ata (yalnızca markası olmayanlara — idempotent)
+    for (const sql of [
+      `UPDATE products SET brand_id=(SELECT id FROM brands WHERE slug='tracon')
+         WHERE brand_id IS NULL AND sku LIKE 'TR-%'`,
+      `UPDATE products SET brand_id=(SELECT id FROM brands WHERE slug='tork')
+         WHERE brand_id IS NULL AND category_id IN (SELECT id FROM categories WHERE name LIKE 'Kabelbinder%')`,
+      `UPDATE products SET brand_id=(SELECT id FROM brands WHERE slug='onka')
+         WHERE brand_id IS NULL AND category_id IN (SELECT id FROM categories WHERE name IN ('Reihenklemmen','Kabelverschraubungen'))`,
+    ]) {
+      try { await db.prepare(sql).run(); } catch (_) {}
+    }
+  } catch (e) { console.error('Schema Migration:', e.message); }
 })();
 
 // Not: Katalog migration artık /__migrate-catalog endpoint'i ile çalışıyor

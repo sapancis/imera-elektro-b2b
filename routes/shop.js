@@ -6,7 +6,7 @@ const { attachTiers } = require('../utils/perf');
 
 router.get('/', async (req, res) => {
   try {
-    const { kategorie, preis, sort = 'popular', page = 1, verfuegbar, groesse } = req.query;
+    const { kategorie, marke, preis, sort = 'popular', page = 1, verfuegbar, groesse } = req.query;
     const perPage = 12;
     const offset = (parseInt(page) - 1) * perPage;
 
@@ -16,6 +16,12 @@ router.get('/', async (req, res) => {
     if (kategorie) {
       where.push('c.slug=?');
       params.push(kategorie);
+    }
+
+    // Marka filtresi — kategori filtresiyle kombine çalışır
+    if (marke) {
+      where.push('b.slug=?');
+      params.push(marke);
     }
 
     if (verfuegbar === '1') {
@@ -51,23 +57,28 @@ router.get('/', async (req, res) => {
     const whereStr = where.join(' AND ');
 
     // Bağımsız sorguları paralel çalıştır (Turso round-trip'lerini azaltır)
-    const [totalRow, products, sizesRows, allRow] = await Promise.all([
+    const [totalRow, products, sizesRows, allRow, brands] = await Promise.all([
       db.prepare(`
         SELECT COUNT(*) as cnt FROM products p
         LEFT JOIN categories c ON p.category_id=c.id
+        LEFT JOIN brands b ON p.brand_id=b.id
         WHERE ${whereStr}
       `).get(...params),
       db.prepare(`
-        SELECT p.*, c.name as cat_name, c.slug as cat_slug,
+        SELECT p.*, c.name as cat_name, c.slug as cat_slug, b.name as brand_name, b.slug as brand_slug,
           (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
         FROM products p
         LEFT JOIN categories c ON p.category_id=c.id
+        LEFT JOIN brands b ON p.brand_id=b.id
         WHERE ${whereStr}
         ORDER BY ${orderBy}
         LIMIT ? OFFSET ?
       `).all(...params, perPage, offset),
       db.prepare("SELECT DISTINCT size FROM products WHERE active=1 AND size IS NOT NULL AND size != '' ORDER BY size").all(),
       db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get(),
+      db.prepare(`SELECT b.*, COUNT(p.id) as cnt FROM brands b
+                  LEFT JOIN products p ON p.brand_id=b.id AND p.active=1
+                  WHERE b.active=1 GROUP BY b.id HAVING cnt > 0 ORDER BY b.sort_order, b.name`).all(),
     ]);
     const total = totalRow.cnt;
 
@@ -84,13 +95,24 @@ router.get('/', async (req, res) => {
     // "Alle" sayısı: filtreden bağımsız tüm aktif ürün sayısı (kategori sayılarıyla tutarlı)
     const allCount = allRow.n;
 
+    // Marka filtresi aktifse: o markanın kataloglarını da göster ("Katalog anzeigen")
+    let activeBrand = null;
+    if (marke) {
+      activeBrand = await db.prepare('SELECT * FROM brands WHERE slug=?').get(marke);
+      if (activeBrand) {
+        activeBrand.catalogs = await db.prepare('SELECT * FROM brand_catalogs WHERE brand_id=? ORDER BY sort_order, id').all(activeBrand.id);
+      }
+    }
+
     res.render('shop', {
-      title: 'Shop',
+      title: activeBrand ? `${activeBrand.name} Produkte` : 'Shop',
       products,
       categories,
+      brands,
+      activeBrand,
       sizes,
       allCount,
-      filters: { kategorie, preis, sort, verfuegbar, groesse },
+      filters: { kategorie, marke, preis, sort, verfuegbar, groesse },
       pagination: { page: parseInt(page), totalPages, total },
     });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }

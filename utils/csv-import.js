@@ -24,7 +24,7 @@ async function importProducts(db, buffer) {
   const rows = parseCsvBuf(buffer.toString('utf8'));
   if (rows.length < 2) throw new Error('CSV ist leer.');
   const H = rows[0].map(h => h.replace(/^﻿/, '').trim());
-  const ci = {}; ['sku', 'name', 'category', 'short_description', 'description', 'image_url', 'gallery', 'price', 'stock', 'specs'].forEach(k => ci[k] = H.indexOf(k));
+  const ci = {}; ['sku', 'name', 'category', 'brand', 'short_description', 'description', 'image_url', 'gallery', 'price', 'stock', 'specs'].forEach(k => ci[k] = H.indexOf(k));
   if (ci.sku < 0 || ci.name < 0 || ci.price < 0) throw new Error('CSV-Kopf muss mindestens sku, name, price enthalten.');
   const data = rows.slice(1).filter(r => (r[ci.sku] || '').trim());
 
@@ -37,6 +37,19 @@ async function importProducts(db, buffer) {
       catch (_) { row = await db.prepare('SELECT id FROM categories WHERE slug=?').get(slugify(cn)); }
     }
     catMap.set(cn, row.id);
+  }
+
+  // 1b) Markalar (varsa oluştur — yeni marka eklemek için yapı değişikliği gerekmez)
+  const brandMap = new Map();
+  if (ci.brand >= 0) {
+    for (const bn of [...new Set(data.map(r => (r[ci.brand] || '').trim()).filter(Boolean))]) {
+      let row = await db.prepare('SELECT id FROM brands WHERE name=? OR slug=?').get(bn, slugify(bn));
+      if (!row) {
+        try { const r = await db.prepare('INSERT INTO brands (name, slug) VALUES (?,?)').run(bn, slugify(bn) || 'marke-' + Date.now()); row = { id: Number(r.lastInsertRowid) }; }
+        catch (_) { row = await db.prepare('SELECT id FROM brands WHERE slug=?').get(slugify(bn)); }
+      }
+      if (row) brandMap.set(bn, row.id);
+    }
   }
 
   // 2) Ürünleri upsert (batch)
@@ -53,14 +66,16 @@ async function importProducts(db, buffer) {
     const specs = JSON.stringify(ci.specs >= 0 ? parseSpecsStr(r[ci.specs]) : []);
     const slug = (slugify(name) || 'produkt') + '-' + slugify(sku);
     priceBySku.set(sku, parseFloat((r[ci.price] || '').replace(',', '.')) || 0);
+    const brand_id = ci.brand >= 0 ? (brandMap.get((r[ci.brand] || '').trim()) || null) : null;
     prodStmts.push({
-      sql: `INSERT INTO products (name, slug, sku, category_id, short_description, description, specs, stock, image, images, active, sell_as_pack, pack_size)
-            VALUES (?,?,?,?,?,?,?,?,?,?,1,0,1)
+      sql: `INSERT INTO products (name, slug, sku, category_id, brand_id, short_description, description, specs, stock, image, images, active, sell_as_pack, pack_size)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,1,0,1)
             ON CONFLICT(sku) DO UPDATE SET name=excluded.name, category_id=excluded.category_id,
+              brand_id=COALESCE(excluded.brand_id, products.brand_id),
               short_description=excluded.short_description, description=excluded.description,
               specs=excluded.specs, stock=excluded.stock, image=excluded.image, images=excluded.images,
               updated_at=datetime('now')`,
-      args: [name, slug, sku, cat_id, short || null, desc || null, specs, stock, image || null, gallery],
+      args: [name, slug, sku, cat_id, brand_id, short || null, desc || null, specs, stock, image || null, gallery],
     });
   }
   for (let i = 0; i < prodStmts.length; i += 100) await db.batch(prodStmts.slice(i, i + 100));
