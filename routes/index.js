@@ -59,6 +59,7 @@ router.get('/sitemap.xml', async (req, res) => {
     const staticPages = [
       { url: '/',           priority: '1.0', freq: 'weekly' },
       { url: '/shop',       priority: '0.9', freq: 'daily'  },
+      { url: '/marken',     priority: '0.8', freq: 'weekly' },
       { url: '/ueber-uns',  priority: '0.6', freq: 'monthly'},
       { url: '/kontakt',    priority: '0.6', freq: 'monthly'},
       { url: '/faq',        priority: '0.5', freq: 'monthly'},
@@ -66,6 +67,7 @@ router.get('/sitemap.xml', async (req, res) => {
 
     const products = await db.prepare('SELECT slug, updated_at FROM products WHERE active=1').all();
     const cats     = await db.prepare('SELECT slug FROM categories WHERE active=1').all();
+    const brands   = await db.prepare('SELECT slug FROM brands WHERE active=1').all();
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
@@ -75,6 +77,9 @@ router.get('/sitemap.xml', async (req, res) => {
     }
     for (const cat of cats) {
       xml += `  <url><loc>${base}/shop?kategorie=${cat.slug}</loc><lastmod>${now}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
+    }
+    for (const b of brands) {
+      xml += `  <url><loc>${base}/marken/${b.slug}</loc><lastmod>${now}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
     }
     for (const prod of products) {
       const lastmod = prod.updated_at ? prod.updated_at.slice(0, 10) : now;

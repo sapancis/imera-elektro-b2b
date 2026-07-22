@@ -23,13 +23,13 @@ if (process.env.CLOUDINARY_CLOUD_NAME) {
 
 const uploadDir = path.join(__dirname, '../public/uploads');
 
-function uploadBufferToCloudinary(buffer) {
+function uploadBufferToCloudinary(buffer, { folder = 'imera-products', resourceType = 'image' } = {}) {
   return new Promise((resolve, reject) => {
     // Resim tarayıcıda zaten küçültülüp JPEG'e çevriliyor; upload'ta transformation YOK
     // (fetch_format gibi delivery parametreleri upload'ta hataya yol açabilir).
-    // Web optimizasyonu istenirse delivery URL'inde yapılır.
+    // PDF/katalog için resourceType 'auto' veya 'raw' kullanılır.
     const stream = cloudinary.uploader.upload_stream(
-      { folder: 'imera-products', resource_type: 'image' },
+      { folder, resource_type: resourceType },
       (err, result) => (err ? reject(err) : resolve(result))
     );
     stream.end(buffer);
@@ -37,16 +37,17 @@ function uploadBufferToCloudinary(buffer) {
 }
 
 // multer memoryStorage'dan gelen file objesini kaydeder, URL döndürür.
-async function saveUpload(file) {
+// opts: { folder, resourceType, prefix } — varsayılan: ürün görseli
+async function saveUpload(file, opts = {}) {
   if (!file || !file.buffer) return null;
   if (CONFIGURED) {
-    const result = await uploadBufferToCloudinary(file.buffer);
+    const result = await uploadBufferToCloudinary(file.buffer, opts);
     return result.secure_url;
   }
   // Local geliştirme: disk'e yaz
   if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
   const ext = path.extname(file.originalname || '').toLowerCase() || '.jpg';
-  const filename = `product-${Date.now()}-${Math.random().toString(36).slice(2, 7)}${ext}`;
+  const filename = `${opts.prefix || 'product'}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}${ext}`;
   fs.writeFileSync(path.join(uploadDir, filename), file.buffer);
   return '/uploads/' + filename;
 }

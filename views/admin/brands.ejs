@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Marken – Admin</title><link rel="stylesheet" href="/css/admin.css?v=9"></head>
+<body class="admin-body">
+<% if (locals.flash) { %><div class="admin-flash admin-flash-<%= flash.type %>"><span><%= flash.message %></span><button onclick="this.parentElement.remove()">×</button></div><% } %>
+<%- include('../partials/admin-nav') %>
+<div class="admin-main">
+  <div class="admin-topbar">
+    <div class="admin-page-title">🏷 Marken (<%= brands.length %>)</div>
+    <div class="admin-topbar-right"><a href="/marken" target="_blank" class="btn-outline btn-sm">Markenseiten ansehen ↗</a></div>
+  </div>
+  <div class="admin-content">
+
+    <% if (noBrandCount > 0) { %>
+    <div style="background:#FFF0EE;border:1px solid #FECACA;border-radius:10px;padding:12px 16px;margin-bottom:1rem;font-size:14px;color:#C0392B">
+      ⚠ <strong><%= noBrandCount %></strong> Produkt<%= noBrandCount > 1 ? 'e' : '' %> <strong>ohne Marke</strong> — diese sind deaktiviert und im Shop nicht sichtbar.
+      <a href="/admin/produkte?marke=none" style="color:#C0392B;text-decoration:underline;font-weight:600">Jetzt zuweisen →</a>
+    </div>
+    <% } %>
+
+    <div class="admin-form-grid">
+      <div class="admin-card">
+        <h3>Neue Marke</h3>
+        <form action="/admin/marken/neu" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="form-group"><label>Name *</label><input type="text" name="name" required></div>
+          <div class="form-group"><label>Slug (leer = automatisch)</label><input type="text" name="slug" placeholder="z.B. onka"></div>
+          <div class="form-group"><label>Logo (PNG/JPG, transparent bevorzugt)</label><input type="file" name="logo" accept="image/*"></div>
+          <div class="form-group"><label>Beschreibung (Markenseite &amp; SEO)</label><textarea name="description" rows="3" placeholder="Kurzer Text über die Marke…"></textarea></div>
+          <div class="form-group"><label>Reihenfolge</label><input type="number" name="sort_order" value="0"></div>
+          <button type="submit" class="btn-blue">Erstellen</button>
+        </form>
+      </div>
+
+      <div class="admin-card">
+        <h3>Vorhandene Marken</h3>
+        <% for (const b of brands) { %>
+        <details class="cat-details">
+          <summary>
+            <% if (b.logo) { %><img src="<%= b.logo %>" style="height:20px;vertical-align:middle;margin-right:6px"><% } %>
+            <%= b.name %> <small>(<%= b.product_count %> Produkte)</small>
+            <% if (!b.active) { %><span class="badge-small badge-gray">Inaktiv</span><% } %>
+          </summary>
+
+          <form action="/admin/marken/<%= b.id %>/bearbeiten" method="POST" enctype="multipart/form-data" style="padding:1rem 0">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="form-grid-2">
+              <div class="form-group"><label>Name</label><input type="text" name="name" value="<%= b.name %>"></div>
+              <div class="form-group"><label>Slug</label><input type="text" name="slug" value="<%= b.slug %>"></div>
+            </div>
+            <div class="form-group">
+              <label>Logo</label>
+              <% if (b.logo) { %>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+                  <img src="<%= b.logo %>" style="max-height:40px;max-width:120px;object-fit:contain;border:1px solid #E5E7EB;border-radius:6px;padding:4px;background:#fff">
+                  <label class="checkbox-label" style="margin:0"><input type="checkbox" name="remove_logo" value="1"> Logo entfernen</label>
+                </div>
+              <% } %>
+              <input type="file" name="logo" accept="image/*">
+            </div>
+            <div class="form-group"><label>Beschreibung</label><textarea name="description" rows="3"><%= b.description || '' %></textarea></div>
+            <div class="form-grid-2">
+              <div class="form-group"><label>Reihenfolge</label><input type="number" name="sort_order" value="<%= b.sort_order %>"></div>
+              <div class="form-group" style="display:flex;align-items:flex-end">
+                <label class="checkbox-label"><input type="checkbox" name="active" value="1" <%= b.active ? 'checked' : '' %>> Aktiv (auf der Website sichtbar)</label>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <button type="submit" class="btn-blue btn-sm">Speichern</button>
+              <a href="/marken/<%= b.slug %>" target="_blank" class="btn-outline btn-sm">Seite ansehen ↗</a>
+              <a href="/admin/produkte?marke=<%= b.slug %>" class="btn-outline btn-sm">Produkte</a>
+            </div>
+          </form>
+
+          <!-- Kataloge -->
+          <div style="border-top:1px solid #E5E7EB;padding-top:1rem;margin-top:.5rem">
+            <strong style="font-size:13px">📄 Kataloge / Downloads</strong>
+            <% const cats = catalogs.filter(c => c.brand_id === b.id); %>
+            <% if (cats.length) { %>
+            <ul style="list-style:none;padding:0;margin:.6rem 0">
+              <% for (const c of cats) { %>
+              <li style="display:flex;align-items:center;gap:8px;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F3F4F6;font-size:13px">
+                <a href="<%= c.file_url %>" target="_blank">📄 <%= c.title %></a>
+                <form action="/admin/marken/katalog/<%= c.id %>/loeschen" method="POST" onsubmit="return confirm('Katalog löschen?')">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button type="submit" class="btn-sm btn-danger">✕</button>
+                </form>
+              </li>
+              <% } %>
+            </ul>
+            <% } else { %><p class="text-gray" style="font-size:13px;margin:.5rem 0">Noch keine Kataloge.</p><% } %>
+
+            <form action="/admin/marken/<%= b.id %>/katalog" method="POST" enctype="multipart/form-data">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <div class="form-grid-2">
+                <div class="form-group"><label>Titel</label><input type="text" name="title" placeholder="z.B. Hauptkatalog 2026"></div>
+                <div class="form-group"><label>Reihenfolge</label><input type="number" name="sort_order" value="0"></div>
+              </div>
+              <div class="form-group"><label>PDF hochladen (max. 25 MB)</label><input type="file" name="pdf" accept="application/pdf"></div>
+              <div class="form-group"><label>…oder externer Link</label><input type="url" name="file_url" placeholder="https://…/katalog.pdf"></div>
+              <button type="submit" class="btn-outline btn-sm">+ Katalog hinzufügen</button>
+            </form>
+          </div>
+
+          <% if (b.product_count === 0) { %>
+          <form action="/admin/marken/<%= b.id %>/loeschen" method="POST" style="margin-top:1rem" onsubmit="return confirm('Marke endgültig löschen?')">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn-sm btn-danger">Marke löschen</button>
+          </form>
+          <% } %>
+        </details>
+        <% } %>
+        <% if (!brands.length) { %><p class="text-gray">Noch keine Marken angelegt.</p><% } %>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/admin.js"></script>
+</body></html>

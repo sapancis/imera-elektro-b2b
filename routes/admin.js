@@ -290,6 +290,104 @@ router.post('/kategorien/:id/bearbeiten', async (req, res) => {
   res.redirect('/admin/kategorien');
 });
 
+// ─── BRANDS (Marken) ────────────────────────────────────────────────────────
+// Logo (Bild) + Katalog (PDF) ayrı multer örnekleri — PDF resim filtresinden geçemez.
+const brandUpload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter });
+const catalogUpload = multer({
+  storage,
+  limits: { fileSize: 25 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => path.extname(file.originalname).toLowerCase() === '.pdf'
+    ? cb(null, true) : cb(new Error('Nur PDF-Dateien erlaubt.')),
+});
+// multer sonrası CSRF doğrulaması (global middleware multipart'ı atlar)
+function afterMulter(mw) {
+  return (req, res, next) => mw(req, res, (err) => {
+    const back = req.get('referer') || '/admin/marken';
+    if (err) { flash(req, 'error', err.message || 'Upload-Fehler.'); return res.redirect(back); }
+    const token = req.body && req.body._csrf;
+    const tokens = req.session.csrfTokens || [];
+    if (!token || !tokens.includes(token)) { flash(req, 'error', 'Sicherheitstoken abgelaufen. Bitte neu laden.'); return res.redirect(back); }
+    req.session.csrfTokens = tokens.filter(t => t !== token);
+    next();
+  });
+}
+
+router.get('/marken', async (req, res) => {
+  try {
+    const brands = await db.prepare(`SELECT b.*, COUNT(p.id) as product_count
+      FROM brands b LEFT JOIN products p ON p.brand_id=b.id
+      GROUP BY b.id ORDER BY b.sort_order, b.name`).all();
+    const catalogs = await db.prepare('SELECT * FROM brand_catalogs ORDER BY sort_order, id').all();
+    const noBrandCount = (await db.prepare('SELECT COUNT(*) as n FROM products WHERE brand_id IS NULL').get()).n;
+    res.render('admin/brands', { title: 'Marken', brands, catalogs, noBrandCount });
+  } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
+});
+
+router.post('/marken/neu', afterMulter(brandUpload.single('logo')), async (req, res) => {
+  try {
+    const { name, slug, description, sort_order } = req.body;
+    if (!name || !name.trim()) { flash(req, 'error', 'Name ist erforderlich.'); return res.redirect('/admin/marken'); }
+    const logo = req.file ? await saveUpload(req.file, { folder: 'imera-brands', prefix: 'brand' }) : null;
+    await db.prepare('INSERT INTO brands (name, slug, logo, description, sort_order) VALUES (?,?,?,?,?)')
+      .run(name.trim(), slug || slugify(name), logo, description || null, parseInt(sort_order) || 0);
+    flash(req, 'success', 'Marke wurde erstellt.');
+  } catch (e) { flash(req, 'error', 'Fehler: ' + (e.message || 'Marke konnte nicht erstellt werden.')); }
+  res.redirect('/admin/marken');
+});
+
+router.post('/marken/:id/bearbeiten', afterMulter(brandUpload.single('logo')), async (req, res) => {
+  try {
+    const { name, slug, description, sort_order, active, remove_logo } = req.body;
+    const brand = await db.prepare('SELECT * FROM brands WHERE id=?').get(req.params.id);
+    if (!brand) { flash(req, 'error', 'Marke nicht gefunden.'); return res.redirect('/admin/marken'); }
+    let logo = brand.logo;
+    if (remove_logo) logo = null;
+    if (req.file) logo = await saveUpload(req.file, { folder: 'imera-brands', prefix: 'brand' });
+    await db.prepare('UPDATE brands SET name=?, slug=?, logo=?, description=?, sort_order=?, active=? WHERE id=?')
+      .run(name.trim(), slug || slugify(name), logo, description || null,
+           parseInt(sort_order) || 0, active ? 1 : 0, req.params.id);
+    flash(req, 'success', 'Marke aktualisiert.');
+  } catch (e) { flash(req, 'error', 'Fehler: ' + (e.message || 'Serverfehler.')); }
+  res.redirect('/admin/marken');
+});
+
+router.post('/marken/:id/loeschen', async (req, res) => {
+  try {
+    const n = (await db.prepare('SELECT COUNT(*) as n FROM products WHERE brand_id=?').get(req.params.id)).n;
+    if (n > 0) {
+      flash(req, 'error', `Marke hat noch ${n} Produkt(e). Bitte zuerst umhängen oder Marke deaktivieren.`);
+    } else {
+      await db.prepare('DELETE FROM brand_catalogs WHERE brand_id=?').run(req.params.id);
+      await db.prepare('DELETE FROM brands WHERE id=?').run(req.params.id);
+      flash(req, 'success', 'Marke gelöscht.');
+    }
+  } catch { flash(req, 'error', 'Serverfehler.'); }
+  res.redirect('/admin/marken');
+});
+
+router.post('/marken/:id/katalog', afterMulter(catalogUpload.single('pdf')), async (req, res) => {
+  try {
+    const { title, sort_order, file_url } = req.body;
+    // Entweder PDF hochladen oder externen Link angeben
+    const url = req.file
+      ? await saveUpload(req.file, { folder: 'imera-katalog', resourceType: 'auto', prefix: 'katalog' })
+      : (file_url || '').trim();
+    if (!url) { flash(req, 'error', 'Bitte PDF hochladen oder Link angeben.'); return res.redirect('/admin/marken'); }
+    await db.prepare('INSERT INTO brand_catalogs (brand_id, title, file_url, sort_order) VALUES (?,?,?,?)')
+      .run(req.params.id, (title || 'Katalog').trim(), url, parseInt(sort_order) || 0);
+    flash(req, 'success', 'Katalog hinzugefügt.');
+  } catch (e) { flash(req, 'error', 'Fehler: ' + (e.message || 'Katalog konnte nicht gespeichert werden.')); }
+  res.redirect('/admin/marken');
+});
+
+router.post('/marken/katalog/:id/loeschen', async (req, res) => {
+  try {
+    await db.prepare('DELETE FROM brand_catalogs WHERE id=?').run(req.params.id);
+    flash(req, 'success', 'Katalog gelöscht.');
+  } catch { flash(req, 'error', 'Serverfehler.'); }
+  res.redirect('/admin/marken');
+});
+
 // ─── ORDERS ─────────────────────────────────────────────────────────────────
 router.get('/bestellungen', async (req, res) => {
   try {

@@ -1,0 +1,76 @@
+<%- include('../partials/header') %>
+<style>
+  .brand-hero { display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap; border:1px solid var(--border,#E5E7EB);
+    border-radius:16px; padding:1.5rem; background:#fff; margin-bottom:1.5rem; }
+  .brand-hero img { max-height:64px; max-width:180px; width:auto; object-fit:contain; }
+  .brand-hero h1 { margin:0 0 .35rem; font-size:26px; }
+  .brand-hero p { margin:0; color:#6B7280; font-size:14px; line-height:1.6; max-width:60ch; }
+  .brand-downloads { border:1px solid #BBF7D0; background:#F0FDF4; border-radius:14px; padding:1.15rem 1.25rem; margin-bottom:1.5rem; }
+  .brand-downloads h2 { font-size:16px; margin:0 0 .75rem; }
+  .brand-dl-list { display:flex; flex-wrap:wrap; gap:.6rem; }
+  .brand-dl { display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid #BBF7D0; border-radius:10px;
+    padding:9px 14px; font-size:13px; font-weight:500; color:#166534; }
+  .brand-dl:hover { border-color:#34C759; color:#166534; }
+  .bp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; }
+  .bp-card { border:1px solid var(--border,#E5E7EB); border-radius:14px; overflow:hidden; background:#fff; display:flex; flex-direction:column; }
+  .bp-img { aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; background:#F9FAFB; overflow:hidden; }
+  .bp-img img { width:100%; height:100%; object-fit:contain; padding:10px; }
+  .bp-body { padding:.75rem .9rem 1rem; display:flex; flex-direction:column; gap:.3rem; }
+  .bp-cat { font-size:11px; color:#6B7280; text-transform:uppercase; letter-spacing:.4px; }
+  .bp-name { font-size:14px; font-weight:600; line-height:1.35; }
+  .bp-price { font-size:14px; font-weight:700; color:#166534; margin-top:.2rem; }
+  @media (max-width:480px){ .bp-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; } }
+</style>
+<main>
+  <div class="container page-content">
+    <nav class="breadcrumb"><a href="/">Startseite</a> › <a href="/marken">Marken</a> › <%= brand.name %></nav>
+
+    <div class="brand-hero">
+      <% if (brand.logo) { %><img src="<%= brand.logo %>" alt="<%= brand.name %> Logo"><% } %>
+      <div style="min-width:0">
+        <h1><%= brand.name %> Produkte</h1>
+        <p><%= brand.description || (brand.name + ' Produkte im B2B-Großhandel – CE-zertifiziert und normkonform, schnelle Lieferung ab Lager in Österreich.') %></p>
+      </div>
+    </div>
+
+    <% if (catalogs && catalogs.length) { %>
+    <div class="brand-downloads">
+      <h2>📄 Kataloge &amp; Downloads</h2>
+      <div class="brand-dl-list">
+        <% for (const c of catalogs) { %>
+        <a href="<%= c.file_url %>" target="_blank" rel="noopener" class="brand-dl">📄 <%= c.title %></a>
+        <% } %>
+      </div>
+    </div>
+    <% } %>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+      <h2 style="margin:0;font-size:18px">Produkte von <%= brand.name %> <span style="color:#6B7280;font-weight:400">(<%= total %>)</span></h2>
+      <a href="/shop?marke=<%= brand.slug %>" class="btn-blue btn-sm">Alle im Shop ansehen →</a>
+    </div>
+
+    <% if (!products.length) { %>
+      <p class="text-gray">Für diese Marke sind derzeit keine Produkte verfügbar.</p>
+    <% } else { %>
+    <div class="bp-grid">
+      <% for (const p of products) { %>
+      <a href="/shop/produkt/<%= p.slug %>" class="bp-card">
+        <div class="bp-img">
+          <% if (p.image) { %><img src="<%= p.image %>" alt="<%= p.name %> – <%= brand.name %>" loading="lazy">
+          <% } else { %><span style="font-size:2rem">📦</span><% } %>
+        </div>
+        <div class="bp-body">
+          <% if (p.cat_name) { %><span class="bp-cat"><%= p.cat_name %></span><% } %>
+          <span class="bp-name"><%= p.name %></span>
+          <% if (p.price_min) { %><span class="bp-price">ab <%= formatEuro(p.price_min) %></span><% } %>
+        </div>
+      </a>
+      <% } %>
+    </div>
+    <% if (total > products.length) { %>
+    <p style="text-align:center;margin-top:1.5rem"><a href="/shop?marke=<%= brand.slug %>" class="btn-blue">Alle <%= total %> Produkte ansehen →</a></p>
+    <% } %>
+    <% } %>
+  </div>
+</main>
+<%- include('../partials/footer') %>
