@@ -121,9 +121,11 @@ router.get('/', async (req, res) => {
 router.get('/produkt/:slug', async (req, res) => {
   try {
     const product = await db.prepare(`
-      SELECT p.*, c.name as cat_name, c.slug as cat_slug
+      SELECT p.*, c.name as cat_name, c.slug as cat_slug,
+             b.name as brand_name, b.slug as brand_slug, b.logo as brand_logo
       FROM products p
       LEFT JOIN categories c ON p.category_id=c.id
+      LEFT JOIN brands b ON p.brand_id=b.id AND b.active=1
       WHERE p.slug=? AND p.active=1
     `).get(req.params.slug);
 
@@ -134,7 +136,7 @@ router.get('/produkt/:slug', async (req, res) => {
     product.imagesArr = product.images ? JSON.parse(product.images) : [];
 
     // Bağımsız sorgular paralel (tier + ilgili ürünler + yorumlar aynı anda)
-    const [tiers, related, reviews] = await Promise.all([
+    const [tiers, related, reviews, brandCatalogs] = await Promise.all([
       db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(product.id),
       db.prepare(`
         SELECT p.*, (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
@@ -146,6 +148,9 @@ router.get('/produkt/:slug', async (req, res) => {
         WHERE r.product_id=? AND r.approved=1
         ORDER BY r.created_at DESC
       `).all(product.id),
+      product.brand_id
+        ? db.prepare('SELECT * FROM brand_catalogs WHERE brand_id=? ORDER BY sort_order, id').all(product.brand_id)
+        : Promise.resolve([]),
     ]);
     product.tiers = tiers;
     await attachTiers(db, related);
@@ -181,7 +186,8 @@ router.get('/produkt/:slug', async (req, res) => {
       description: (product.description || '').slice(0, 500),
       sku: product.sku || undefined,
       image: product.image ? `https://www.imeragroup.com${product.image}` : undefined,
-      brand: { '@type': 'Brand', name: 'Imera Elektro' },
+      brand: { '@type': 'Brand', name: product.brand_name || 'Imera Elektro' },
+      manufacturer: product.brand_name ? { '@type': 'Organization', name: product.brand_name } : undefined,
       offers: {
         '@type': 'Offer',
         url: `https://www.imeragroup.com/shop/produkt/${product.slug}`,
@@ -210,7 +216,7 @@ router.get('/produkt/:slug', async (req, res) => {
       ],
     });
 
-    res.render('product', { title, product, related, metaDesc, reviews, reviewStats, hasOrdered, alreadyReviewed, productJsonLd, breadcrumbJsonLd, noJsonLd: true, ogType: 'product', ogTitle: `${product.name} – Imera Elektro`, ogImage: product.image ? `https://www.imeragroup.com${product.image}` : undefined });
+    res.render('product', { title, product, related, metaDesc, reviews, brandCatalogs, reviewStats, hasOrdered, alreadyReviewed, productJsonLd, breadcrumbJsonLd, noJsonLd: true, ogType: 'product', ogTitle: `${product.name} – Imera Elektro`, ogImage: product.image ? `https://www.imeragroup.com${product.image}` : undefined });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 

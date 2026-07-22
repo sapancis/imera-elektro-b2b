@@ -3,7 +3,7 @@
 <main>
   <div class="container">
     <nav class="breadcrumb">
-      <a href="/">Startseite</a> › <a href="/shop">Shop</a> › <a href="/shop?kategorie=<%= product.cat_slug %>"><%= product.cat_name %></a> › <%= product.name %>
+      <a href="/">Startseite</a> › <a href="/shop">Shop</a> › <a href="/shop?kategorie=<%= product.cat_slug %>"><%= product.cat_name %></a><% if (product.brand_name) { %> › <a href="/marken/<%= product.brand_slug %>"><%= product.brand_name %></a><% } %> › <%= product.name %>
     </nav>
 
     <div class="product-detail-grid">
@@ -32,6 +32,12 @@
 
       <!-- Product Info -->
       <div class="product-info">
+        <% if (product.brand_name) { %>
+        <a href="/marken/<%= product.brand_slug %>" class="product-brand-badge" title="Alle Produkte von <%= product.brand_name %>">
+          <% if (product.brand_logo) { %><img src="<%= product.brand_logo %>" alt="<%= product.brand_name %>"><% } %>
+          <span><%= product.brand_name %></span>
+        </a>
+        <% } %>
         <h1 class="product-detail-title"><%= product.name %></h1>
         <% if (product.short_description) { %><p class="product-short-desc"><%= product.short_description %></p><% } %>
         <p class="product-detail-meta">
@@ -173,6 +179,17 @@
           <tr><td><%= key %></td><td><%= val %></td></tr>
           <% } %>
         </table>
+        </div>
+        <% } %>
+
+        <% if (locals.brandCatalogs && brandCatalogs.length) { %>
+        <div class="brand-cat-box">
+          <h3>📄 Datenblätter &amp; Kataloge<% if (product.brand_name) { %> – <%= product.brand_name %><% } %></h3>
+          <div class="brand-cat-list">
+            <% for (const c of brandCatalogs) { %>
+            <a href="<%= c.file_url %>" target="_blank" rel="noopener">📄 <%= c.title %></a>
+            <% } %>
+          </div>
         </div>
         <% } %>
       </div>

@@ -25,6 +25,26 @@ router.get('/marken', async (req, res) => {
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
+// Zentrale Katalog-/Downloadseite über alle Marken
+router.get('/kataloge', async (req, res) => {
+  try {
+    const rows = await db.prepare(`SELECT bc.*, b.name as brand_name, b.slug as brand_slug, b.logo as brand_logo
+      FROM brand_catalogs bc JOIN brands b ON b.id=bc.brand_id
+      WHERE b.active=1 ORDER BY b.sort_order, b.name, bc.sort_order, bc.id`).all();
+    const groups = [];
+    for (const r of rows) {
+      let g = groups.find(x => x.slug === r.brand_slug);
+      if (!g) { g = { slug: r.brand_slug, name: r.brand_name, logo: r.brand_logo, items: [] }; groups.push(g); }
+      g.items.push(r);
+    }
+    res.render('pages/catalogs', {
+      title: 'Kataloge & Datenblätter',
+      groups,
+      metaDesc: 'Alle Kataloge und Datenblätter unserer Marken als PDF zum Download – Imera Elektro B2B-Großhandel.',
+    });
+  } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
+});
+
 router.get('/marken/:slug', async (req, res) => {
   try {
     const brand = await db.prepare('SELECT * FROM brands WHERE slug=? AND active=1').get(req.params.slug);

@@ -60,6 +60,7 @@ router.get('/sitemap.xml', async (req, res) => {
       { url: '/',           priority: '1.0', freq: 'weekly' },
       { url: '/shop',       priority: '0.9', freq: 'daily'  },
       { url: '/marken',     priority: '0.8', freq: 'weekly' },
+      { url: '/kataloge',   priority: '0.6', freq: 'weekly' },
       { url: '/ueber-uns',  priority: '0.6', freq: 'monthly'},
       { url: '/kontakt',    priority: '0.6', freq: 'monthly'},
       { url: '/faq',        priority: '0.5', freq: 'monthly'},
