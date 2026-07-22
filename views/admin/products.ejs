@@ -18,9 +18,21 @@
         <option value="">Alle Kategorien</option>
         <% for (const cat of categories) { %><option value="<%= cat.slug %>" <%= kat===cat.slug ? 'selected' : '' %>><%= cat.name %></option><% } %>
       </select>
+      <select name="marke" onchange="this.form.submit()" style="padding:8px 12px;border:1px solid #E5E7EB;border-radius:8px;font-size:13px;background:#fff">
+        <option value="">Alle Marken</option>
+        <option value="none" <%= marke==='none' ? 'selected' : '' %>>⚠ Ohne Marke (<%= locals.noBrandCount || 0 %>)</option>
+        <% for (const b of (locals.brands || [])) { %><option value="<%= b.slug %>" <%= marke===b.slug ? 'selected' : '' %>><%= b.name %></option><% } %>
+      </select>
       <button type="submit" class="btn-blue btn-sm">Suchen</button>
       <% if (q || kat) { %><a href="/admin/produkte" class="btn-outline btn-sm">Zurücksetzen</a><% } %>
     </form>
+
+    <% if ((locals.noBrandCount || 0) > 0) { %>
+    <div style="background:#FFF0EE;border:1px solid #FECACA;border-radius:10px;padding:12px 16px;margin-bottom:1rem;font-size:14px;color:#C0392B">
+      ⚠ <strong><%= noBrandCount %></strong> Produkt<%= noBrandCount > 1 ? 'e' : '' %> <strong>ohne Marke</strong> — diese sind <strong>deaktiviert</strong> und im Shop nicht sichtbar.
+      <a href="/admin/produkte?marke=none" style="color:#C0392B;text-decoration:underline;font-weight:600">Jetzt zuweisen →</a>
+    </div>
+    <% } %>
 
     <!-- Stock summary -->
     <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
@@ -42,6 +54,7 @@
           <tr>
             <th>Bild</th>
             <th>Name / Art.-Nr.</th>
+            <th>Marke</th>
             <th>Kategorie</th>
             <th>Preis ab</th>
             <th>Lager</th>
@@ -64,6 +77,9 @@
                 <div><a href="/admin/produkte/<%= p.id %>/bearbeiten" style="font-weight:600;font-size:13px"><%= p.name %></a></div>
                 <small class="text-gray"><%= p.sku || '–' %></small>
               </div>
+            </td>
+            <td data-label="Marke" style="font-size:13px">
+              <% if (p.brand_name) { %><%= p.brand_name %><% } else { %><span class="badge-small" style="background:#FFF0EE;color:#C0392B;border:1px solid #FECACA">⚠ Ohne Marke</span><% } %>
             </td>
             <td data-label="Kategorie" style="font-size:13px"><%= p.cat_name || '–' %></td>
             <td data-label="Preis ab" class="text-green" style="font-weight:600"><%= p.price_min ? formatPrice(p.price_min) : '–' %></td>
@@ -92,7 +108,7 @@
           </tr>
           <% } %>
           <% if (!products.length) { %>
-          <tr><td colspan="7" style="text-align:center;color:#9CA3AF;padding:3rem">Keine Produkte gefunden. <a href="/admin/produkte/neu">Jetzt erstellen →</a></td></tr>
+          <tr><td colspan="8" style="text-align:center;color:#9CA3AF;padding:3rem">Keine Produkte gefunden. <a href="/admin/produkte/neu">Jetzt erstellen →</a></td></tr>
           <% } %>
         </tbody>
       </table>

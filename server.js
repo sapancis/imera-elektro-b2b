@@ -208,6 +208,15 @@ app.use((err, req, res, next) => {
     ]) {
       try { await db.prepare(sql).run(); } catch (_) {}
     }
+    // Markasız ürünleri BİR KEZ pasife al (admin'de "Ohne Marke" olarak görünür,
+    // marka atanınca tekrar aktif edilebilir — tekrar tekrar pasife almaz)
+    try {
+      const flag = await db.prepare("SELECT value FROM settings WHERE key='unbranded_deactivated'").get();
+      if (!flag || flag.value !== '1') {
+        await db.prepare('UPDATE products SET active=0 WHERE brand_id IS NULL').run();
+        await db.prepare("INSERT INTO settings (key, value) VALUES ('unbranded_deactivated','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
+      }
+    } catch (_) {}
   } catch (e) { console.error('Schema Migration:', e.message); }
 })();
 

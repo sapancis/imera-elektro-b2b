@@ -127,26 +127,32 @@ router.get('/', async (req, res) => {
 // ─── PRODUCTS ───────────────────────────────────────────────────────────────
 router.get('/produkte', async (req, res) => {
   try {
-    const { q, kat } = req.query;
+    const { q, kat, marke } = req.query;
     let where = ['1=1'];
     let params = [];
     if (q) { where.push('(p.name LIKE ? OR p.sku LIKE ?)'); params.push(`%${q}%`, `%${q}%`); }
     if (kat) { where.push('c.slug=?'); params.push(kat); }
+    if (marke === 'none') where.push('p.brand_id IS NULL');
+    else if (marke) { where.push('b.slug=?'); params.push(marke); }
     const products = await db.prepare(`
-      SELECT p.*, c.name as cat_name,
+      SELECT p.*, c.name as cat_name, b.name as brand_name,
         (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
       FROM products p LEFT JOIN categories c ON p.category_id=c.id
+      LEFT JOIN brands b ON p.brand_id=b.id
       WHERE ${where.join(' AND ')} ORDER BY p.id DESC
     `).all(...params);
     const categories = await db.prepare('SELECT * FROM categories WHERE active=1').all();
-    res.render('admin/products', { title: 'Produkte', products, categories, q, kat });
+    const brands = await db.prepare('SELECT * FROM brands WHERE active=1 ORDER BY sort_order, name').all();
+    const noBrandCount = (await db.prepare('SELECT COUNT(*) as n FROM products WHERE brand_id IS NULL').get()).n;
+    res.render('admin/products', { title: 'Produkte', products, categories, brands, noBrandCount, q, kat, marke });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
 router.get('/produkte/neu', async (req, res) => {
   try {
     const categories = await db.prepare('SELECT * FROM categories WHERE active=1').all();
-    res.render('admin/product-edit', { title: 'Neues Produkt', product: null, tiers: [], categories });
+    const brands = await db.prepare('SELECT * FROM brands WHERE active=1 ORDER BY sort_order, name').all();
+    res.render('admin/product-edit', { title: 'Neues Produkt', product: null, tiers: [], categories, brands });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
@@ -155,18 +161,18 @@ router.post('/produkte/neu', handleUpload, async (req, res) => {
     const { name, slug, sku, category_id, short_description, description, specs_raw, apps_raw,
             market_price_min, market_price_max, stock, min_order_qty, delivery_time,
             weight, dimensions, size, meta_title, meta_description, featured, badge, active,
-            sell_as_pack, pack_size } = req.body;
+            sell_as_pack, pack_size, brand_id } = req.body;
     const image = await saveUpload(req.files?.image?.[0]);
     const extraImages = (await Promise.all((req.files?.images || []).map(saveUpload))).filter(Boolean);
     const specsArr = parseTableInput(specs_raw);
     const appsArr = parseListInput(apps_raw);
 
     const r = await db.prepare(`
-      INSERT INTO products (name, slug, sku, category_id, short_description, description, specs, applications,
+      INSERT INTO products (name, slug, sku, category_id, brand_id, short_description, description, specs, applications,
         market_price_min, market_price_max, stock, min_order_qty, delivery_time, weight, dimensions, size,
         meta_title, meta_description, image, images, featured, badge, active, sell_as_pack, pack_size)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `).run(name, slug || slugify(name), sku || null, category_id || null,
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `).run(name, slug || slugify(name), sku || null, category_id || null, brand_id || null,
       short_description || null, description || null,
       JSON.stringify(specsArr), JSON.stringify(appsArr),
       parseFloat(market_price_min) || null, parseFloat(market_price_max) || null,
@@ -191,9 +197,10 @@ router.get('/produkte/:id/bearbeiten', async (req, res) => {
     if (!product) return res.redirect('/admin/produkte');
     const tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(product.id);
     const categories = await db.prepare('SELECT * FROM categories WHERE active=1').all();
+    const brands = await db.prepare('SELECT * FROM brands WHERE active=1 ORDER BY sort_order, name').all();
     product.specsArr = product.specs ? JSON.parse(product.specs) : [];
     product.appsArr = product.applications ? JSON.parse(product.applications) : [];
-    res.render('admin/product-edit', { title: 'Produkt bearbeiten', product, tiers, categories });
+    res.render('admin/product-edit', { title: 'Produkt bearbeiten', product, tiers, categories, brands });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
@@ -202,7 +209,7 @@ router.post('/produkte/:id/bearbeiten', handleUpload, async (req, res) => {
     const { name, slug, sku, category_id, short_description, description, specs_raw, apps_raw,
             market_price_min, market_price_max, stock, min_order_qty, delivery_time,
             weight, dimensions, size, meta_title, meta_description, featured, badge, active,
-            sell_as_pack, pack_size, remove_image, remove_gallery_image } = req.body;
+            sell_as_pack, pack_size, brand_id, remove_image, remove_gallery_image } = req.body;
     const product = await db.prepare('SELECT * FROM products WHERE id=?').get(req.params.id);
     if (!product) return res.redirect('/admin/produkte');
 
@@ -221,13 +228,13 @@ router.post('/produkte/:id/bearbeiten', handleUpload, async (req, res) => {
     const appsArr = parseListInput(apps_raw);
 
     await db.prepare(`
-      UPDATE products SET name=?, slug=?, sku=?, category_id=?, short_description=?, description=?,
+      UPDATE products SET name=?, slug=?, sku=?, category_id=?, brand_id=?, short_description=?, description=?,
       specs=?, applications=?, market_price_min=?, market_price_max=?,
       stock=?, min_order_qty=?, delivery_time=?, weight=?, dimensions=?, size=?,
       meta_title=?, meta_description=?, image=?, images=?, featured=?, badge=?, active=?,
       sell_as_pack=?, pack_size=?, updated_at=datetime('now')
       WHERE id=?
-    `).run(name, slug || slugify(name), sku || null, category_id || null,
+    `).run(name, slug || slugify(name), sku || null, category_id || null, brand_id || null,
       short_description || null, description || null,
       JSON.stringify(specsArr), JSON.stringify(appsArr),
       parseFloat(market_price_min) || null, parseFloat(market_price_max) || null,
