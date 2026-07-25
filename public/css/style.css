@@ -2211,3 +2211,47 @@ img {
   .brand-logo-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
   .brand-logo-item { height: 68px; padding: 10px; }
 }
+
+/* ── Sortiment-Hinweis (temporärer Partner-Hinweis auf /shop) ─────────────── */
+.sortiment-hinweis {
+  margin: 0 0 1.5rem; border-radius: 16px; overflow: hidden;
+  background: linear-gradient(135deg, #0f1f17 0%, #14342420 100%), #102a1e;
+  color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.12);
+}
+.sh-inner { padding: 24px 26px; }
+.sh-badge {
+  display: inline-block; background: rgba(52,199,89,.18); color: #6ee7a8;
+  font-size: 12px; font-weight: 700; letter-spacing: .3px;
+  padding: 5px 12px; border-radius: 999px; margin-bottom: 12px;
+}
+.sh-head h2 { font-size: 22px; font-weight: 700; letter-spacing: -.3px; margin: 0 0 8px; color: #fff; }
+.sh-head p { font-size: 14px; line-height: 1.6; color: #cfe9db; margin: 0; max-width: 760px; }
+.sh-head strong { color: #fff; }
+.sh-partners {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px; margin: 18px 0;
+}
+.sh-partner {
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.10);
+  border-radius: 12px; padding: 14px 16px;
+}
+.sh-partner-name { font-size: 15px; font-weight: 700; color: #6ee7a8; margin-bottom: 4px; }
+.sh-partner-areas { font-size: 13px; line-height: 1.5; color: #bcd8c9; }
+.sh-cta {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,.12); padding-top: 16px;
+}
+.sh-cta p { font-size: 13.5px; line-height: 1.6; color: #cfe9db; margin: 0; flex: 1 1 340px; }
+.sh-cta strong { color: #fff; }
+.sh-btn {
+  display: inline-block; background: #34C759; color: #062b16; font-weight: 700;
+  font-size: 14px; padding: 12px 22px; border-radius: 999px; text-decoration: none;
+  white-space: nowrap; transition: transform .15s ease, background .15s ease;
+}
+.sh-btn:hover { background: #2fb350; transform: translateY(-1px); }
+@media (max-width: 560px) {
+  .sh-inner { padding: 20px 18px; }
+  .sh-head h2 { font-size: 19px; }
+  .sh-cta { flex-direction: column; align-items: stretch; }
+  .sh-btn { text-align: center; }
+}

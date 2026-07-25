@@ -117,6 +117,8 @@
       </div>
       <% } %>
 
+      <% if (pagination.page === 1) { %><%- include('partials/sortiment-hinweis') %><% } %>
+
       <p class="shop-shipping-note" style="margin:0 0 1rem;font-size:13px;color:#6B7280">🚚 Versandkosten werden im Checkout berechnet — gratis ab 200 € netto.</p>
 
       <div class="product-grid">
