@@ -295,7 +295,11 @@
         <% for (const rp of related) { %>
         <div class="product-card">
           <a href="/shop/produkt/<%= rp.slug %>" class="product-card-image">
-            <div class="product-placeholder">📦</div>
+            <% if (rp.image) { %>
+              <img src="<%= rp.image %>" alt="<%= rp.name %>" loading="lazy">
+            <% } else { %>
+              <div class="product-placeholder">📦</div>
+            <% } %>
           </a>
           <div class="product-card-body">
             <h3 class="product-name"><a href="/shop/produkt/<%= rp.slug %>"><%= rp.name %></a></h3>
