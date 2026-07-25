@@ -2189,3 +2189,24 @@ img {
   padding: 8px 14px; font-size: 13px; font-weight: 500; color: #166534;
 }
 .brand-cat-list a:hover { border-color: #34C759; }
+
+/* ── Marken-Übersicht (Startseite Logo-Leiste) ───────────────────────────── */
+.brand-strip { padding: 2.5rem 0; background: #fff; border-bottom: 1px solid var(--border); }
+.brand-strip-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
+.brand-strip-head h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; margin: 0; }
+.brand-strip-all { font-size: 14px; font-weight: 600; color: #166534; text-decoration: none; white-space: nowrap; }
+.brand-strip-all:hover { text-decoration: underline; }
+.brand-logo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+.brand-logo-item {
+  display: flex; align-items: center; justify-content: center;
+  height: 84px; padding: 14px; background: #fff;
+  border: 1px solid var(--border); border-radius: 12px;
+  transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease;
+}
+.brand-logo-item:hover { border-color: #34C759; box-shadow: 0 6px 20px rgba(0,0,0,.08); transform: translateY(-2px); }
+.brand-logo-item img { max-height: 100%; max-width: 100%; object-fit: contain; filter: grayscale(35%); transition: filter .15s ease; }
+.brand-logo-item:hover img { filter: grayscale(0%); }
+@media (max-width: 640px) {
+  .brand-logo-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+  .brand-logo-item { height: 68px; padding: 10px; }
+}

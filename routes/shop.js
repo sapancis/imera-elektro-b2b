@@ -175,7 +175,7 @@ router.get('/produkt/:slug', async (req, res) => {
 
     const metaDesc = product.meta_description ||
       `${product.short_description || ''}${product.short_description ? ' ' : ''}${product.name} – ${product.sku ? 'Art.-Nr. ' + product.sku + '. ' : ''}${(product.description || '').slice(0, 120)} | Imera Elektro`;
-    const title = product.meta_title || product.name;
+    const title = product.meta_title || (product.brand_name ? `${product.name} – ${product.brand_name}` : product.name);
 
     // ── Product JSON-LD (Google Rich Results: Preis, Bewertungen) ──
     const minPrice = product.tiers.length ? Math.min(...product.tiers.map(t => t.price)) : null;

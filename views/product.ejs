@@ -8,10 +8,11 @@
 
     <div class="product-detail-grid">
       <!-- Image Gallery -->
+      <% const _altBrand = product.brand_name ? ' – ' + product.brand_name : ''; %>
       <div class="product-gallery">
         <div class="gallery-main">
           <% if (product.image) { %>
-            <img src="<%= product.image %>" alt="<%= product.name %>" id="mainImage">
+            <img src="<%= product.image %>" alt="<%= product.name %><%= _altBrand %>" id="mainImage">
           <% } else { %>
             <div class="gallery-placeholder"><%= product.cat_name === 'Kabelbinder & Zubehör' ? '🔗' : product.cat_name === 'Kabelverschraubungen' ? '🔧' : product.cat_name === 'Reihenklemmen' ? '⚡' : '📦' %></div>
           <% } %>
@@ -19,12 +20,12 @@
         <div class="gallery-thumbs">
           <% if (product.image) { %>
           <div class="gallery-thumb active" onclick="document.getElementById('mainImage').src='<%= product.image %>';document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active')">
-            <img src="<%= product.image %>" alt="<%= product.name %> – Hauptbild">
+            <img src="<%= product.image %>" alt="<%= product.name %><%= _altBrand %> – Hauptbild">
           </div>
           <% } %>
           <% for (let gi = 0; gi < product.imagesArr.length; gi++) { %>
           <div class="gallery-thumb" onclick="document.getElementById('mainImage').src='<%= product.imagesArr[gi] %>';document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active')">
-            <img src="<%= product.imagesArr[gi] %>" alt="<%= product.name %> – Bild <%= gi + 2 %>">
+            <img src="<%= product.imagesArr[gi] %>" alt="<%= product.name %><%= _altBrand %> – Bild <%= gi + 2 %>">
           </div>
           <% } %>
         </div>

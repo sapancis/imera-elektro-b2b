@@ -36,7 +36,15 @@ router.get('/', async (req, res) => {
           ORDER BY p.id DESC LIMIT 8
         `).all(),
       ]);
-      homeData = { featured, newProducts, stats: { products: statsRow.n } };
+      // Marken-Übersicht: nur Marken mit Logo, für die Logo-Leiste auf der Startseite
+      const brands = await db.prepare(`
+        SELECT b.id, b.name, b.slug, b.logo
+        FROM brands b
+        WHERE b.active=1 AND b.logo IS NOT NULL AND b.logo != ''
+          AND EXISTS (SELECT 1 FROM products p WHERE p.brand_id=b.id AND p.active=1)
+        ORDER BY b.sort_order, b.name
+      `).all();
+      homeData = { featured, newProducts, stats: { products: statsRow.n }, brands };
       cache.set('home_data', homeData, 120_000);
     }
 
@@ -45,7 +53,7 @@ router.get('/', async (req, res) => {
       title: 'CE-zertifizierte Elektrokomponenten – 40-60% günstiger',
       metaDesc: 'Kabelbinder, Kabelverschraubungen & Reihenklemmen direkt vom Hersteller. CE-zertifiziert, Direktimport. 40-60% günstiger als der österreichische Markt.',
       ogTitle: 'Imera Elektro – Elektrokomponenten 40-60% unter Marktpreis',
-      categories, featured: homeData.featured, newProducts: homeData.newProducts, stats: homeData.stats, settings,
+      categories, featured: homeData.featured, newProducts: homeData.newProducts, stats: homeData.stats, brands: homeData.brands, settings,
     });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });

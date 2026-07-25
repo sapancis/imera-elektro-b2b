@@ -30,6 +30,25 @@
     </div>
   </div>
 
+  <!-- Marken-Übersicht -->
+  <% if (locals.brands && brands.length) { %>
+  <section class="brand-strip">
+    <div class="container">
+      <div class="brand-strip-head">
+        <h2>Unsere Marken</h2>
+        <a href="/marken" class="brand-strip-all">Alle Marken →</a>
+      </div>
+      <div class="brand-logo-grid">
+        <% for (const b of brands) { %>
+        <a href="/marken/<%= b.slug %>" class="brand-logo-item" title="<%= b.name %> Produkte ansehen">
+          <img src="<%= b.logo %>" alt="<%= b.name %>" loading="lazy">
+        </a>
+        <% } %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
   <!-- Stats Bar -->
   <section class="stats-bar">
     <div class="container">
