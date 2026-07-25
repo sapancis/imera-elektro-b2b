@@ -180,11 +180,35 @@
         <% } %>
       </div>
 
-      <% if (pagination.totalPages > 1) { %>
+      <% if (pagination.totalPages > 1) {
+        const qs = (p) => {
+          const params = new URLSearchParams();
+          params.set('page', p);
+          if (filters.kategorie)  params.set('kategorie', filters.kategorie);
+          if (filters.marke)      params.set('marke', filters.marke);
+          if (filters.preis)      params.set('preis', filters.preis);
+          if (filters.verfuegbar) params.set('verfuegbar', filters.verfuegbar);
+          if (filters.groesse)    params.set('groesse', filters.groesse);
+          if (filters.sort)       params.set('sort', filters.sort);
+          return '/shop?' + params.toString();
+        };
+        const cur = pagination.page, tp = pagination.totalPages, win = 2;
+        const start = Math.max(1, cur - win), end = Math.min(tp, cur + win);
+      %>
       <div class="pagination">
-        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
-        <a href="/shop?page=<%= i %>&kategorie=<%= filters.kategorie||'' %>&sort=<%= filters.sort %>" class="page-btn <%= i === pagination.page ? 'page-btn--active' : '' %>"><%= i %></a>
+        <% if (cur > 1) { %><a href="<%= qs(cur - 1) %>" class="page-btn" rel="prev">‹</a><% } %>
+        <% if (start > 1) { %>
+          <a href="<%= qs(1) %>" class="page-btn">1</a>
+          <% if (start > 2) { %><span class="page-ellipsis">…</span><% } %>
         <% } %>
+        <% for (let i = start; i <= end; i++) { %>
+        <a href="<%= qs(i) %>" class="page-btn <%= i === cur ? 'page-btn--active' : '' %>"><%= i %></a>
+        <% } %>
+        <% if (end < tp) { %>
+          <% if (end < tp - 1) { %><span class="page-ellipsis">…</span><% } %>
+          <a href="<%= qs(tp) %>" class="page-btn"><%= tp %></a>
+        <% } %>
+        <% if (cur < tp) { %><a href="<%= qs(cur + 1) %>" class="page-btn" rel="next">›</a><% } %>
       </div>
       <% } %>
     </div>

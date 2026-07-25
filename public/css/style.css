@@ -209,6 +209,7 @@ img { max-width: 100%; display: block; }
 .pagination { display: flex; gap: 6px; justify-content: center; margin-top: 2rem; }
 .page-btn { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--bg-card); }
 .page-btn--active { background: var(--black); color: white; border-color: var(--black); }
+.page-ellipsis { padding: 8px 4px; font-size: 14px; color: var(--text-muted); align-self: center; }
 
 /* ─── Schnell-Bestellformular ───────────────────────────────────────────── */
 /* ─── Schnellbestellung ──────────────────────────────────────────────────── */
