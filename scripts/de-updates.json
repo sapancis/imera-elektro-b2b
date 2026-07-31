@@ -1,0 +1,1587 @@
+{
+ "TR-B60-13-1": {
+  "name": "Leitungsschutzschalter, B13, 1-polig",
+  "short_description": "Leitungsschutzschalter, B13, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-B60-20-1": {
+  "name": "Leitungsschutzschalter, B20, 1-polig",
+  "short_description": "Leitungsschutzschalter, B20, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-B60-32-1": {
+  "name": "Leitungsschutzschalter, B32, 1-polig",
+  "short_description": "Leitungsschutzschalter, B32, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-1B-10": {
+  "name": "Leitungsschutzschalter, B10, 1-polig",
+  "short_description": "Leitungsschutzschalter, B10, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-1B-13": {
+  "name": "Leitungsschutzschalter, B13, 1-polig",
+  "short_description": "Leitungsschutzschalter, B13, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-1B-16": {
+  "name": "Leitungsschutzschalter, B16, 1-polig",
+  "short_description": "Leitungsschutzschalter, B16, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-1B-20": {
+  "name": "Leitungsschutzschalter, B20, 1-polig",
+  "short_description": "Leitungsschutzschalter, B20, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-1B-6": {
+  "name": "Leitungsschutzschalter, B6, 1-polig",
+  "short_description": "Leitungsschutzschalter, B6, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1B-10": {
+  "name": "Leitungsschutzschalter, B10, 1-polig",
+  "short_description": "Leitungsschutzschalter, B10, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1B-16": {
+  "name": "Leitungsschutzschalter, B16, 1-polig",
+  "short_description": "Leitungsschutzschalter, B16, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1B-6": {
+  "name": "Leitungsschutzschalter, B6, 1-polig",
+  "short_description": "Leitungsschutzschalter, B6, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1B-25": {
+  "name": "Leitungsschutzschalter, B25, 1-polig",
+  "short_description": "Leitungsschutzschalter, B25, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1B-32": {
+  "name": "Leitungsschutzschalter, B32, 1-polig",
+  "short_description": "Leitungsschutzschalter, B32, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1B-20": {
+  "name": "Leitungsschutzschalter, B20, 1-polig",
+  "short_description": "Leitungsschutzschalter, B20, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDM-1B-6": {
+  "name": "Leitungsschutzschalter, B6, 1-polig",
+  "short_description": "Leitungsschutzschalter, B6, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDM-1B-32": {
+  "name": "Leitungsschutzschalter, B32, 1-polig",
+  "short_description": "Leitungsschutzschalter, B32, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1B-13": {
+  "name": "Leitungsschutzschalter, B13, 1-polig",
+  "short_description": "Leitungsschutzschalter, B13, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDM-1B-20": {
+  "name": "Leitungsschutzschalter, B20, 1-polig",
+  "short_description": "Leitungsschutzschalter, B20, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1B-6": {
+  "name": "Leitungsschutzschalter, B6, 1-polig",
+  "short_description": "Leitungsschutzschalter, B6, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1B-10": {
+  "name": "Leitungsschutzschalter, B10, 1-polig",
+  "short_description": "Leitungsschutzschalter, B10, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1B-13": {
+  "name": "Leitungsschutzschalter, B13, 1-polig",
+  "short_description": "Leitungsschutzschalter, B13, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1B-16": {
+  "name": "Leitungsschutzschalter, B16, 1-polig",
+  "short_description": "Leitungsschutzschalter, B16, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1B-20": {
+  "name": "Leitungsschutzschalter, B20, 1-polig",
+  "short_description": "Leitungsschutzschalter, B20, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1B-25": {
+  "name": "Leitungsschutzschalter, B25, 1-polig",
+  "short_description": "Leitungsschutzschalter, B25, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1B-32": {
+  "name": "Leitungsschutzschalter, B32, 1-polig",
+  "short_description": "Leitungsschutzschalter, B32, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-B60-20-3": {
+  "name": "Leitungsschutzschalter, B20, 3-polig",
+  "short_description": "Leitungsschutzschalter, B20, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-B60-25-3": {
+  "name": "Leitungsschutzschalter, B25, 3-polig",
+  "short_description": "Leitungsschutzschalter, B25, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-B60-32-3": {
+  "name": "Leitungsschutzschalter, B32, 3-polig",
+  "short_description": "Leitungsschutzschalter, B32, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDS-3B-10": {
+  "name": "Leitungsschutzschalter, B10, 3-polig, farbiger Kipphebel",
+  "short_description": "Leitungsschutzschalter, B10, 3-polig, farbiger Kipphebel",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDS-3B-16": {
+  "name": "Leitungsschutzschalter, B16, 3-polig, farbiger Kipphebel",
+  "short_description": "Leitungsschutzschalter, B16, 3-polig, farbiger Kipphebel",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDS-3B-20": {
+  "name": "Leitungsschutzschalter, B20, 3-polig, farbiger Kipphebel",
+  "short_description": "Leitungsschutzschalter, B20, 3-polig, farbiger Kipphebel",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDS-3B-25": {
+  "name": "Leitungsschutzschalter, B25, 3-polig, farbiger Kipphebel",
+  "short_description": "Leitungsschutzschalter, B25, 3-polig, farbiger Kipphebel",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3B-10": {
+  "name": "Leitungsschutzschalter, B10, 3-polig",
+  "short_description": "Leitungsschutzschalter, B10, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3B-16": {
+  "name": "Leitungsschutzschalter, B16, 3-polig",
+  "short_description": "Leitungsschutzschalter, B16, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3B-20": {
+  "name": "Leitungsschutzschalter, B20, 3-polig",
+  "short_description": "Leitungsschutzschalter, B20, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3B-25": {
+  "name": "Leitungsschutzschalter, B25, 3-polig",
+  "short_description": "Leitungsschutzschalter, B25, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3B-32": {
+  "name": "Leitungsschutzschalter, B32, 3-polig",
+  "short_description": "Leitungsschutzschalter, B32, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3B-16": {
+  "name": "Leitungsschutzschalter, B16, 3-polig",
+  "short_description": "Leitungsschutzschalter, B16, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3B-20": {
+  "name": "Leitungsschutzschalter, B20, 3-polig",
+  "short_description": "Leitungsschutzschalter, B20, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3B-25": {
+  "name": "Leitungsschutzschalter, B25, 3-polig",
+  "short_description": "Leitungsschutzschalter, B25, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3B-32": {
+  "name": "Leitungsschutzschalter, B32, 3-polig",
+  "short_description": "Leitungsschutzschalter, B32, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3B-10": {
+  "name": "Leitungsschutzschalter, B10, 3-polig",
+  "short_description": "Leitungsschutzschalter, B10, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDM-3B-10": {
+  "name": "Leitungsschutzschalter, B10, 3-polig",
+  "short_description": "Leitungsschutzschalter, B10, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDM-3B-16": {
+  "name": "Leitungsschutzschalter, B16, 3-polig",
+  "short_description": "Leitungsschutzschalter, B16, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDM-3B-20": {
+  "name": "Leitungsschutzschalter, B20, 3-polig",
+  "short_description": "Leitungsschutzschalter, B20, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDM-3B-32": {
+  "name": "Leitungsschutzschalter, B32, 3-polig",
+  "short_description": "Leitungsschutzschalter, B32, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3B-10": {
+  "name": "Leitungsschutzschalter, B10, 3-polig",
+  "short_description": "Leitungsschutzschalter, B10, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3B-16": {
+  "name": "Leitungsschutzschalter, B16, 3-polig",
+  "short_description": "Leitungsschutzschalter, B16, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3B-20": {
+  "name": "Leitungsschutzschalter, B20, 3-polig",
+  "short_description": "Leitungsschutzschalter, B20, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3B-25": {
+  "name": "Leitungsschutzschalter, B25, 3-polig",
+  "short_description": "Leitungsschutzschalter, B25, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3B-32": {
+  "name": "Leitungsschutzschalter, B32, 3-polig",
+  "short_description": "Leitungsschutzschalter, B32, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-C60-32-1": {
+  "name": "Leitungsschutzschalter, C32, 1-polig",
+  "short_description": "Leitungsschutzschalter, C32, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-1C-10": {
+  "name": "Leitungsschutzschalter, C10, 1-polig",
+  "short_description": "Leitungsschutzschalter, C10, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-1C-16": {
+  "name": "Leitungsschutzschalter, C16, 1-polig",
+  "short_description": "Leitungsschutzschalter, C16, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-1C-6": {
+  "name": "Leitungsschutzschalter, C6, 1-polig",
+  "short_description": "Leitungsschutzschalter, C6, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-1C-20": {
+  "name": "Leitungsschutzschalter, C20, 1-polig",
+  "short_description": "Leitungsschutzschalter, C20, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-C60-25-1": {
+  "name": "Leitungsschutzschalter, C25, 1-polig",
+  "short_description": "Leitungsschutzschalter, C25, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1C-10": {
+  "name": "Leitungsschutzschalter, C10, 1-polig",
+  "short_description": "Leitungsschutzschalter, C10, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1C-16": {
+  "name": "Leitungsschutzschalter, C16, 1-polig",
+  "short_description": "Leitungsschutzschalter, C16, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1C-25": {
+  "name": "Leitungsschutzschalter, C25, 1-polig",
+  "short_description": "Leitungsschutzschalter, C25, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1C-32": {
+  "name": "Leitungsschutzschalter, C32, 1-polig",
+  "short_description": "Leitungsschutzschalter, C32, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1C-6": {
+  "name": "Leitungsschutzschalter, C6, 1-polig",
+  "short_description": "Leitungsschutzschalter, C6, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-1C-20": {
+  "name": "Leitungsschutzschalter, C20, 1-polig",
+  "short_description": "Leitungsschutzschalter, C20, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1C-6": {
+  "name": "Leitungsschutzschalter, C6, 1-polig",
+  "short_description": "Leitungsschutzschalter, C6, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1C-10": {
+  "name": "Leitungsschutzschalter, C10, 1-polig",
+  "short_description": "Leitungsschutzschalter, C10, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1C-16": {
+  "name": "Leitungsschutzschalter, C16, 1-polig",
+  "short_description": "Leitungsschutzschalter, C16, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1C-25": {
+  "name": "Leitungsschutzschalter, C25, 1-polig",
+  "short_description": "Leitungsschutzschalter, C25, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-1C-32": {
+  "name": "Leitungsschutzschalter, C32, 1-polig",
+  "short_description": "Leitungsschutzschalter, C32, 1-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-DC-1C-6": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C6, 1-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C6, 1-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-DC-1C-10": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C10, 1-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C10, 1-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-DC-1C-16": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C16, 1-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C16, 1-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-DC-1C-20": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C20, 1-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C20, 1-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-DC-1C-25": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C25, 1-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C25, 1-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-DC-1C-32": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C32, 1-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C32, 1-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-C60-16-3": {
+  "name": "Leitungsschutzschalter, C16, 3-polig",
+  "short_description": "Leitungsschutzschalter, C16, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-C60-20-3": {
+  "name": "Leitungsschutzschalter, C20, 3-polig",
+  "short_description": "Leitungsschutzschalter, C20, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3C-10": {
+  "name": "Leitungsschutzschalter, C10, 3-polig",
+  "short_description": "Leitungsschutzschalter, C10, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3C-16": {
+  "name": "Leitungsschutzschalter, C16, 3-polig",
+  "short_description": "Leitungsschutzschalter, C16, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3C-20": {
+  "name": "Leitungsschutzschalter, C20, 3-polig",
+  "short_description": "Leitungsschutzschalter, C20, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3C-25": {
+  "name": "Leitungsschutzschalter, C25, 3-polig",
+  "short_description": "Leitungsschutzschalter, C25, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-MB-3C-32": {
+  "name": "Leitungsschutzschalter, C32, 3-polig",
+  "short_description": "Leitungsschutzschalter, C32, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3C-25": {
+  "name": "Leitungsschutzschalter, C25, 3-polig",
+  "short_description": "Leitungsschutzschalter, C25, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3C-32": {
+  "name": "Leitungsschutzschalter, C32, 3-polig",
+  "short_description": "Leitungsschutzschalter, C32, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3C-20": {
+  "name": "Leitungsschutzschalter, C20, 3-polig",
+  "short_description": "Leitungsschutzschalter, C20, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3C-10": {
+  "name": "Leitungsschutzschalter, C10, 3-polig",
+  "short_description": "Leitungsschutzschalter, C10, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDZ-3C-16": {
+  "name": "Leitungsschutzschalter, C16, 3-polig",
+  "short_description": "Leitungsschutzschalter, C16, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDM-3C-10": {
+  "name": "Leitungsschutzschalter, C10, 3-polig",
+  "short_description": "Leitungsschutzschalter, C10, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3C-10": {
+  "name": "Leitungsschutzschalter, C10, 3-polig",
+  "short_description": "Leitungsschutzschalter, C10, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3C-16": {
+  "name": "Leitungsschutzschalter, C16, 3-polig",
+  "short_description": "Leitungsschutzschalter, C16, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3C-20": {
+  "name": "Leitungsschutzschalter, C20, 3-polig",
+  "short_description": "Leitungsschutzschalter, C20, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3C-25": {
+  "name": "Leitungsschutzschalter, C25, 3-polig",
+  "short_description": "Leitungsschutzschalter, C25, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-TDA-3C-32": {
+  "name": "Leitungsschutzschalter, C32, 3-polig",
+  "short_description": "Leitungsschutzschalter, C32, 3-polig",
+  "description": "Leitungsschutzschalter (LS-Schalter) für Überstrom- und Kurzschlussschutz in Elektroinstallationen."
+ },
+ "TR-DC-3C-10": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C10, 3-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C10, 3-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-DC-3C-16": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C16, 3-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C16, 3-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-DC-3C-20": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C20, 3-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C20, 3-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-DC-3C-25": {
+  "name": "DC-Leitungsschutzschalter für PV-Anlagen, C25, 3-polig",
+  "short_description": "DC-Leitungsschutzschalter für PV-Anlagen, C25, 3-polig",
+  "description": "DC-Leitungsschutzschalter für Photovoltaik-Anlagen – Überstrom- und Kurzschlussschutz im DC-Kreis."
+ },
+ "TR-RB2-25100": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB2-25300": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 300 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 300 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB2-40100": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB2-40300": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 300 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 300 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB2-25030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB2-40030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV2-40030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV2-40100": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV2-25030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV2-25100": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV2-25300": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 300 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 300 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV2-40300": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 300 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 300 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG2-25100": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 100 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 100 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG2-40100": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 100 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 100 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG2-25300": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 300 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 300 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG2-40300": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 300 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 300 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG2-25030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 30 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 30 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG2-40030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 30 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 30 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG2-63300": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 63A, 300 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 63A, 300 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV2-63030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 63A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 63A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV2-63100": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 63A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 63A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG2-63030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 63A, 30 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 63A, 30 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG2-63100": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 63A, 100 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 63A, 100 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFXGA2-25030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 25A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 25A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFXGA2-40030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 40A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 40A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFXGA2-63030": {
+  "name": "FI-Schutzschalter (RCD), 2-polig, 63A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "short_description": "FI-Schutzschalter (RCD), 2-polig, 63A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB4-25100": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB4-25300": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 300 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 300 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB4-40100": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB4-40300": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 300 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 300 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB4-63300": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 63A, 300 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 63A, 300 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB4-25030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB4-40030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-RB4-63030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 63A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 63A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV4-40030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV4-40100": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV4-25030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV4-25100": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV4-25300": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 300 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 300 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV4-40300": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 300 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 300 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV4-63030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 63A, 30 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 63A, 30 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFV4-63100": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 63A, 100 mA, Typ AC",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 63A, 100 mA, Typ AC",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG4-40100": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 100 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 100 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG4-63100": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 63A, 100 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 63A, 100 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG4-63300": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 63A, 300 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 63A, 300 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG4-25100": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 100 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 100 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG4-25300": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 300 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 300 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG4-40300": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 300 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 300 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG4-40030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 30 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 30 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG4-25030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 30 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 30 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFG4-63030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 63A, 30 mA, Typ A",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 63A, 30 mA, Typ A",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFXGA4-25030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 25A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 25A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFXGA4-40030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 40A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 40A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFXGA4-63030": {
+  "name": "FI-Schutzschalter (RCD), 4-polig, 63A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "short_description": "FI-Schutzschalter (RCD), 4-polig, 63A, 30 mA, kurzzeitverzögert (Typ G/A)",
+  "description": "Fehlerstrom-Schutzschalter (RCD) zum Schutz von Personen vor gefährlichen Fehlerströmen."
+ },
+ "TR-TFIG4-25300": {
+  "name": "FI-Schutzschalter mit Wiedereinschaltautomatik, 4-polig, 25A, 300 mA",
+  "short_description": "FI-Schutzschalter mit Wiedereinschaltautomatik, 4-polig, 25A, 300 mA",
+  "description": "FI-Schutzschalter (RCD) mit automatischer Wiedereinschaltung nach Fehlerabschaltung."
+ },
+ "TR-KVKV-6/10": {
+  "name": "FI/LS-Schalter (RCBO), C10, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), C10, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKV-10/03": {
+  "name": "FI/LS-Schalter (RCBO), C10, 2-polig, 30 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), C10, 2-polig, 30 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKV-10/10": {
+  "name": "FI/LS-Schalter (RCBO), C10, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), C10, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKV-16/10": {
+  "name": "FI/LS-Schalter (RCBO), C16, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), C16, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKV-20/03": {
+  "name": "FI/LS-Schalter (RCBO), C20, 2-polig, 30 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), C20, 2-polig, 30 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKV-20/10": {
+  "name": "FI/LS-Schalter (RCBO), C20, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), C20, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKV-25/03": {
+  "name": "FI/LS-Schalter (RCBO), C25, 2-polig, 30 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), C25, 2-polig, 30 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKV-25/10": {
+  "name": "FI/LS-Schalter (RCBO), C25, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), C25, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKV-32/10": {
+  "name": "FI/LS-Schalter (RCBO), C32, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), C32, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKVB-6/03": {
+  "name": "FI/LS-Schalter (RCBO), B6, 2-polig, 30 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), B6, 2-polig, 30 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKVB-6/10": {
+  "name": "FI/LS-Schalter (RCBO), B10, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), B10, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKVB-10/10": {
+  "name": "FI/LS-Schalter (RCBO), B10, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), B10, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKVB-16/10": {
+  "name": "FI/LS-Schalter (RCBO), B16, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), B16, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKVB-20/10": {
+  "name": "FI/LS-Schalter (RCBO), B20, 2-polig, 100 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), B20, 2-polig, 100 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-KVKVB-25/03": {
+  "name": "FI/LS-Schalter (RCBO), B25, 2-polig, 30 mA, Typ AC",
+  "short_description": "FI/LS-Schalter (RCBO), B25, 2-polig, 30 mA, Typ AC",
+  "description": "Kombischutzschalter (FI/LS, RCBO) – vereint Fehlerstrom- und Leitungsschutz in einem Gerät."
+ },
+ "TR-TME-ZMH": {
+  "name": "Verschluss für TME-Kunststoffschrank (Dreikant)",
+  "short_description": "Verschluss für TME-Kunststoffschrank (Dreikant)",
+  "description": "Dreikant-Verschluss für Verteilerschränke der Baureihe TME."
+ },
+ "TR-TME-ZM": {
+  "name": "Sicherheitsschloss für TME-Kunststoffschrank",
+  "short_description": "Sicherheitsschloss für TME-Kunststoffschrank",
+  "description": "Abschließbares Sicherheitsschloss für Verteilerschränke der Baureihe TME."
+ },
+ "TR-TME504018R": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME604020R": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME282113": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME705025R": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME332513": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME282113T": {
+  "name": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-CMB1": {
+  "name": "Zählerverteiler 1-phasig (für Unterzähler)",
+  "short_description": "Zählerverteiler 1-phasig (für Unterzähler)",
+  "description": "Zählerverteilergehäuse zur Aufnahme eines Unterzählers."
+ },
+ "TR-TME332513T": {
+  "name": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME403017": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME282113M": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME282113MT": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME403017T": {
+  "name": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME403020": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME332513M": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME332513MT": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME403017M": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-CMB3": {
+  "name": "Zählerverteiler 3-phasig (für Unterzähler)",
+  "short_description": "Zählerverteiler 3-phasig (für Unterzähler)",
+  "description": "Zählerverteilergehäuse zur Aufnahme eines Unterzählers."
+ },
+ "TR-TME504018": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME403017MT": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME604020": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME504018T": {
+  "name": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME604020T": {
+  "name": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME504018M": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME605022": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME504018MT": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME605022T": {
+  "name": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME604020MT": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME705025": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME604020M": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME705025T": {
+  "name": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME605022M": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME605022MT": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME806026": {
+  "name": "Kunststoff-Verteilerschrank",
+  "short_description": "Kunststoff-Verteilerschrank",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME705025M": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME705025MT": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME806026T": {
+  "name": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME806026M": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TME806026MT": {
+  "name": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "short_description": "Kunststoff-Verteilerschrank, mit Modulträger, mit transparenter Tür",
+  "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
+ },
+ "TR-TTV-B2": {
+  "name": "Sockel für Überspannungsableiter-Einsätze (Typ 2)",
+  "short_description": "Sockel für Überspannungsableiter-Einsätze (Typ 2)",
+  "description": "Basissockel zur Aufnahme steckbarer Überspannungsableiter-Einsätze Typ 2."
+ },
+ "TR-ESPD2-40MO": {
+  "name": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "short_description": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "description": "Überspannungsableiter Typ 2 für den Schutz elektrischer Anlagen; Einsatz austauschbar."
+ },
+ "TR-ESPD2-40M": {
+  "name": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "short_description": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "description": "Überspannungsableiter Typ 2 für den Schutz elektrischer Anlagen; Einsatz austauschbar."
+ },
+ "TR-TTV2-BASE-3P": {
+  "name": "Sockel für Überspannungsableiter-Einsätze (Typ 2)",
+  "short_description": "Sockel für Überspannungsableiter-Einsätze (Typ 2)",
+  "description": "Basissockel zur Aufnahme steckbarer Überspannungsableiter-Einsätze Typ 2."
+ },
+ "TR-TTV-B3": {
+  "name": "Sockel für Überspannungsableiter-Einsätze (Typ 2)",
+  "short_description": "Sockel für Überspannungsableiter-Einsätze (Typ 2)",
+  "description": "Basissockel zur Aufnahme steckbarer Überspannungsableiter-Einsätze Typ 2."
+ },
+ "TR-ESPD2-40-1P": {
+  "name": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "short_description": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "description": "Überspannungsableiter Typ 2 für den Schutz elektrischer Anlagen; Einsatz austauschbar."
+ },
+ "TR-TTV-DM5": {
+  "name": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "short_description": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "description": "Überspannungsableiter Typ 2 für den Schutz elektrischer Anlagen; Einsatz austauschbar."
+ },
+ "TR-ESPD3-3-2P": {
+  "name": "Überspannungsableiter Typ 3 (AC) für Steckdoseneinbau",
+  "short_description": "Überspannungsableiter Typ 3 (AC) für Steckdoseneinbau",
+  "description": "Überspannungs-Feinschutz Typ 3 für den Einbau nahe empfindlicher Endgeräte."
+ },
+ "TR-ESPD2-DC40-600V": {
+  "name": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "short_description": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
+  "description": "Überspannungsableiter Typ 2 für den Schutz elektrischer Anlagen; Einsatz austauschbar."
+ },
+ "TR-TFK101": {
+  "name": "Aufputz-Schalter, einpolig",
+  "short_description": "Aufputz-Schalter, einpolig",
+  "description": "Einpoliger Aufputz-Schalter für die Elektroinstallation."
+ },
+ "TR-TFK101B": {
+  "name": "Aufputz-Taster",
+  "short_description": "Aufputz-Taster",
+  "description": "Aufputz-Taster für Klingel-/Steuerungsanwendungen."
+ },
+ "TR-TFK102": {
+  "name": "Aufputz-Schalter, zweipolig",
+  "short_description": "Aufputz-Schalter, zweipolig",
+  "description": "Zweipoliger Aufputz-Schalter für die Elektroinstallation."
+ },
+ "TR-TTK-04B": {
+  "name": "Aufputz-Taster mit Klingelsymbol",
+  "short_description": "Aufputz-Taster mit Klingelsymbol",
+  "description": "Aufputz-Taster für Klingel-/Steuerungsanwendungen."
+ },
+ "TR-TTK-04L": {
+  "name": "Aufputz-Taster mit Lichtsymbol",
+  "short_description": "Aufputz-Taster mit Lichtsymbol",
+  "description": "Aufputz-Taster für Klingel-/Steuerungsanwendungen."
+ },
+ "TR-TTK-04W": {
+  "name": "Aufputz-Taster mit WC-Symbol",
+  "short_description": "Aufputz-Taster mit WC-Symbol",
+  "description": "Aufputz-Taster für Klingel-/Steuerungsanwendungen."
+ },
+ "TR-TFK105": {
+  "name": "Aufputz-Wechselschalter",
+  "short_description": "Aufputz-Wechselschalter",
+  "description": "Aufputz-Wechselschalter für die Elektroinstallation."
+ },
+ "TR-TTK-01": {
+  "name": "Aufputz-Schalter, einpolig",
+  "short_description": "Aufputz-Schalter, einpolig",
+  "description": "Einpoliger Aufputz-Schalter für die Elektroinstallation."
+ },
+ "TR-TFK106": {
+  "name": "Aufputz-Kreuzschalter",
+  "short_description": "Aufputz-Kreuzschalter",
+  "description": "Aufputz-Kreuz-/Umschalter für die Elektroinstallation."
+ },
+ "TR-TTK-31": {
+  "name": "Aufputz-Schalter",
+  "short_description": "Aufputz-Schalter",
+  "description": "Aufputz-Schaltgerät für die Elektroinstallation."
+ },
+ "TR-TR-PH07L": {
+  "name": "Aufputz-Taster mit Beleuchtung",
+  "short_description": "Aufputz-Taster mit Beleuchtung",
+  "description": "Aufputz-Taster für Klingel-/Steuerungsanwendungen."
+ },
+ "TR-TTK-21": {
+  "name": "Aufputz-Schalter",
+  "short_description": "Aufputz-Schalter",
+  "description": "Aufputz-Schaltgerät für die Elektroinstallation."
+ },
+ "TR-TR-PH05L": {
+  "name": "Aufputz-Schalter, einpolig mit Beleuchtung",
+  "short_description": "Aufputz-Schalter, einpolig mit Beleuchtung",
+  "description": "Einpoliger Aufputz-Schalter für die Elektroinstallation."
+ },
+ "TR-TTK-03": {
+  "name": "Aufputz-Schalter, zweipolig",
+  "short_description": "Aufputz-Schalter, zweipolig",
+  "description": "Zweipoliger Aufputz-Schalter für die Elektroinstallation."
+ },
+ "TR-TTK-12": {
+  "name": "Aufputz-Schalter",
+  "short_description": "Aufputz-Schalter",
+  "description": "Aufputz-Schaltgerät für die Elektroinstallation."
+ },
+ "TR-TR-PH06L": {
+  "name": "Aufputz-Kreuzschalter mit Beleuchtung",
+  "short_description": "Aufputz-Kreuzschalter mit Beleuchtung",
+  "description": "Aufputz-Kreuz-/Umschalter für die Elektroinstallation."
+ },
+ "TR-TTK-11": {
+  "name": "Aufputz-Schalter",
+  "short_description": "Aufputz-Schalter",
+  "description": "Aufputz-Schaltgerät für die Elektroinstallation."
+ },
+ "TR-TTK-07": {
+  "name": "Aufputz-Jalousieschalter",
+  "short_description": "Aufputz-Jalousieschalter",
+  "description": "Aufputz-Schalter zur Ansteuerung von Jalousien/Rollläden."
+ },
+ "TR-TTK-02": {
+  "name": "Aufputz-Kreuzschalter",
+  "short_description": "Aufputz-Kreuzschalter",
+  "description": "Aufputz-Kreuz-/Umschalter für die Elektroinstallation."
+ },
+ "TR-TR-PH07": {
+  "name": "Aufputz-Taster",
+  "short_description": "Aufputz-Taster",
+  "description": "Aufputz-Taster für Klingel-/Steuerungsanwendungen."
+ },
+ "TR-TTK-05": {
+  "name": "Aufputz-Wechselschalter",
+  "short_description": "Aufputz-Wechselschalter",
+  "description": "Aufputz-Wechselschalter für die Elektroinstallation."
+ },
+ "TR-TR-PH05": {
+  "name": "Aufputz-Schalter, einpolig",
+  "short_description": "Aufputz-Schalter, einpolig",
+  "description": "Einpoliger Aufputz-Schalter für die Elektroinstallation."
+ },
+ "TR-TR-PH06-2": {
+  "name": "Aufputz-Kreuzschalter",
+  "short_description": "Aufputz-Kreuzschalter",
+  "description": "Aufputz-Kreuz-/Umschalter für die Elektroinstallation."
+ },
+ "TR-TR-PH01": {
+  "name": "Aufputz-Schalter",
+  "short_description": "Aufputz-Schalter",
+  "description": "Aufputz-Schaltgerät für die Elektroinstallation."
+ },
+ "TR-TTK-32": {
+  "name": "Aufputz-Antennendose (TV/UKW)",
+  "short_description": "Aufputz-Antennendose (TV/UKW)",
+  "description": "Aufputz-Antennenanschlussdose für TV- und UKW-Signale."
+ },
+ "TR-TR-PH05-2": {
+  "name": "Aufputz-Wechselschalter",
+  "short_description": "Aufputz-Wechselschalter",
+  "description": "Aufputz-Wechselschalter für die Elektroinstallation."
+ },
+ "TR-TR-PH04": {
+  "name": "Aufputz-Schalter, zweipolig",
+  "short_description": "Aufputz-Schalter, zweipolig",
+  "description": "Zweipoliger Aufputz-Schalter für die Elektroinstallation."
+ },
+ "TR-TFKSCH-2": {
+  "name": "Aufputz-Schalter",
+  "short_description": "Aufputz-Schalter",
+  "description": "Aufputz-Schaltgerät für die Elektroinstallation."
+ },
+ "TR-TR-PH03V": {
+  "name": "Aufputz-Steckdose + Schalter (einpolig), Schuko, vertikal",
+  "short_description": "Aufputz-Steckdose + Schalter (einpolig), Schuko, vertikal",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PHF03V": {
+  "name": "Aufputz-Steckdose + Schalter (einpolig), französisch, vertikal",
+  "short_description": "Aufputz-Steckdose + Schalter (einpolig), französisch, vertikal",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PH08": {
+  "name": "Aufputz-Steckdose + Wechselschalter, Schuko",
+  "short_description": "Aufputz-Steckdose + Wechselschalter, Schuko",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PH08V": {
+  "name": "Aufputz-Steckdose + Wechselschalter, Schuko, vertikal",
+  "short_description": "Aufputz-Steckdose + Wechselschalter, Schuko, vertikal",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PH09": {
+  "name": "Aufputz-Steckdose + Wechselschalter, Schuko",
+  "short_description": "Aufputz-Steckdose + Wechselschalter, Schuko",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PH09V": {
+  "name": "Aufputz-Steckdose + Wechselschalter, Schuko, vertikal",
+  "short_description": "Aufputz-Steckdose + Wechselschalter, Schuko, vertikal",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PHF08": {
+  "name": "Aufputz-Steckdose + Wechselschalter, französisch",
+  "short_description": "Aufputz-Steckdose + Wechselschalter, französisch",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PHF08V": {
+  "name": "Aufputz-Steckdose + Wechselschalter, französisch, vertikal",
+  "short_description": "Aufputz-Steckdose + Wechselschalter, französisch, vertikal",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PHF09V": {
+  "name": "Aufputz-Steckdose + Wechselschalter, französisch, vertikal",
+  "short_description": "Aufputz-Steckdose + Wechselschalter, französisch, vertikal",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PHF09": {
+  "name": "Aufputz-Steckdose + Wechselschalter, französisch",
+  "short_description": "Aufputz-Steckdose + Wechselschalter, französisch",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PH10": {
+  "name": "Aufputz-Steckdose + Schalter (einpolig), Schuko",
+  "short_description": "Aufputz-Steckdose + Schalter (einpolig), Schuko",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PH10V": {
+  "name": "Aufputz-Steckdose + Schalter (einpolig), Schuko, vertikal",
+  "short_description": "Aufputz-Steckdose + Schalter (einpolig), Schuko, vertikal",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PHF03": {
+  "name": "Aufputz-Steckdose + Schalter (einpolig), französisch",
+  "short_description": "Aufputz-Steckdose + Schalter (einpolig), französisch",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PHF10": {
+  "name": "Aufputz-Steckdose + Schalter (einpolig), französisch",
+  "short_description": "Aufputz-Steckdose + Schalter (einpolig), französisch",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PHF10V": {
+  "name": "Aufputz-Steckdose + Schalter (einpolig), französisch, vertikal",
+  "short_description": "Aufputz-Steckdose + Schalter (einpolig), französisch, vertikal",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PH11": {
+  "name": "Aufputz-Steckdose + Schalter (zweipolig), Schuko",
+  "short_description": "Aufputz-Steckdose + Schalter (zweipolig), Schuko",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-TR-PHF02": {
+  "name": "Aufputz-Schalter",
+  "short_description": "Aufputz-Schalter",
+  "description": "Aufputz-Schaltgerät für die Elektroinstallation."
+ },
+ "TR-TR-PH02": {
+  "name": "Aufputz-Schalter",
+  "short_description": "Aufputz-Schalter",
+  "description": "Aufputz-Schaltgerät für die Elektroinstallation."
+ },
+ "TR-TFKSCH-3": {
+  "name": "Aufputz-Schalter",
+  "short_description": "Aufputz-Schalter",
+  "description": "Aufputz-Schaltgerät für die Elektroinstallation."
+ },
+ "TR-TR-PH03": {
+  "name": "Aufputz-Steckdose + Schalter (einpolig), Schuko",
+  "short_description": "Aufputz-Steckdose + Schalter (einpolig), Schuko",
+  "description": "Aufputz-Kombination aus Steckdose und Schalter."
+ },
+ "TR-USB-21": {
+  "name": "Schuko-Steckdose mit USB-Anschluss",
+  "short_description": "Schuko-Steckdose mit USB-Anschluss",
+  "description": "Schuko-Steckdose mit integriertem USB-Ladeanschluss."
+ },
+ "TR-TMB-011": {
+  "name": "Aufputz-Bewegungsmelder (PIR), weiß",
+  "short_description": "Aufputz-Bewegungsmelder (PIR), weiß",
+  "description": "PIR-Bewegungsmelder für die Aufputzmontage zur automatischen Lichtsteuerung."
+ },
+ "TR-TMB-E50": {
+  "name": "Bewegungsmelder-Adapter für E27-Fassungen (PIR)",
+  "short_description": "Bewegungsmelder-Adapter für E27-Fassungen (PIR)",
+  "description": "PIR-Bewegungsmelder als Adapter für E27-Leuchtmittelfassungen."
+ },
+ "TR-TMB-061": {
+  "name": "Aufputz-Bewegungsmelder (PIR), weiß",
+  "short_description": "Aufputz-Bewegungsmelder (PIR), weiß",
+  "description": "PIR-Bewegungsmelder für die Aufputzmontage zur automatischen Lichtsteuerung."
+ },
+ "TR-TMB-011L": {
+  "name": "Aufputz-Bewegungsmelder (PIR), weiß",
+  "short_description": "Aufputz-Bewegungsmelder (PIR), weiß",
+  "description": "PIR-Bewegungsmelder für die Aufputzmontage zur automatischen Lichtsteuerung."
+ },
+ "TR-TMB-060": {
+  "name": "Aufputz-Bewegungsmelder (PIR), weiß",
+  "short_description": "Aufputz-Bewegungsmelder (PIR), weiß",
+  "description": "PIR-Bewegungsmelder für die Aufputzmontage zur automatischen Lichtsteuerung."
+ },
+ "TR-RSMDSU10W": {
+  "name": "LED-Flutlicht, 10W, mit SAMSUNG-Chip und Bewegungsmelder",
+  "short_description": "LED-Flutlicht, 10W, mit SAMSUNG-Chip und Bewegungsmelder",
+  "description": "LED-Fluter mit SAMSUNG-LED-Chip für Außen- und Objektbeleuchtung."
+ },
+ "TR-RSMDS10W": {
+  "name": "LED-Flutlicht, 10W, mit SAMSUNG-Chip",
+  "short_description": "LED-Flutlicht, 10W, mit SAMSUNG-Chip",
+  "description": "LED-Fluter mit SAMSUNG-LED-Chip für Außen- und Objektbeleuchtung."
+ },
+ "TR-RSMDSU20W": {
+  "name": "LED-Flutlicht, 20W, mit SAMSUNG-Chip und Bewegungsmelder",
+  "short_description": "LED-Flutlicht, 20W, mit SAMSUNG-Chip und Bewegungsmelder",
+  "description": "LED-Fluter mit SAMSUNG-LED-Chip für Außen- und Objektbeleuchtung."
+ },
+ "TR-RSMDS20W": {
+  "name": "LED-Flutlicht, 20W, mit SAMSUNG-Chip",
+  "short_description": "LED-Flutlicht, 20W, mit SAMSUNG-Chip",
+  "description": "LED-Fluter mit SAMSUNG-LED-Chip für Außen- und Objektbeleuchtung."
+ },
+ "TR-SMDGU105W": {
+  "name": "SMD-LED-Spot (Kunststoffgehäuse)",
+  "short_description": "SMD-LED-Spot (Kunststoffgehäuse)",
+  "description": "SMD-LED-Leuchtmittel im Kunststoffgehäuse."
+ },
+ "TR-SMDGU105NW": {
+  "name": "SMD-LED-Spot (Kunststoffgehäuse)",
+  "short_description": "SMD-LED-Spot (Kunststoffgehäuse)",
+  "description": "SMD-LED-Leuchtmittel im Kunststoffgehäuse."
+ },
+ "TR-TFSS-1Z": {
+  "name": "Endkappe für Kammschiene (Phasenschiene)",
+  "short_description": "Endkappe für Kammschiene (Phasenschiene)",
+  "description": "Isolierende Endkappe zum Berührungsschutz von Kamm-/Phasenschienen."
+ },
+ "TR-TFSS-2Z": {
+  "name": "Endkappe für Kammschiene (Phasenschiene)",
+  "short_description": "Endkappe für Kammschiene (Phasenschiene)",
+  "description": "Isolierende Endkappe zum Berührungsschutz von Kamm-/Phasenschienen."
+ },
+ "TR-TFSS-3Z": {
+  "name": "Endkappe für Kammschiene (Phasenschiene)",
+  "short_description": "Endkappe für Kammschiene (Phasenschiene)",
+  "description": "Isolierende Endkappe zum Berührungsschutz von Kamm-/Phasenschienen."
+ },
+ "TR-TNFSB1": {
+  "name": "Kunststoff-Halter für N/PE-Schiene (1 Schiene)",
+  "short_description": "Kunststoff-Halter für N/PE-Schiene (1 Schiene)",
+  "description": "Isolierter Halter zur Befestigung einer N/PE-Sammelschiene."
+ },
+ "TR-TFSS-4Z": {
+  "name": "Endkappe für Kammschiene (Phasenschiene)",
+  "short_description": "Endkappe für Kammschiene (Phasenschiene)",
+  "description": "Isolierende Endkappe zum Berührungsschutz von Kamm-/Phasenschienen."
+ },
+ "TR-TQBY2-GB": {
+  "name": "Gummi-Kabeleinführung für TQB2-Abzweigdosen",
+  "short_description": "Gummi-Kabeleinführung für TQB2-Abzweigdosen",
+  "description": "Gummi-Kabeleinführung als Zubehör für Abzweigdosen der Baureihe TQB2."
+ },
+ "TR-TICS-012G": {
+  "name": "Gummi-Stecker mit Schutzkontakt (leicht zu öffnen)",
+  "short_description": "Gummi-Stecker mit Schutzkontakt (leicht zu öffnen)",
+  "description": "Robuster Gummi-Schutzkontaktstecker für den rauen Einsatz."
+ },
+ "TR-TICS-012GH": {
+  "name": "Gummi-Stecker mit Schutzkontakt (leicht zu öffnen)",
+  "short_description": "Gummi-Stecker mit Schutzkontakt (leicht zu öffnen)",
+  "description": "Robuster Gummi-Schutzkontaktstecker für den rauen Einsatz."
+ },
+ "TR-TICS-105S": {
+  "name": "Einbausteckdose rund (Schuko)",
+  "short_description": "Einbausteckdose rund (Schuko)",
+  "description": "Runde Einbausteckdose zur Frontplatten-/Gehäusemontage."
+ },
+ "TR-TICS-105SG": {
+  "name": "Einbausteckdose rund (Schuko)",
+  "short_description": "Einbausteckdose rund (Schuko)",
+  "description": "Runde Einbausteckdose zur Frontplatten-/Gehäusemontage."
+ },
+ "TR-TICS-212G": {
+  "name": "Gummi-Kupplung mit Schutzkontakt (leicht zu öffnen)",
+  "short_description": "Gummi-Kupplung mit Schutzkontakt (leicht zu öffnen)",
+  "description": "Robuste Gummi-Schutzkontaktkupplung für den rauen Einsatz."
+ },
+ "TR-TICS-013H": {
+  "name": "CEE-Industriestecker mit Kabelverschraubung",
+  "short_description": "CEE-Industriestecker mit Kabelverschraubung",
+  "description": "CEE-Industriestecker für den gewerblichen/industriellen Einsatz."
+ },
+ "TR-TICS-105SF": {
+  "name": "Einbausteckdose rund (französisch)",
+  "short_description": "Einbausteckdose rund (französisch)",
+  "description": "Runde Einbausteckdose zur Frontplatten-/Gehäusemontage."
+ },
+ "TR-TICS-212GF": {
+  "name": "Gummi-Kupplung mit Schutzkontakt (leicht zu öffnen)",
+  "short_description": "Gummi-Kupplung mit Schutzkontakt (leicht zu öffnen)",
+  "description": "Robuste Gummi-Schutzkontaktkupplung für den rauen Einsatz."
+ },
+ "TR-TICS-313": {
+  "name": "CEE-Industriesteckdose mit Kabelverschraubung",
+  "short_description": "CEE-Industriesteckdose mit Kabelverschraubung",
+  "description": "CEE-Industriesteckdose für den gewerblichen/industriellen Einsatz."
+ },
+ "TR-TICS-212GH": {
+  "name": "Gummi-Kupplung mit Schutzkontakt (leicht zu öffnen)",
+  "short_description": "Gummi-Kupplung mit Schutzkontakt (leicht zu öffnen)",
+  "description": "Robuste Gummi-Schutzkontaktkupplung für den rauen Einsatz."
+ },
+ "TR-TICS-414": {
+  "name": "CEE-Industriesteckdose mit Kabelverschraubung",
+  "short_description": "CEE-Industriesteckdose mit Kabelverschraubung",
+  "description": "CEE-Industriesteckdose für den gewerblichen/industriellen Einsatz."
+ },
+ "TR-TICS-014H": {
+  "name": "CEE-Industriestecker mit Kabelverschraubung",
+  "short_description": "CEE-Industriestecker mit Kabelverschraubung",
+  "description": "CEE-Industriestecker für den gewerblichen/industriellen Einsatz."
+ },
+ "TR-TICS-213H": {
+  "name": "CEE-Industriesteckdose mit Kabelverschraubung",
+  "short_description": "CEE-Industriesteckdose mit Kabelverschraubung",
+  "description": "CEE-Industriesteckdose für den gewerblichen/industriellen Einsatz."
+ },
+ "TR-TICS-314": {
+  "name": "CEE-Industriesteckdose mit Kabelverschraubung",
+  "short_description": "CEE-Industriesteckdose mit Kabelverschraubung",
+  "description": "CEE-Industriesteckdose für den gewerblichen/industriellen Einsatz."
+ },
+ "TR-TICS-0132H": {
+  "name": "CEE-Industriestecker (hohe Schutzart)",
+  "short_description": "CEE-Industriestecker (hohe Schutzart)",
+  "description": "CEE-Industriestecker für den gewerblichen/industriellen Einsatz."
+ },
+ "TR-TR6DN20": {
+  "name": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "short_description": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "description": "Hilfskontakt zur Signalisierung/Ansteuerung an Leistungsschützen der Baureihe TR1."
+ },
+ "TR-TR6DN11": {
+  "name": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "short_description": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "description": "Hilfskontakt zur Signalisierung/Ansteuerung an Leistungsschützen der Baureihe TR1."
+ },
+ "TR-TR6DN02": {
+  "name": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "short_description": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "description": "Hilfskontakt zur Signalisierung/Ansteuerung an Leistungsschützen der Baureihe TR1."
+ },
+ "TR-TR8-DN20": {
+  "name": "Seitlicher Hilfskontakt für Schütze (TR1D/F)",
+  "short_description": "Seitlicher Hilfskontakt für Schütze (TR1D/F)",
+  "description": "Hilfskontakt zur Signalisierung/Ansteuerung an Leistungsschützen der Baureihe TR1."
+ },
+ "TR-TR6DN31": {
+  "name": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "short_description": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "description": "Hilfskontakt zur Signalisierung/Ansteuerung an Leistungsschützen der Baureihe TR1."
+ },
+ "TR-TR6DN22": {
+  "name": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "short_description": "Frontseitiger Hilfskontakt für Schütze (TR1D/F, TR1E)",
+  "description": "Hilfskontakt zur Signalisierung/Ansteuerung an Leistungsschützen der Baureihe TR1."
+ },
+ "TR-NARIDON": {
+  "name": "Zeitrelais, anzugsverzögert (Delay ON)",
+  "short_description": "Zeitrelais, anzugsverzögert (Delay ON)",
+  "description": "Einfunktions-Zeitrelais mit Anzugsverzögerung."
+ },
+ "TR-NARIDOFF": {
+  "name": "Zeitrelais, abfallverzögert (Delay OFF)",
+  "short_description": "Zeitrelais, abfallverzögert (Delay OFF)",
+  "description": "Einfunktions-Zeitrelais mit Abfallverzögerung."
+ },
+ "TR-NARIMF": {
+  "name": "Multifunktions-Zeitrelais (10 Funktionen)",
+  "short_description": "Multifunktions-Zeitrelais (10 Funktionen)",
+  "description": "Multifunktions-Zeitrelais mit zehn wählbaren Zeitfunktionen für Steuerungsaufgaben."
+ },
+ "TR-TIR-FR1": {
+  "name": "Blinkrelais",
+  "short_description": "Blinkrelais",
+  "description": "Blinkrelais zur getakteten Ansteuerung von Signalgebern."
+ },
+ "TR-NARIDOFFS": {
+  "name": "Zeitrelais, abfallverzögert (Delay OFF)",
+  "short_description": "Zeitrelais, abfallverzögert (Delay OFF)",
+  "description": "Einfunktions-Zeitrelais mit Abfallverzögerung."
+ },
+ "TR-NT00C-6": {
+  "name": "NH-Sicherungseinsatz, NHC00, 6A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 6A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ },
+ "TR-NT00C-10": {
+  "name": "NH-Sicherungseinsatz, NHC00, 10A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 10A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ },
+ "TR-NT00C-16": {
+  "name": "NH-Sicherungseinsatz, NHC00, 16A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 16A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ },
+ "TR-NT00C-20": {
+  "name": "NH-Sicherungseinsatz, NHC00, 20A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 20A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ },
+ "TR-NT00C-25": {
+  "name": "NH-Sicherungseinsatz, NHC00, 25A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 25A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ },
+ "TR-NT00C-32": {
+  "name": "NH-Sicherungseinsatz, NHC00, 32A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 32A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ },
+ "TR-NT00C-40": {
+  "name": "NH-Sicherungseinsatz, NHC00, 40A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 40A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ },
+ "TR-NT00C-50": {
+  "name": "NH-Sicherungseinsatz, NHC00, 50A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 50A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ },
+ "TR-NT00C-63": {
+  "name": "NH-Sicherungseinsatz, NHC00, 63A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 63A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ },
+ "TR-NT00C-80": {
+  "name": "NH-Sicherungseinsatz, NHC00, 80A, gG",
+  "short_description": "NH-Sicherungseinsatz, NHC00, 80A, gG",
+  "description": "NH-Sicherungseinsatz (Niederspannungs-Hochleistungssicherung) für den Kabel- und Leitungsschutz."
+ }
+}

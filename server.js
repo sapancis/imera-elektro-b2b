@@ -122,6 +122,35 @@ app.use('/merkliste', require('./routes/merkliste'));
 app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
+// ─── GEÇİCİ: Almanca isim/açıklama migration (İngilizce metinleri temizler) ──
+// Kullanım: /__de-names?token=imera-de-2026  → işi bitince bu blok silinecek.
+app.get('/__de-names', async (req, res) => {
+  if (req.query.token !== 'imera-de-2026') return res.status(403).send('forbidden');
+  try {
+    const db = require('./database/db');
+    const map = require('./scripts/de-updates.json');
+    const entries = Object.entries(map);
+    const stmts = [];
+    for (const [sku, v] of entries) {
+      const sets = [], args = [];
+      if (v.name) { sets.push('name=?'); args.push(v.name); }
+      if (v.short_description) { sets.push('short_description=?'); args.push(v.short_description); }
+      if (v.description) { sets.push('description=?'); args.push(v.description); }
+      if (!sets.length) continue;
+      args.push(sku);
+      stmts.push({ sql: `UPDATE products SET ${sets.join(', ')} WHERE sku=?`, args });
+    }
+    let changed = 0;
+    if (db.batch) {
+      const r = await db.batch(stmts);
+      changed = Array.isArray(r) ? r.reduce((s, x) => s + Number(x.rowsAffected || (x.changes) || 0), 0) : stmts.length;
+    } else {
+      for (const s of stmts) { const r = await db.prepare(s.sql).run(...s.args); changed += (r.changes || 0); }
+    }
+    res.json({ ok: true, records: stmts.length, changed });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.locals.currentPath = res.locals.currentPath || req.path;
