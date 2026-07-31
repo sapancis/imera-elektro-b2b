@@ -91,7 +91,14 @@ app.use(csrfMiddleware);
 app.use(setLocals);
 
 // ─── Template Helpers ─────────────────────────────────────────────────────
-app.locals.formatPrice = (n) => typeof n === 'number' ? n.toFixed(3).replace('.', ',') + '€' : n;
+// Preis: min. 2 Dezimalstellen, überflüssige Nullen entfernt (76,500→76,50; 0,990→0,99; 0,025 bleibt).
+app.locals.formatPrice = (n) => {
+  if (typeof n !== 'number') return n;
+  let s = n.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+  let [int, dec = ''] = s.split('.');
+  dec = dec.padEnd(2, '0').slice(0, 3);
+  return int + ',' + dec + '€';
+};
 app.locals.formatEuro = (n) => typeof n === 'number' ? n.toFixed(2).replace('.', ',') + '€' : n;
 app.locals.formatDate = (d) => d ? new Date(d).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
 app.locals.orderStatusLabel = (s) => ({ pending: 'Offen', processing: 'In Bearbeitung', shipped: 'Versandt', delivered: 'Geliefert', cancelled: 'Storniert' }[s] || s);
@@ -216,6 +223,13 @@ app.use((err, req, res, next) => {
         await db.prepare('UPDATE products SET active=0 WHERE brand_id IS NULL').run();
         await db.prepare("INSERT INTO settings (key, value) VALUES ('unbranded_deactivated','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
       }
+    } catch (_) {}
+    // Falscher "Kleinunternehmer"-Steuerhinweis (Regelbesteuerung ist korrekt) — einmalig überschreiben
+    try {
+      await db.prepare(
+        "UPDATE settings SET value='Imera Elektro unterliegt der Regelbesteuerung · UID: ATU82785639 · Alle Preise netto zzgl. 20% MwSt.' " +
+        "WHERE key='company_legal' AND value LIKE '%Kleinunternehmer%'"
+      ).run();
     } catch (_) {}
   } catch (e) { console.error('Schema Migration:', e.message); }
 })();

@@ -90,16 +90,20 @@
           <div class="text-center">
             <p class="product-cat-label"><%= p.cat_name %></p>
             <h3 class="comparison-product-name"><%= p.name %></h3>
+            <% const _pack = p.sell_as_pack == 1; const _ps = p.pack_size || 1; const _unit = _pack ? 'Paket' : 'Stück'; %>
             <div class="price-compare">
               <div class="price-ours">
-                <div class="price-label">Preis pro Stück</div>
+                <div class="price-label">Preis pro <%= _unit %></div>
                 <div class="price-value price-green"><%= formatPrice(p.tiers[0]?.price) %></div>
+                <% if (_pack && _ps > 1 && p.tiers[0]) { %>
+                <div class="price-per-unit"><%= _ps %> Stück/Paket · <%= formatPrice(p.tiers[0].price / _ps) %>/Stück</div>
+                <% } %>
               </div>
             </div>
             <% if (p.tiers.length > 1) { %>
             <div class="tier-hint">
               <div class="tier-hint-label">Staffelpreise verfügbar</div>
-              <% for (const t of p.tiers.slice(1,2)) { %><div>Ab <%= t.min_qty %> Stk: <%= formatPrice(t.price) %></div><% } %>
+              <% for (const t of p.tiers.slice(1,2)) { %><div>Ab <%= t.min_qty %> <%= _unit %>: <%= formatPrice(t.price) %></div><% } %>
             </div>
             <% } %>
             <a href="/shop/produkt/<%= p.slug %>" class="btn-blue btn-sm mt-1" style="display:block">Zum Produkt</a>
