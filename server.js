@@ -128,6 +128,16 @@ app.get('/__de-names', async (req, res) => {
   if (req.query.token !== 'imera-de-2026') return res.status(403).send('forbidden');
   try {
     const db = require('./database/db');
+    // Teşhis: öne çıkan/paket adayı ürünleri (isim, sku, tier, paket bayrağı) göster
+    if (req.query.inspect === '1') {
+      const feat = await db.prepare(
+        "SELECT id, sku, slug, name, sell_as_pack, pack_size, featured FROM products WHERE featured=1 OR active=1 ORDER BY featured DESC, id LIMIT 40"
+      ).all();
+      for (const p of feat) {
+        p.tiers = await db.prepare('SELECT min_qty, price FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(p.id);
+      }
+      return res.json({ ok: true, products: feat });
+    }
     const map = require('./scripts/de-updates.json');
     const entries = Object.entries(map);
     const stmts = [];
