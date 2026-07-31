@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
 
-<main>
+<main class="product-main">
   <div class="container">
     <nav class="breadcrumb">
       <a href="/">Startseite</a> › <a href="/shop">Shop</a> › <a href="/shop?kategorie=<%= product.cat_slug %>"><%= product.cat_name %></a><% if (product.brand_name) { %> › <a href="/marken/<%= product.brand_slug %>"><%= product.brand_name %></a><% } %> › <%= product.name %>

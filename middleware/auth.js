@@ -19,7 +19,8 @@ async function setLocals(req, res, next) {
     : null;
 
   const cart = req.session.cart || {};
-  res.locals.cartCount = Object.values(cart).reduce((sum, q) => sum + q, 0);
+  // Sepet rozeti: farklı ürün SAYISI (miktar değil) — 1 üründen 1000 adet olsa da "1"
+  res.locals.cartCount = Object.keys(cart).length;
   res.locals.currentPath = req.path;
   res.locals.csrfToken = req.csrfToken ? req.csrfToken() : '';
   res.locals.flash = req.session.flash || null;

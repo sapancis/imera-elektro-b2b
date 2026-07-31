@@ -73,12 +73,12 @@ router.post('/hinzufuegen', async (req, res) => {
         return res.json({ ok: false, message: `Sie haben bereits die maximale Menge (${product.stock} Stk.) im Warenkorb.` });
       }
       req.session.cart[productId] = product.stock;
-      const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
+      const cartCount = Object.keys(req.session.cart).length;
       return res.json({ ok: true, cartCount, message: `Nur noch ${product.stock} Stk. auf Lager – Menge auf ${product.stock} angepasst.` });
     }
 
     req.session.cart[productId] = totalRequested;
-    const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
+    const cartCount = Object.keys(req.session.cart).length;
     req.session.save(() => {
       res.json({ ok: true, cartCount, message: 'Produkt wurde in den Warenkorb gelegt.' });
     });
@@ -169,7 +169,7 @@ router.post('/schnellbestellung', async (req, res) => {
       added++;
     }
 
-    const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
+    const cartCount = Object.keys(req.session.cart).length;
     res.json({ ok: added > 0, added, errors, cartCount,
       message: added > 0 ? `${added} Produkt(e) zum Warenkorb hinzugefügt.` : 'Keine Produkte gefunden.' });
   } catch { res.status(500).json({ ok: false, message: 'Serverfehler.' }); }
@@ -193,7 +193,7 @@ router.post('/csv-upload', csvUpload.single('csv'), async (req, res) => {
       req.session.cart[product.id] = (req.session.cart[product.id] || 0) + qty;
       added++;
     }
-    const cartCount = Object.values(req.session.cart).reduce((s, q) => s + q, 0);
+    const cartCount = Object.keys(req.session.cart).length;
     res.json({ ok: added > 0, added, errors, cartCount, message: added > 0 ? `${added} Produkt(e) importiert.` : 'Keine Produkte importiert.' });
   } catch { res.status(500).json({ ok: false, message: 'Serverfehler.' }); }
 });

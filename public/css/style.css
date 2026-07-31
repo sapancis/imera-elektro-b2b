@@ -310,6 +310,9 @@ img { max-width: 100%; display: block; }
 .comparison-logos { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
 .comparison-logos div { background: var(--bg); padding: 1rem; border-radius: var(--radius); font-size: 14px; }
 .related-products { padding-top: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+/* Ürünlerden sonra siyah CTA'ya geçmeden önce beyaz nefes alanı */
+.product-main { padding-bottom: 4.5rem; }
+.related-products .product-grid { margin-top: 0.5rem; }
 .related-products h2 { font-size: 22px; font-weight: 600; margin-bottom: 1.5rem; letter-spacing: -0.3px; }
 
 /* ─── Cart ───────────────────────────────────────────────────────────────── */
