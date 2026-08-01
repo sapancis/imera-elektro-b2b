@@ -263,6 +263,24 @@ app.use((err, req, res, next) => {
         await db.prepare("INSERT INTO settings (key, value) VALUES ('unbranded_deactivated','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
       }
     } catch (_) {}
+    // CSV-Import-Kategorien: Icon + Beschreibung setzen (nur wenn noch leer → Admin-Edits bleiben erhalten)
+    const catMeta = [
+      ['netzwerkinstallation', '🛡️', 'Leitungsschutzschalter, FI-Schalter & Sicherungen'],
+      ['verteilerkaesten', '🗄️', 'Verteilerschränke, Zählerverteiler & Gehäuse'],
+      ['energieverteilung', '🔋', 'Sammelschienen, Überspannungsschutz & Verteilung'],
+      ['stecker-und-steckdosen', '🔌', 'CEE-Industrie, Schuko & Aufputz-Steckdosen'],
+      ['leuchten', '💡', 'LED-Fluter, Strahler & Außenleuchten'],
+      ['lichtquellen', '🔆', 'LED-Leuchtmittel & Spots'],
+      ['relais', '⏱️', 'Zeit- & Multifunktionsrelais'],
+      ['hilfsmaterial', '🧰', 'Montagezubehör & Kleinmaterial'],
+    ];
+    for (const [slug, icon, desc] of catMeta) {
+      try {
+        await db.prepare(
+          "UPDATE categories SET icon=?, description=? WHERE slug=? AND (description IS NULL OR description='' OR icon IS NULL OR icon='📦')"
+        ).run(icon, desc, slug);
+      } catch (_) {}
+    }
     // Falscher "Kleinunternehmer"-Steuerhinweis (Regelbesteuerung ist korrekt) — einmalig überschreiben
     try {
       await db.prepare(
