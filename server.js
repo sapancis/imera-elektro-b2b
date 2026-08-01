@@ -162,6 +162,42 @@ app.get('/__de-names', async (req, res) => {
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
 
+// ─── GEÇİCİ: Kategori yeniden düzenleme (Netzwerkinstallation → Leitungsschutz) ──
+// Kullanım: /__recat?token=imera-de-2026  → işi bitince bu blok silinecek.
+app.get('/__recat', async (req, res) => {
+  if (req.query.token !== 'imera-de-2026') return res.status(403).send('forbidden');
+  try {
+    const db = require('./database/db');
+    const cfg = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'scripts/recat.json'), 'utf8'));
+    // 1) Kategorileri yeniden adlandır (idempotent: yeni slug yoksa eski slug'tan)
+    let renamed = 0;
+    for (const c of cfg.renameCategories) {
+      const r = await db.prepare(
+        'UPDATE categories SET name=?, slug=?, icon=?, description=? WHERE slug=? OR slug=?'
+      ).run(c.name, c.slug, c.icon, c.description, c.from_slug, c.slug);
+      renamed += (r.changes || 0);
+    }
+    // 2) slug→id haritası
+    const cats = await db.prepare('SELECT id, slug FROM categories').all();
+    const idBySlug = Object.fromEntries(cats.map(c => [c.slug, c.id]));
+    // 3) Ürünleri taşı (SKU anahtarı)
+    const stmts = [];
+    for (const [sku, slug] of Object.entries(cfg.moves)) {
+      const cid = idBySlug[slug];
+      if (!cid) continue;
+      stmts.push({ sql: 'UPDATE products SET category_id=? WHERE sku=?', args: [cid, sku] });
+    }
+    let moved = 0;
+    if (db.batch) {
+      const r = await db.batch(stmts);
+      moved = Array.isArray(r) ? r.reduce((s, x) => s + Number(x.rowsAffected || x.changes || 0), 0) : stmts.length;
+    } else {
+      for (const s of stmts) { const r = await db.prepare(s.sql).run(...s.args); moved += (r.changes || 0); }
+    }
+    res.json({ ok: true, renamed, moveStatements: stmts.length, moved });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.locals.currentPath = res.locals.currentPath || req.path;
