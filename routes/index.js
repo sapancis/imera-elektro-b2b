@@ -27,13 +27,17 @@ router.get('/', async (req, res) => {
       await attachTiers(db, featured);
       const [statsRow, newProducts] = await Promise.all([
         db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get(),
+        // "Aktuelle Produkte": pro Kategorie nur 1 Artikel → abwechslungsreiche Auswahl
         db.prepare(`
-          SELECT p.*, c.name as cat_name,
-            (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
-          FROM products p
-          LEFT JOIN categories c ON p.category_id=c.id
-          WHERE p.active=1
-          ORDER BY p.id DESC LIMIT 8
+          SELECT * FROM (
+            SELECT p.*, c.name as cat_name,
+              (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min,
+              ROW_NUMBER() OVER (PARTITION BY p.category_id ORDER BY (p.image IS NULL), p.id DESC) as rn
+            FROM products p
+            LEFT JOIN categories c ON p.category_id=c.id
+            WHERE p.active=1
+          ) WHERE rn=1
+          ORDER BY (image IS NULL), id DESC LIMIT 8
         `).all(),
       ]);
       // Marken-Übersicht: nur Marken mit Logo, für die Logo-Leiste auf der Startseite
