@@ -879,6 +879,16 @@
   "short_description": "Kunststoff-Verteilerschrank, mit transparenter Tür",
   "description": "Kunststoff-Verteilerschrank (Aufputz) zur Aufnahme von Reiheneinbaugeräten."
  },
+ "TR-TMEK432": {
+  "name": "Säulen-Befestigungssatz (Aluminium)",
+  "short_description": "Säulen-Befestigungssatz (Aluminium)",
+  "description": "Befestigungssatz aus Aluminium für die Säulenmontage von Verteilerschränken."
+ },
+ "TR-TMEK642": {
+  "name": "Säulen-Befestigungssatz (Aluminium)",
+  "short_description": "Säulen-Befestigungssatz (Aluminium)",
+  "description": "Befestigungssatz aus Aluminium für die Säulenmontage von Verteilerschränken."
+ },
  "TR-TME403017": {
   "name": "Kunststoff-Verteilerschrank",
   "short_description": "Kunststoff-Verteilerschrank",
@@ -1043,6 +1053,11 @@
   "name": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
   "short_description": "Überspannungsableiter Typ 2 (AC) mit wechselbarem Einsatz",
   "description": "Überspannungsableiter Typ 2 für den Schutz elektrischer Anlagen; Einsatz austauschbar."
+ },
+ "TR-TTVL2+3-6": {
+  "name": "Überspannungsableiter mit LED-Statusanzeige",
+  "short_description": "Überspannungsableiter mit LED-Statusanzeige",
+  "description": "Überspannungsschutzgerät mit LED-Anzeige des Betriebszustands."
  },
  "TR-TTV2-BASE-3P": {
   "name": "Sockel für Überspannungsableiter-Einsätze (Typ 2)",
@@ -1319,6 +1334,11 @@
   "short_description": "Schuko-Steckdose mit USB-Anschluss",
   "description": "Schuko-Steckdose mit integriertem USB-Ladeanschluss."
  },
+ "TR-ALK-OUT": {
+  "name": "Dämmerungsschalter (Lichtsensor)",
+  "short_description": "Dämmerungsschalter (Lichtsensor)",
+  "description": "Lichtabhängiger Dämmerungsschalter zur automatischen Beleuchtungssteuerung."
+ },
  "TR-TMB-011": {
   "name": "Aufputz-Bewegungsmelder (PIR), weiß",
   "short_description": "Aufputz-Bewegungsmelder (PIR), weiß",
@@ -1354,6 +1374,16 @@
   "short_description": "LED-Flutlicht, 10W, mit SAMSUNG-Chip",
   "description": "LED-Fluter mit SAMSUNG-LED-Chip für Außen- und Objektbeleuchtung."
  },
+ "TR-RSMDL10": {
+  "name": "SMD-LED-Fluter, 10W, schwarz",
+  "short_description": "SMD-LED-Fluter, 10W, schwarz",
+  "description": "SMD-LED-Fluter für Außen- und Objektbeleuchtung."
+ },
+ "TR-RSMDLF10": {
+  "name": "SMD-LED-Fluter, 10W, weiß",
+  "short_description": "SMD-LED-Fluter, 10W, weiß",
+  "description": "SMD-LED-Fluter für Außen- und Objektbeleuchtung."
+ },
  "TR-RSMDSU20W": {
   "name": "LED-Flutlicht, 20W, mit SAMSUNG-Chip und Bewegungsmelder",
   "short_description": "LED-Flutlicht, 20W, mit SAMSUNG-Chip und Bewegungsmelder",
@@ -1363,6 +1393,81 @@
   "name": "LED-Flutlicht, 20W, mit SAMSUNG-Chip",
   "short_description": "LED-Flutlicht, 20W, mit SAMSUNG-Chip",
   "description": "LED-Fluter mit SAMSUNG-LED-Chip für Außen- und Objektbeleuchtung."
+ },
+ "TR-RSMDL20": {
+  "name": "SMD-LED-Fluter, 20W, schwarz",
+  "short_description": "SMD-LED-Fluter, 20W, schwarz",
+  "description": "SMD-LED-Fluter für Außen- und Objektbeleuchtung."
+ },
+ "TR-RSMDLF20": {
+  "name": "SMD-LED-Fluter, 20W, weiß",
+  "short_description": "SMD-LED-Fluter, 20W, weiß",
+  "description": "SMD-LED-Fluter für Außen- und Objektbeleuchtung."
+ },
+ "TR-LG455NW": {
+  "name": "LED-Lampe",
+  "short_description": "LED-Lampe",
+  "description": "LED-Leuchtmittel für die allgemeine Beleuchtung."
+ },
+ "TR-LG455W": {
+  "name": "LED-Lampe",
+  "short_description": "LED-Lampe",
+  "description": "LED-Leuchtmittel für die allgemeine Beleuchtung."
+ },
+ "TR-LG454W": {
+  "name": "LED-Globelampe",
+  "short_description": "LED-Globelampe",
+  "description": "LED-Leuchtmittel in Globe-Form für dekorative und allgemeine Beleuchtung."
+ },
+ "TR-LGY5NW": {
+  "name": "LED-Kerzenlampe (Milchglas)",
+  "short_description": "LED-Kerzenlampe (Milchglas)",
+  "description": "LED-Leuchtmittel in Kerzenform für dekorative Beleuchtung."
+ },
+ "TR-LMG455NW": {
+  "name": "LED-Globelampe",
+  "short_description": "LED-Globelampe",
+  "description": "LED-Leuchtmittel in Globe-Form für dekorative und allgemeine Beleuchtung."
+ },
+ "TR-LMG455W": {
+  "name": "LED-Globelampe",
+  "short_description": "LED-Globelampe",
+  "description": "LED-Leuchtmittel in Globe-Form für dekorative und allgemeine Beleuchtung."
+ },
+ "TR-LGY5W": {
+  "name": "LED-Kerzenlampe (Milchglas)",
+  "short_description": "LED-Kerzenlampe (Milchglas)",
+  "description": "LED-Leuchtmittel in Kerzenform für dekorative Beleuchtung."
+ },
+ "TR-LMG457W": {
+  "name": "LED-Globelampe",
+  "short_description": "LED-Globelampe",
+  "description": "LED-Leuchtmittel in Globe-Form für dekorative und allgemeine Beleuchtung."
+ },
+ "TR-LMG457NW": {
+  "name": "LED-Globelampe",
+  "short_description": "LED-Globelampe",
+  "description": "LED-Leuchtmittel in Globe-Form für dekorative und allgemeine Beleuchtung."
+ },
+ "TR-LGY7W": {
+  "name": "LED-Kerzenlampe (Milchglas)",
+  "short_description": "LED-Kerzenlampe (Milchglas)",
+  "description": "LED-Leuchtmittel in Kerzenform für dekorative Beleuchtung."
+ },
+ "TR-LGY7NW": {
+  "name": "LED-Kerzenlampe (Milchglas)",
+  "short_description": "LED-Kerzenlampe (Milchglas)",
+  "description": "LED-Leuchtmittel in Kerzenform für dekorative Beleuchtung."
+ },
+ "TR-LA555W": {
+  "name": "LED-Globelampe",
+  "short_description": "LED-Globelampe",
+  "description": "LED-Leuchtmittel in Globe-Form für dekorative und allgemeine Beleuchtung."
+ },
+ "TR-LA555NW": {
+  "name": "LED-Globelampe",
+  "short_description": "LED-Globelampe",
+  "description": "LED-Leuchtmittel in Globe-Form für dekorative und allgemeine Beleuchtung."
  },
  "TR-SMDGU105W": {
   "name": "SMD-LED-Spot (Kunststoffgehäuse)",
@@ -1398,6 +1503,76 @@
   "name": "Endkappe für Kammschiene (Phasenschiene)",
   "short_description": "Endkappe für Kammschiene (Phasenschiene)",
   "description": "Isolierende Endkappe zum Berührungsschutz von Kamm-/Phasenschienen."
+ },
+ "TR-35/7,5SIN-20": {
+  "name": "Tragschiene (Hutschiene) 35×7,5 mm",
+  "short_description": "Tragschiene (Hutschiene) 35×7,5 mm",
+  "description": "Verzinkte Tragschiene/Hutschiene 35×7,5 mm nach EN 60715 für Reiheneinbaugeräte."
+ },
+ "TR-35/7,5SIN-60": {
+  "name": "Tragschiene (Hutschiene) 35×7,5 mm",
+  "short_description": "Tragschiene (Hutschiene) 35×7,5 mm",
+  "description": "Verzinkte Tragschiene/Hutschiene 35×7,5 mm nach EN 60715 für Reiheneinbaugeräte."
+ },
+ "TR-35/7,5SIN-137": {
+  "name": "Tragschiene (Hutschiene) 35×7,5 mm",
+  "short_description": "Tragschiene (Hutschiene) 35×7,5 mm",
+  "description": "Verzinkte Tragschiene/Hutschiene 35×7,5 mm nach EN 60715 für Reiheneinbaugeräte."
+ },
+ "TR-BV0603": {
+  "name": "Kabeltülle (offen)",
+  "short_description": "Kabeltülle (offen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
+ },
+ "TR-BV0705": {
+  "name": "Kabeltülle (offen)",
+  "short_description": "Kabeltülle (offen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
+ },
+ "TR-BVZ0603": {
+  "name": "Kabeltülle (geschlossen)",
+  "short_description": "Kabeltülle (geschlossen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
+ },
+ "TR-BVZ0706": {
+  "name": "Kabeltülle (geschlossen)",
+  "short_description": "Kabeltülle (geschlossen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
+ },
+ "TR-BV1006": {
+  "name": "Kabeltülle (offen)",
+  "short_description": "Kabeltülle (offen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
+ },
+ "TR-BVZ1006": {
+  "name": "Kabeltülle (geschlossen)",
+  "short_description": "Kabeltülle (geschlossen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
+ },
+ "TR-BV1108": {
+  "name": "Kabeltülle (offen)",
+  "short_description": "Kabeltülle (offen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
+ },
+ "TR-BVZ1108": {
+  "name": "Kabeltülle (geschlossen)",
+  "short_description": "Kabeltülle (geschlossen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
+ },
+ "TR-D60": {
+  "name": "UP-Gerätedose ohne Deckel",
+  "short_description": "UP-Gerätedose ohne Deckel",
+  "description": "Unterputz-Gerätedose zur Aufnahme von Installationsgeräten (ohne Deckel)."
+ },
+ "TR-BV1410": {
+  "name": "Kabeltülle (offen)",
+  "short_description": "Kabeltülle (offen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
+ },
+ "TR-BVZ1410": {
+  "name": "Kabeltülle (geschlossen)",
+  "short_description": "Kabeltülle (geschlossen)",
+  "description": "Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung."
  },
  "TR-TQBY2-GB": {
   "name": "Gummi-Kabeleinführung für TQB2-Abzweigdosen",
@@ -1528,6 +1703,11 @@
   "name": "Blinkrelais",
   "short_description": "Blinkrelais",
   "description": "Blinkrelais zur getakteten Ansteuerung von Signalgebern."
+ },
+ "TR-NARIST": {
+  "name": "Stern-Dreieck-Zeitrelais (anzugsverzögert)",
+  "short_description": "Stern-Dreieck-Zeitrelais (anzugsverzögert)",
+  "description": "Zeitrelais für die Stern-Dreieck-Umschaltung von Drehstrommotoren."
  },
  "TR-NARIDOFFS": {
   "name": "Zeitrelais, abfallverzögert (Delay OFF)",

@@ -138,7 +138,8 @@ app.get('/__de-names', async (req, res) => {
       }
       return res.json({ ok: true, products: feat });
     }
-    const map = require('./scripts/de-updates.json');
+    // Dosyayı taze oku (require-cache yok) → git pull sonrası Restart gerekmeden güncel veri
+    const map = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'scripts/de-updates.json'), 'utf8'));
     const entries = Object.entries(map);
     const stmts = [];
     for (const [sku, v] of entries) {

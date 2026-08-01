@@ -181,6 +181,18 @@ function build(r) {
   if (/socket-outlet.*usb/i.test(d)) return { name: 'Schuko-Steckdose mit USB-Anschluss', desc: 'Schuko-Steckdose mit integriertem USB-Ladeanschluss.' };
   if (/pir motion sensor/i.test(d)) return { name: 'Aufputz-Bewegungsmelder (PIR), weiß', desc: 'PIR-Bewegungsmelder für die Aufputzmontage zur automatischen Lichtsteuerung.' };
   if (/panel mount socket/i.test(d)) { const t = /french/i.test(d) ? 'französisch' : 'Schuko'; return { name: `Einbausteckdose rund (${t})`, desc: 'Runde Einbausteckdose zur Frontplatten-/Gehäusemontage.' }; }
+  // Ek Tracon aileleri
+  if (/column fixing kit/i.test(d)) return { name: 'Säulen-Befestigungssatz (Aluminium)', desc: 'Befestigungssatz aus Aluminium für die Säulenmontage von Verteilerschränken.' };
+  if (/led surge protection/i.test(d)) return { name: 'Überspannungsableiter mit LED-Statusanzeige', desc: 'Überspannungsschutzgerät mit LED-Anzeige des Betriebszustands.' };
+  if (/light[- ]control sensor/i.test(d)) return { name: 'Dämmerungsschalter (Lichtsensor)', desc: 'Lichtabhängiger Dämmerungsschalter zur automatischen Beleuchtungssteuerung.' };
+  if (/smd floodlight/i.test(d)) { const col = /black/i.test(d) ? 'schwarz' : /white/i.test(d) ? 'weiß' : ''; const w = (sku.match(/(\d+)/g) || []).pop(); return { name: bits('SMD-LED-Fluter', w ? `${w}W` : null, col || null), desc: 'SMD-LED-Fluter für Außen- und Objektbeleuchtung.' }; }
+  if (/globe style led (lamp|bulb)/i.test(d)) return { name: 'LED-Globelampe', desc: 'LED-Leuchtmittel in Globe-Form für dekorative und allgemeine Beleuchtung.' };
+  if (/candle style led lamp/i.test(d)) return { name: `LED-Kerzenlampe${/milk-?glass/i.test(d) ? ' (Milchglas)' : ''}`, desc: 'LED-Leuchtmittel in Kerzenform für dekorative Beleuchtung.' };
+  if (/led (lamp|bulb)/i.test(d)) return { name: 'LED-Lampe', desc: 'LED-Leuchtmittel für die allgemeine Beleuchtung.' };
+  if (/mounting rail/i.test(d)) return { name: 'Tragschiene (Hutschiene) 35×7,5 mm', desc: 'Verzinkte Tragschiene/Hutschiene 35×7,5 mm nach EN 60715 für Reiheneinbaugeräte.' };
+  if (/grommet/i.test(d)) return { name: `Kabeltülle (${/closed/i.test(d) ? 'geschlossen' : 'offen'})`, desc: 'Gummi-Kabeltülle zur Kabeleinführung und Zugentlastung.' };
+  if (/flush mounted device box/i.test(d)) return { name: 'UP-Gerätedose ohne Deckel', desc: 'Unterputz-Gerätedose zur Aufnahme von Installationsgeräten (ohne Deckel).' };
+  if (/star\/delta/i.test(d)) return { name: 'Stern-Dreieck-Zeitrelais (anzugsverzögert)', desc: 'Zeitrelais für die Stern-Dreieck-Umschaltung von Drehstrommotoren.' };
 
   return null; // eşleşmedi
 }
