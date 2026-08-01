@@ -60,9 +60,11 @@
     </div>
     <% } %>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
-      <h2 style="margin:0;font-size:18px">Produkte von <%= brand.name %> <span style="color:#6B7280;font-weight:400">(<%= total %>)</span></h2>
-      <a href="/shop?marke=<%= brand.slug %><%= activeKat ? '&kategorie=' + activeKat : '' %>" class="btn-blue btn-sm">Alle im Shop ansehen →</a>
+    <div style="margin-bottom:1rem">
+      <h2 style="margin:0 0 .9rem;font-size:18px">Produkte von <%= brand.name %> <span style="color:#6B7280;font-weight:400">(<%= total %>)</span></h2>
+      <div style="text-align:center">
+        <a href="/shop?marke=<%= brand.slug %><%= activeKat ? '&kategorie=' + activeKat : '' %>" class="btn-blue btn-sm">Alle im Shop ansehen →</a>
+      </div>
     </div>
 
     <% if (!products.length) { %>
