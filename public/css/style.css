@@ -247,9 +247,10 @@ img { max-width: 100%; display: block; }
 .gallery-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .gallery-placeholder { font-size: 100px; opacity: 0.15; }
 .gallery-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.gallery-thumb { background: var(--bg); border: 2px solid transparent; border-radius: var(--radius); padding: 8px; cursor: pointer; overflow: hidden; }
-.gallery-thumb.active { border-color: var(--black); }
-.gallery-thumb img { width: 100%; height: 60px; object-fit: cover; }
+.gallery-thumb { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 6px; cursor: pointer; overflow: hidden; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; transition: border-color .15s; }
+.gallery-thumb:hover { border-color: #9CA3AF; }
+.gallery-thumb.active { border-color: var(--black); border-width: 2px; }
+.gallery-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .product-badge-detail { display: inline-block; padding: 4px 14px; border-radius: 980px; font-size: 12px; font-weight: 600; margin-bottom: 0.75rem; }
 .product-detail-title { font-size: 32px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; line-height: 1.2; letter-spacing: -0.5px; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
 .product-detail-meta { font-size: 14px; color: var(--text-muted); margin-bottom: 1.25rem; }
