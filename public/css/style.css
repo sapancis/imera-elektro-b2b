@@ -1819,9 +1819,8 @@ img {
   /* ── PRODUCT DETAIL ───────────────────────────────────────────────────────── */
   .product-detail-grid { grid-template-columns: 1fr; gap: 1.5rem; }
   .product-detail-title { font-size: clamp(18px, 5vw, 24px); }
-  /* Gallery thumbs: smaller on mobile */
+  /* Gallery thumbs: smaller on mobile — quadratisch (aspect-ratio), Bild füllt Kachel */
   .gallery-thumbs { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .gallery-thumb img { height: 50px; }
   /* Gallery main: kare oran zaten ayarlı (aspect-ratio 1/1) */
   /* Specs table: horizontal scroll */
   .specs-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -1970,7 +1969,7 @@ img {
 
   /* ── Gallery thumbs: 4-col maintained ───────────────────────────────────── */
   .gallery-thumbs { grid-template-columns: repeat(4, 1fr); gap: 4px; }
-  .gallery-thumb img { height: 44px; }
+  .gallery-thumb { padding: 4px; }
 
   /* ── Trust row: may need to go 2-col on very small ──────────────────────── */
   /* Keep 3-col but smaller padding */
