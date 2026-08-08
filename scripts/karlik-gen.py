@@ -110,6 +110,77 @@ for (base, serie), vs in groups.items():
         "variants": variants,
     })
 
+# ─── American-Style-Schalter aus der Original-Preisliste (Kipphebel-Ausführung) ───
+# Nachtrag: technisch identisch mit Standard-Schaltern, nur Kipphebel statt Wippe.
+# Preis = Karlik-Listenpreis (CENA NETTO EUR) × 0,78. Name = Standard-Name + " (Kipphebel-Ausführung)".
+import os as _os
+def _find_orig():
+    d = "C:/Users/alisa/Downloads"
+    for f in _os.listdir(d):
+        if 'cennik' in f.lower():
+            return _os.path.join(d, f)
+    return None
+
+# Standard-Name/-Kategorie je (Symbol, Serie) aus der Import-Datei
+name_by, cat_by = {}, {}
+for r in data:
+    name_by[(str(r[0]), r[4])] = clean(r[2])
+    cat_by[(str(r[0]), r[4])] = clean(r[5])
+
+EN_DE_COLOR = {
+    'white':'Weiß','matt white':'Mattweiß','beige':'Beige','silver metallic':'Silber Metallic',
+    'gold':'Gold','gold metallic':'Gold Metallic','graphite':'Graphit','matt graphite':'Mattgraphit',
+    'matt grey':'Mattgrau','matt black':'Mattschwarz','brown metallic':'Braun Metallic','taupe':'Taupe',
+    'sage':'Salbeigrün','salmon':'Lachs','terracotta':'Terrakotta','navy blue':'Marineblau',
+}
+def core_sym(sym):
+    m = re.match(r'^(\d*)([A-Za-z].*)$', str(sym))
+    return m.group(2) if m else str(sym)
+
+orig = _find_orig()
+ame_added = 0
+if orig:
+    ows = openpyxl.load_workbook(orig, read_only=True, data_only=True)['CENNIK_PRICE LIST_ПРАЙС-ЛИСТ']
+    orows = [r for r in ows.iter_rows(min_row=8, values_only=True) if r[1]]
+    ame = [r for r in orows if r[18] and 'american' in str(r[18]).lower()]
+    agroups = defaultdict(list)
+    for r in ame:
+        agroups[(core_sym(r[1]), r[6])].append(r)
+    for (cs, serie), vs in agroups.items():
+        ss = cs.replace('US', '', 1)
+        std = name_by.get((ss, serie))
+        if std:
+            nm = re.sub(r'^⚠️?\s*manuell prüfen:\s*', '', std, flags=re.I).strip()
+            name = f"{nm} (Kipphebel-Ausführung)"
+        else:
+            name = f"{clean(vs[0][13] or vs[0][12])} (Kipphebel-Ausführung)"
+        cat_name = cat_by.get((ss, serie), 'Schalter') or 'Schalter'
+        cat_slug = slugify(cat_name); cats.setdefault(cat_slug, cat_name)
+        sku = cs if cs not in sku_used else f"{cs}-{serie}"
+        sku_used.add(sku)
+        slug = slugify(f"{cs}-{serie}")
+        if slug in slug_used:
+            n = 2
+            while f"{slug}-{n}" in slug_used: n += 1
+            slug = f"{slug}-{n}"
+        slug_used.add(slug)
+        variants = []
+        for v in sorted(vs, key=lambda x: (color_rank(EN_DE_COLOR.get(clean(x[9]).lower(), clean(x[9]))), clean(x[9]))):
+            col = EN_DE_COLOR.get(clean(v[9]).lower(), clean(v[9]))
+            if v[16] is None: continue
+            variants.append({
+                "sku": clean(v[1]), "color": col, "ean": clean(v[11]),
+                "price": round(float(v[16]) * 0.78, 2), "image": clean(v[37]),
+            })
+        if not variants: continue
+        products.append({
+            "sku": sku, "slug": slug, "name": name, "series": serie,
+            "category_slug": cat_slug, "short_description": f"Karlik {serie} – {cat_name}",
+            "image": variants[0]["image"], "price_min": min(x["price"] for x in variants),
+            "warn": False, "variants": variants,
+        })
+        ame_added += 1
+
 out = {
     "brand": {"name": "Karlik", "slug": "karlik"},
     "categories": [{"name": n, "slug": s} for s, n in sorted(cats.items())],
@@ -119,5 +190,5 @@ with open(OUT, "w", encoding="utf-8") as f:
     json.dump(out, f, ensure_ascii=False)
 
 nv = sum(len(p["variants"]) for p in products)
-print(f"Produkte: {len(products)} | Varianten: {nv} | Kategorien: {len(cats)} | ⚠️ Produkte: {len(warn_products)}")
+print(f"Produkte: {len(products)} | Varianten: {nv} | Kategorien: {len(cats)} | ⚠️ Produkte: {len(warn_products)} | American-Style: {ame_added}")
 print("Beispiel:", json.dumps(products[0], ensure_ascii=False)[:300])
