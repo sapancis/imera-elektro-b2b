@@ -10,7 +10,10 @@ router.get('/', async (req, res) => {
     // Cache'den al, yoksa DB'den çek (2 dk TTL)
     let categories = cache.get('categories');
     if (!categories) {
-      categories = await db.prepare('SELECT * FROM categories WHERE active=1 ORDER BY sort_order').all();
+      // Nur Kategorien mit mind. 1 aktivem Produkt (verhindert leere Kacheln, z.B. gestagte Karlik-Kategorien)
+      categories = await db.prepare(`SELECT c.* FROM categories c
+        WHERE c.active=1 AND EXISTS (SELECT 1 FROM products p WHERE p.category_id=c.id AND p.active=1)
+        ORDER BY c.sort_order`).all();
       cache.set('categories', categories, 120_000);
     }
 
@@ -79,7 +82,7 @@ router.get('/sitemap.xml', async (req, res) => {
     ];
 
     const products = await db.prepare('SELECT slug, updated_at FROM products WHERE active=1').all();
-    const cats     = await db.prepare('SELECT slug FROM categories WHERE active=1').all();
+    const cats     = await db.prepare('SELECT DISTINCT c.slug FROM categories c JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1').all();
     const brands   = await db.prepare('SELECT slug FROM brands WHERE active=1').all();
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
