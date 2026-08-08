@@ -153,6 +153,10 @@ router.get('/produkt/:slug', async (req, res) => {
         : Promise.resolve([]),
     ]);
     product.tiers = tiers;
+    // Farbvarianten (Karlik): Farbe bestimmt Preis/Bild/SKU
+    product.variantsArr = product.has_variants
+      ? await db.prepare('SELECT id, sku, color, ean, price, image FROM product_variants WHERE product_id=? AND active=1 ORDER BY sort_order, id').all(product.id)
+      : [];
     await attachTiers(db, related);
     const reviewStats = {
       count: reviews.length,

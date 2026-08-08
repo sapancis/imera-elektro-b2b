@@ -17,10 +17,21 @@ async function calcItemPrice(productId, qty) {
 async function buildOrderItems(cart) {
   const items = [];
   let subtotal = 0;
-  for (const [productId, qty] of Object.entries(cart)) {
-    const product = await db.prepare('SELECT * FROM products WHERE id=? AND active=1').get(productId);
+  for (const [key, qty] of Object.entries(cart)) {
+    if (String(key).startsWith('v')) {
+      const v = await db.prepare(`SELECT pv.*, p.name as pname FROM product_variants pv
+        JOIN products p ON p.id=pv.product_id WHERE pv.id=? AND pv.active=1 AND p.active=1`).get(parseInt(String(key).slice(1)));
+      if (!v) continue;
+      subtotal += v.price * qty;
+      items.push({
+        product: { id: v.product_id, name: `${v.pname} – ${v.color}`, sku: v.sku, sell_as_pack: 0, pack_size: 1 },
+        qty, unitPrice: v.price, lineTotal: v.price * qty, isVariant: true,
+      });
+      continue;
+    }
+    const product = await db.prepare('SELECT * FROM products WHERE id=? AND active=1').get(key);
     if (!product) continue;
-    const unitPrice = await calcItemPrice(parseInt(productId), qty);
+    const unitPrice = await calcItemPrice(parseInt(key), qty);
     if (!unitPrice) continue;
     subtotal += unitPrice * qty;
     items.push({ product, qty, unitPrice, lineTotal: unitPrice * qty });
@@ -127,8 +138,10 @@ router.post('/bestellung', async (req, res) => {
     for (const item of items) {
       await db.prepare(`INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, total_price, is_pack, pack_size) VALUES (?,?,?,?,?,?,?,?,?)`)
         .run(orderId, item.product.id, item.product.name, item.product.sku, item.qty, item.unitPrice, item.lineTotal, item.product.sell_as_pack ? 1 : 0, item.product.pack_size || 1);
-      await db.prepare('UPDATE products SET stock = MAX(0, stock - ?) WHERE id=?')
-        .run(item.qty, item.product.id);
+      if (!item.isVariant) {
+        await db.prepare('UPDATE products SET stock = MAX(0, stock - ?) WHERE id=?')
+          .run(item.qty, item.product.id);
+      }
     }
 
     if (coupon) await db.prepare('UPDATE coupons SET used_count=used_count+1 WHERE id=?').run(coupon.id);

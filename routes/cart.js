@@ -23,16 +23,31 @@ router.get('/', async (req, res) => {
     let subtotal = 0;
     const staleKeys = []; // çözülemeyen kalemler (silinmiş/pasif ürün veya eski seed ID'leri)
 
-    for (const [productId, qty] of Object.entries(cart)) {
-      const product = await db.prepare('SELECT * FROM products WHERE id=? AND active=1').get(productId);
-      if (!product) { staleKeys.push(productId); continue; }
-      const unitPrice = await calcItemPrice(parseInt(productId), qty);
-      if (!unitPrice) { staleKeys.push(productId); continue; }
+    for (const [key, qty] of Object.entries(cart)) {
+      if (String(key).startsWith('v')) {
+        // Farbvariante
+        const v = await db.prepare(`SELECT pv.*, p.name as pname, p.slug as pslug
+          FROM product_variants pv JOIN products p ON p.id=pv.product_id
+          WHERE pv.id=? AND pv.active=1 AND p.active=1`).get(parseInt(String(key).slice(1)));
+        if (!v) { staleKeys.push(key); continue; }
+        const unitPrice = v.price;
+        const lineTotal = unitPrice * qty;
+        subtotal += lineTotal;
+        items.push({
+          product: { id: v.product_id, name: v.pname, slug: v.pslug, image: v.image, sku: v.sku, stock: 999 },
+          variantColor: v.color, cartKey: key, qty, unitPrice, lineTotal, tiers: [], nextTier: null,
+        });
+        continue;
+      }
+      const product = await db.prepare('SELECT * FROM products WHERE id=? AND active=1').get(key);
+      if (!product) { staleKeys.push(key); continue; }
+      const unitPrice = await calcItemPrice(parseInt(key), qty);
+      if (!unitPrice) { staleKeys.push(key); continue; }
       const lineTotal = unitPrice * qty;
       subtotal += lineTotal;
-      const tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(productId);
-      const nextTier = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? AND min_qty>? ORDER BY min_qty ASC LIMIT 1').get(productId, qty);
-      items.push({ product, qty, unitPrice, lineTotal, tiers, nextTier });
+      const tiers = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? ORDER BY min_qty').all(key);
+      const nextTier = await db.prepare('SELECT * FROM product_tiers WHERE product_id=? AND min_qty>? ORDER BY min_qty ASC LIMIT 1').get(key, qty);
+      items.push({ product, qty, unitPrice, lineTotal, tiers, nextTier, cartKey: key });
     }
 
     // Çözülemeyen kalemleri sepetten temizle — aksi halde sepet rozeti (cartCount)
@@ -56,6 +71,20 @@ router.post('/hinzufuegen', async (req, res) => {
   try {
     const productId = parseInt(req.body.product_id);
     const qty = Math.max(1, parseInt(req.body.qty) || 1);
+    const variantId = parseInt(req.body.variant_id);
+
+    // ── Farbvariante (Karlik): eigener Warenkorb-Key v<id> ──
+    if (variantId) {
+      const v = await db.prepare(`SELECT pv.id, pv.color, p.name, p.active
+        FROM product_variants pv JOIN products p ON p.id=pv.product_id
+        WHERE pv.id=? AND pv.active=1`).get(variantId);
+      if (!v || !v.active) return res.json({ ok: false, message: 'Produkt nicht gefunden.' });
+      if (!req.session.cart) req.session.cart = {};
+      const key = 'v' + variantId;
+      req.session.cart[key] = (req.session.cart[key] || 0) + qty;
+      const cartCount = Object.keys(req.session.cart).length;
+      return req.session.save(() => res.json({ ok: true, cartCount, message: `"${v.name} – ${v.color}" wurde in den Warenkorb gelegt.` }));
+    }
 
     const product = await db.prepare('SELECT id, name, stock FROM products WHERE id=? AND active=1').get(productId);
     if (!product) return res.json({ ok: false, message: 'Produkt nicht gefunden.' });

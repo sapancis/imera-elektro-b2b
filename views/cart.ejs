@@ -24,7 +24,7 @@
               <td>
                 <% const _pk = item.product.sell_as_pack == 1; const _un = _pk ? 'Paket' : 'Stk'; %>
                 <div class="cart-product">
-                  <a href="/shop/produkt/<%= item.product.slug %>" class="cart-product-name"><%= item.product.name %></a>
+                  <a href="/shop/produkt/<%= item.product.slug %>" class="cart-product-name"><%= item.product.name %><% if (item.variantColor) { %> – <%= item.variantColor %><% } %></a>
                   <% if (item.product.sku) { %><small>Art.-Nr.: <%= item.product.sku %></small><% } %>
                   <% if (_pk) { %><small style="color:#166534;font-weight:600">📦 1 Paket = <%= item.product.pack_size || 1 %> Stück</small><% } %>
                   <div class="tier-hint-sm">
@@ -43,7 +43,7 @@
               <td>
                 <form action="/warenkorb/aktualisieren" method="POST" class="qty-form">
                   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                  <input type="hidden" name="product_id" value="<%= item.product.id %>">
+                  <input type="hidden" name="product_id" value="<%= item.cartKey || item.product.id %>">
                   <input type="number" name="qty" value="<%= item.qty %>" min="0" class="qty-input" onchange="this.form.submit()">
                 </form>
               </td>
@@ -51,7 +51,7 @@
               <td>
                 <form action="/warenkorb/entfernen" method="POST">
                   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                  <input type="hidden" name="product_id" value="<%= item.product.id %>">
+                  <input type="hidden" name="product_id" value="<%= item.cartKey || item.product.id %>">
                   <button type="submit" class="btn-remove" title="Entfernen">×</button>
                 </form>
               </td>

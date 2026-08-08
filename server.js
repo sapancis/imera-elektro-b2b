@@ -109,6 +109,17 @@ app.locals.orderStatusClass = (s) => ({ pending: 'warning', processing: 'info', 
 try { app.locals.mainInlineJs = require('fs').readFileSync(path.join(__dirname, 'public/js/main.js'), 'utf8'); }
 catch (_) { app.locals.mainInlineJs = ''; }
 app.locals.savings = (our, mktMax) => mktMax > our ? Math.round((1 - our / mktMax) * 100) : 0;
+// Farb-Swatch: deutscher Farbname -> Hex (Fallback grau)
+const COLOR_HEX = {
+  'Weiß':'#F5F5F0','Mattweiß':'#EDEDE8','Beige':'#D8C7A8','Creme':'#EFE6CE',
+  'Graphit':'#3A3A3C','Mattgraphit':'#37373A','Grau':'#9AA0A6','Mattgrau':'#8B9096',
+  'Mattschwarz':'#1C1C1E','Schwarz':'#0B0B0C','Silber Metallic':'#C7CBD1','Silber':'#C7CBD1',
+  'Gold':'#D9B45B','Gold Metallic':'#C9A24B','Braun Metallic':'#6E4B2A','Braun':'#6E4B2A',
+  'Taupe':'#8A7C6B','Salbeigrün':'#9CA788','Lachs':'#E5A186','Terrakotta':'#B5623F',
+  'Anthrazit':'#383E42','Kupfer':'#B87333','Bronze':'#8C7853','Champagner':'#E6D2A8',
+  'Ecru':'#EFE6D6','Petrol':'#22636B','Marineblau':'#243B5E','Weinrot':'#6E1F2E',
+};
+app.locals.colorHex = (c) => COLOR_HEX[c] || '#B9BEC6';
 const { VAT_RATE, vatAmount, grossAmount } = require('./utils/vat');
 app.locals.VAT_RATE = VAT_RATE;
 app.locals.vatPercent = Math.round(VAT_RATE * 100);

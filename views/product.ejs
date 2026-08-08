@@ -48,6 +48,44 @@
           <% if (product.min_order_qty > 1) { %> &nbsp;|&nbsp; Min. Bestellung: <strong><%= product.min_order_qty %> Stk.</strong><% } %>
         </p>
 
+        <% const _hasVar = product.has_variants && product.variantsArr && product.variantsArr.length; %>
+        <% if (_hasVar) { %>
+        <!-- Farbvarianten (Karlik) -->
+        <div class="tier-box">
+          <div class="variant-block">
+            <div class="variant-head">
+              <span class="variant-label">Farbe: <strong id="variantColorName"><%= product.variantsArr[0].color %></strong></span>
+            </div>
+            <div class="variant-swatches" id="variantSwatches">
+              <% for (let vi = 0; vi < product.variantsArr.length; vi++) { const v = product.variantsArr[vi]; %>
+              <button type="button" class="variant-swatch <%= vi === 0 ? 'active' : '' %>"
+                data-vid="<%= v.id %>" data-price="<%= v.price %>" data-image="<%= v.image %>"
+                data-color="<%= v.color %>" title="<%= v.color %> – <%= formatEuro(v.price) %>">
+                <span class="variant-swatch-dot" style="background:<%= colorHex(v.color) %>"></span>
+                <span class="variant-swatch-name"><%= v.color %></span>
+              </button>
+              <% } %>
+            </div>
+          </div>
+          <div class="qty-section">
+            <div class="qty-label">Bestellmenge eingeben</div>
+            <div class="qty-row">
+              <input type="number" id="detailQty" value="1" min="1" class="qty-input-lg">
+              <button onclick="adjustQty(10)" class="btn-qty-adj">+10</button>
+              <button onclick="adjustQty(100)" class="btn-qty-adj">+100</button>
+            </div>
+            <div class="price-summary" id="priceSummary">
+              <div class="price-summary-row">
+                <span>Gesamtpreis</span>
+                <span class="price-total-big" id="totalPrice"><%= formatEuro(product.variantsArr[0].price) %></span>
+              </div>
+              <div class="price-summary-note" id="priceNote">1 Stück × <%= formatEuro(product.variantsArr[0].price) %></div>
+            </div>
+            <button class="btn-add-cart-lg btn-blue-full" id="addToCartBtn" data-product-id="<%= product.id %>" data-variant-id="<%= product.variantsArr[0].id %>" data-csrf="<%= csrfToken %>">In den Warenkorb legen</button>
+            <button class="btn-add-cart-lg btn-outline-full btn-sofort-kaufen" id="sofortKaufenBtn" data-product-id="<%= product.id %>" data-variant-id="<%= product.variantsArr[0].id %>" data-csrf="<%= csrfToken %>" style="margin-top:8px;background:transparent;border:2px solid #1E3A8A;color:#1E3A8A;cursor:pointer;border-radius:8px;padding:14px;font-weight:500;width:100%;font-size:1rem">Sofort kaufen</button>
+          </div>
+        </div>
+        <% } else { %>
         <!-- Tier Price Box -->
         <% const _pack = product.sell_as_pack == 1; const _unit = _pack ? 'Paket' : 'Stück'; const _psize = product.pack_size || 1; %>
         <div class="tier-box">
@@ -100,6 +138,7 @@
             <% } %>
           </div>
         </div>
+        <% } %>
 
         <div class="product-actions-row" style="margin-top:12px">
           <button class="btn-merken" id="merkenBtn" data-product-id="<%= product.id %>" data-csrf="<%= csrfToken %>">♥ Merken</button>
@@ -319,6 +358,23 @@ const tiers = <%- JSON.stringify(product.tiers) %>;
 const sellAsPack = <%= product.sell_as_pack == 1 ? 'true' : 'false' %>;
 const packSize = <%= product.pack_size || 1 %>;
 const unitLabel = sellAsPack ? 'Paket' : 'Stück';
+const hasVariants = <%= (product.has_variants && product.variantsArr && product.variantsArr.length) ? 'true' : 'false' %>;
+let selVariant = hasVariants ? { id: <%= product.variantsArr[0].id %>, price: <%= product.variantsArr[0].price %>, color: '<%= product.variantsArr[0].color.replace(/'/g,"\\'") %>' } : null;
+const euro = (n) => Number(n).toFixed(2).replace('.', ',') + '€';
+
+// Farb-Swatch Auswahl
+document.querySelectorAll('.variant-swatch').forEach(sw => {
+  sw.addEventListener('click', function () {
+    document.querySelectorAll('.variant-swatch').forEach(s => s.classList.remove('active'));
+    this.classList.add('active');
+    selVariant = { id: parseInt(this.dataset.vid), price: parseFloat(this.dataset.price), color: this.dataset.color };
+    document.getElementById('variantColorName').textContent = this.dataset.color;
+    const img = document.getElementById('mainImage');
+    if (img && this.dataset.image) img.src = this.dataset.image;
+    ['addToCartBtn','sofortKaufenBtn'].forEach(id => { const b = document.getElementById(id); if (b) b.dataset.variantId = this.dataset.vid; });
+    updatePrice();
+  });
+});
 
 function adjustQty(n) {
   const inp = document.getElementById('detailQty');
@@ -343,6 +399,12 @@ document.querySelectorAll('.tier-option-row').forEach((row, i) => {
 
 function updatePrice() {
   const qty = parseInt(document.getElementById('detailQty').value) || 1;
+  if (hasVariants) {
+    const unit = selVariant ? selVariant.price : 0;
+    document.getElementById('totalPrice').textContent = euro(unit * qty);
+    document.getElementById('priceNote').textContent = qty + ' Stück × ' + euro(unit);
+    return;
+  }
   fetch(`/shop/api/preis/${productId}?qty=${qty}`)
     .then(r => r.json()).then(data => {
       if (!data.ok) return;
@@ -370,10 +432,11 @@ function highlightTier(qty) {
 document.getElementById('addToCartBtn')?.addEventListener('click', function() {
   const qty = parseInt(document.getElementById('detailQty').value) || 1;
   const csrf = this.dataset.csrf;
+  const vid = hasVariants ? (this.dataset.variantId || (selVariant && selVariant.id)) : '';
   fetch('/warenkorb/hinzufuegen', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `product_id=${productId}&qty=${qty}&_csrf=${encodeURIComponent(csrf)}`
+    body: `product_id=${productId}&qty=${qty}${vid ? '&variant_id=' + vid : ''}&_csrf=${encodeURIComponent(csrf)}`
   }).then(r => r.json()).then(d => {
     if (d.ok) {
       document.querySelectorAll('.cart-badge').forEach(b => b.textContent = d.cartCount);
@@ -391,10 +454,11 @@ document.getElementById('sofortKaufenBtn')?.addEventListener('click', function()
   const btn = this;
   btn.disabled = true;
   btn.textContent = 'Weiterleitung...';
+  const vid = hasVariants ? (this.dataset.variantId || (selVariant && selVariant.id)) : '';
   fetch('/warenkorb/hinzufuegen', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `product_id=${productId}&qty=${qty}&_csrf=${encodeURIComponent(csrf)}`
+    body: `product_id=${productId}&qty=${qty}${vid ? '&variant_id=' + vid : ''}&_csrf=${encodeURIComponent(csrf)}`
   }).then(r => r.json()).then(d => {
     if (d.ok) {
       window.location.href = '/warenkorb';
