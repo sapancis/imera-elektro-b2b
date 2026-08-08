@@ -148,6 +148,21 @@
             <% if (p.description) { %><p class="product-short-desc"><%= p.description.slice(0,80) %><%= p.description.length > 80 ? '…' : '' %></p><% } %>
 
             <% const _pk = p.sell_as_pack == 1; %>
+            <% if (p.has_variants) { %>
+            <div class="tier-table">
+              <div class="tier-table-label">Preis</div>
+              <div class="tier-table-row">
+                <div>
+                  <div class="tier-qty">ab</div>
+                  <div class="tier-price"><%= formatPrice(p.tiers[0] ? p.tiers[0].price : 0) %></div>
+                </div>
+                <div style="align-self:center;font-size:12px;color:#6B7280">mehrere Farben verfügbar</div>
+              </div>
+            </div>
+            <div class="product-order-row">
+              <a href="/shop/produkt/<%= p.slug %>" class="btn-add-cart" style="text-decoration:none;text-align:center;display:block;width:100%">Farbe wählen →</a>
+            </div>
+            <% } else { %>
             <div class="tier-table">
               <div class="tier-table-label">Staffelpreise<% if (_pk) { %> <span style="color:#166534">· pro Paket (<%= p.pack_size || 1 %> Stk)</span><% } %></div>
               <div class="tier-table-row">
@@ -168,6 +183,7 @@
               <button class="btn-add-cart btn-disabled" disabled>Ausverkauft</button>
               <% } %>
             </div>
+            <% } %>
 
             <div class="product-actions-row">
               <button class="btn-merken" data-product-id="<%= p.id %>" data-csrf="<%= csrfToken %>" title="Merken">♥ Merken</button>
@@ -375,15 +391,13 @@
           <div class="qv-cat">${p.cat_name || ''}</div>
           <h2 class="qv-name">${p.name}</h2>
           ${p.sku ? `<div class="qv-sku">Art.-Nr.: ${p.sku}</div>` : ''}
-          <div class="qv-tiers-label">Staffelpreise</div>
-          ${tiersHtml}
-          ${stockHtml}
-          <div class="qv-order-row">
-            <input type="number" id="qvQty" class="qty-input" value="1" min="1" style="width:80px">
-            ${p.stock > 0
-              ? `<button class="btn-add-cart" id="qvAddCart" data-product-id="${p.id}" data-csrf="${csrf}">In den Warenkorb</button>`
-              : `<button class="btn-add-cart btn-disabled" disabled>Ausverkauft</button>`}
-          </div>
+          ${p.has_variants
+            ? `<div class="qv-tiers-label">Preis</div><div class="qv-tiers"><div class="qv-tier"><span class="qv-tier-qty">ab</span><span class="qv-tier-price">${fmt(p.tiers[0]?.price || 0)}</span></div></div><div style="font-size:12px;color:#6B7280;margin:6px 0">Mehrere Farben verfügbar</div>
+               <div class="qv-order-row"><a href="/shop/produkt/${p.slug}" class="btn-add-cart" style="text-decoration:none;text-align:center;display:block;width:100%">Farbe wählen →</a></div>`
+            : `<div class="qv-tiers-label">Staffelpreise</div>${tiersHtml}${stockHtml}
+               <div class="qv-order-row"><input type="number" id="qvQty" class="qty-input" value="1" min="1" style="width:80px">${p.stock > 0
+                 ? `<button class="btn-add-cart" id="qvAddCart" data-product-id="${p.id}" data-csrf="${csrf}">In den Warenkorb</button>`
+                 : `<button class="btn-add-cart btn-disabled" disabled>Ausverkauft</button>`}</div>`}
           <a href="/shop/produkt/${p.slug}" class="qv-detail-link">Vollständige Produktdetails →</a>
         `;
 

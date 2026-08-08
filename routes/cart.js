@@ -86,8 +86,10 @@ router.post('/hinzufuegen', async (req, res) => {
       return req.session.save(() => res.json({ ok: true, cartCount, message: `"${v.name} – ${v.color}" wurde in den Warenkorb gelegt.` }));
     }
 
-    const product = await db.prepare('SELECT id, name, stock FROM products WHERE id=? AND active=1').get(productId);
+    const product = await db.prepare('SELECT id, name, stock, has_variants FROM products WHERE id=? AND active=1').get(productId);
     if (!product) return res.json({ ok: false, message: 'Produkt nicht gefunden.' });
+    // Variantenprodukt ohne Farbwahl → zur Produktseite verweisen
+    if (product.has_variants) return res.json({ ok: false, message: 'Bitte wählen Sie zuerst eine Farbe aus.', needsVariant: true });
 
     // ── Stok kontrolü ────────────────────────────────────────────────
     if (product.stock <= 0) {
