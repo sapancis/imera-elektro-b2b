@@ -93,6 +93,8 @@ db.exec(`
     badge TEXT,
     sell_as_pack INTEGER DEFAULT 0,
     pack_size INTEGER DEFAULT 1,
+    has_variants INTEGER DEFAULT 0,
+    series TEXT,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
   );
@@ -104,6 +106,19 @@ db.exec(`
     max_qty INTEGER,
     price REAL NOT NULL,
     label TEXT
+  );
+
+  -- Farbvarianten (Karlik): 1 Produkt = mehrere Farben, je eigene SKU/Preis/Bild
+  CREATE TABLE IF NOT EXISTS product_variants (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    sku TEXT UNIQUE,
+    color TEXT,
+    ean TEXT,
+    price REAL NOT NULL,
+    image TEXT,
+    sort_order INTEGER DEFAULT 0,
+    active INTEGER DEFAULT 1
   );
 
   CREATE TABLE IF NOT EXISTS users (

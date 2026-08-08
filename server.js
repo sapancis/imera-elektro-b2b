@@ -127,6 +127,67 @@ app.use('/merkliste', require('./routes/merkliste'));
 app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
+// ─── GEÇİCİ: Karlik varyant importu (pasif/taslak) ──────────────────────────
+// /__karlik?token=imera-de-2026  → işi bitince bu blok silinecek.
+app.get('/__karlik', async (req, res) => {
+  if (req.query.token !== 'imera-de-2026') return res.status(403).send('forbidden');
+  try {
+    const db = require('./database/db');
+    const fs = require('fs'), path2 = require('path');
+    const cfg = JSON.parse(fs.readFileSync(path2.join(__dirname, 'scripts/karlik-import.json'), 'utf8'));
+    const slugify = (s) => String(s || '').toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const chunk = async (stmts) => { for (let i=0;i<stmts.length;i+=400){ const c=stmts.slice(i,i+400); if(db.batch) await db.batch(c); else for(const s of c) await db.prepare(s.sql).run(...s.args); } };
+
+    // 1) Marke
+    try { await db.prepare('INSERT INTO brands (name, slug, sort_order) VALUES (?,?,4)').run(cfg.brand.name, cfg.brand.slug); } catch(_){}
+    const brand = await db.prepare('SELECT id FROM brands WHERE slug=?').get(cfg.brand.slug);
+
+    // 2) Kategorien
+    for (const c of cfg.categories) {
+      try { await db.prepare('INSERT INTO categories (name, slug) VALUES (?,?)').run(c.name, c.slug); } catch(_){}
+    }
+    const catRows = await db.prepare('SELECT id, slug FROM categories').all();
+    const catId = Object.fromEntries(catRows.map(c => [c.slug, c.id]));
+
+    // 3) Produkte (upsert by sku, INAKTIV/staged, has_variants=1)
+    const pStmts = cfg.products.map(p => ({
+      sql: `INSERT INTO products (name, slug, sku, category_id, brand_id, short_description, image, stock, active, has_variants, series)
+            VALUES (?,?,?,?,?,?,?,?,0,1,?)
+            ON CONFLICT(sku) DO UPDATE SET name=excluded.name, category_id=excluded.category_id,
+              brand_id=excluded.brand_id, short_description=excluded.short_description, image=excluded.image,
+              has_variants=1, series=excluded.series`,
+      args: [p.name, p.slug, p.sku, catId[p.category_slug] || null, brand.id, p.short_description, p.image, 999, p.series],
+    }));
+    await chunk(pStmts);
+
+    // 4) sku -> product_id
+    const prodRows = await db.prepare('SELECT id, sku FROM products WHERE brand_id=?').all(brand.id);
+    const pid = Object.fromEntries(prodRows.map(r => [r.sku, r.id]));
+
+    // 5) Tiers (price_min) + Varianten — idempotent: erst löschen, dann neu
+    const ids = Object.values(pid);
+    for (let i=0;i<ids.length;i+=300){
+      const part = ids.slice(i,i+300);
+      const ph = part.map(()=>'?').join(',');
+      await db.prepare(`DELETE FROM product_tiers WHERE product_id IN (${ph})`).run(...part);
+      await db.prepare(`DELETE FROM product_variants WHERE product_id IN (${ph})`).run(...part);
+    }
+    const tStmts = [], vStmts = [];
+    for (const p of cfg.products) {
+      const id = pid[p.sku]; if (!id) continue;
+      tStmts.push({ sql: 'INSERT INTO product_tiers (product_id, min_qty, max_qty, price) VALUES (?,1,NULL,?)', args: [id, p.price_min] });
+      p.variants.forEach((v, i) => vStmts.push({
+        sql: 'INSERT INTO product_variants (product_id, sku, color, ean, price, image, sort_order, active) VALUES (?,?,?,?,?,?,?,1) ON CONFLICT(sku) DO UPDATE SET product_id=excluded.product_id, color=excluded.color, ean=excluded.ean, price=excluded.price, image=excluded.image, sort_order=excluded.sort_order',
+        args: [id, v.sku, v.color, v.ean, v.price, v.image, i],
+      }));
+    }
+    await chunk(tStmts);
+    await chunk(vStmts);
+
+    res.json({ ok: true, brand: brand.id, categories: cfg.categories.length, products: pStmts.length, tiers: tStmts.length, variants: vStmts.length });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message, stack: (e.stack||'').split('\n').slice(0,3) }); }
+});
+
 // ─── 404 Handler ──────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.locals.currentPath = res.locals.currentPath || req.path;
@@ -200,6 +261,14 @@ app.use((err, req, res, next) => {
          title TEXT NOT NULL, file_url TEXT NOT NULL, sort_order INTEGER DEFAULT 0,
          created_at TEXT DEFAULT (datetime('now')))`,
       'ALTER TABLE products ADD COLUMN brand_id INTEGER REFERENCES brands(id)',
+      // Farbvarianten (Karlik)
+      'ALTER TABLE products ADD COLUMN has_variants INTEGER DEFAULT 0',
+      'ALTER TABLE products ADD COLUMN series TEXT',
+      `CREATE TABLE IF NOT EXISTS product_variants (
+         id INTEGER PRIMARY KEY AUTOINCREMENT,
+         product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+         sku TEXT UNIQUE, color TEXT, ean TEXT, price REAL NOT NULL,
+         image TEXT, sort_order INTEGER DEFAULT 0, active INTEGER DEFAULT 1)`,
     ]) {
       try { await db.prepare(sql).run(); } catch (_) { /* zaten var */ }
     }
