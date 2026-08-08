@@ -145,6 +145,13 @@ app.get('/__karlik', async (req, res) => {
   try {
     const db = require('./database/db');
     const fs = require('fs'), path2 = require('path');
+    // Aktivierung/Deaktivierung aller Karlik-Produkte (ohne Re-Import)
+    if (req.query.activate === '1' || req.query.deactivate === '1') {
+      const b = await db.prepare("SELECT id FROM brands WHERE slug='karlik'").get();
+      const a = req.query.activate === '1' ? 1 : 0;
+      const r = await db.prepare('UPDATE products SET active=? WHERE brand_id=?').run(a, b.id);
+      return res.json({ ok: true, action: a ? 'activated' : 'deactivated', changed: r.changes || 0 });
+    }
     const cfg = JSON.parse(fs.readFileSync(path2.join(__dirname, 'scripts/karlik-import.json'), 'utf8'));
     const slugify = (s) => String(s || '').toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     const chunk = async (stmts) => { for (let i=0;i<stmts.length;i+=400){ const c=stmts.slice(i,i+400); if(db.batch) await db.batch(c); else for(const s of c) await db.prepare(s.sql).run(...s.args); } };
