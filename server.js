@@ -103,6 +103,11 @@ app.locals.formatEuro = (n) => typeof n === 'number' ? n.toFixed(2).replace('.',
 app.locals.formatDate = (d) => d ? new Date(d).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
 app.locals.orderStatusLabel = (s) => ({ pending: 'Offen', processing: 'In Bearbeitung', shipped: 'Versandt', delivered: 'Geliefert', cancelled: 'Storniert' }[s] || s);
 app.locals.orderStatusClass = (s) => ({ pending: 'warning', processing: 'info', shipped: 'primary', delivered: 'success', cancelled: 'danger' }[s] || 'secondary');
+// main.js INLINE gömülür — Hostinger CDN'i ara sıra HTTP/3 (QUIC) ile bu dosyayı
+// düşürüyordu; o durumda tüm butonlar (Merken/Vergleichen/Warenkorb) ölüyordu.
+// Inline gömünce ayrı istek olmaz → HTML ile hep gelir, güvenilir çalışır.
+try { app.locals.mainInlineJs = require('fs').readFileSync(path.join(__dirname, 'public/js/main.js'), 'utf8'); }
+catch (_) { app.locals.mainInlineJs = ''; }
 app.locals.savings = (our, mktMax) => mktMax > our ? Math.round((1 - our / mktMax) * 100) : 0;
 const { VAT_RATE, vatAmount, grossAmount } = require('./utils/vat');
 app.locals.VAT_RATE = VAT_RATE;
