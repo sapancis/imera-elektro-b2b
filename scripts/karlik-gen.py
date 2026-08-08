@@ -181,6 +181,14 @@ if orig:
         })
         ame_added += 1
 
+# Bilder auf https normalisieren (karlik.pl unterstützt https → kein 301-Redirect, kein Mixed-Content)
+def _https(u):
+    return u.replace('http://', 'https://', 1) if u and u.startswith('http://') else u
+for p in products:
+    p['image'] = _https(p['image'])
+    for v in p['variants']:
+        v['image'] = _https(v['image'])
+
 out = {
     "brand": {"name": "Karlik", "slug": "karlik"},
     "categories": [{"name": n, "slug": s} for s, n in sorted(cats.items())],
