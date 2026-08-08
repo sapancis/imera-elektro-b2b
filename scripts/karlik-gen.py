@@ -212,9 +212,62 @@ for p in products:
     for v in p['variants']:
         v['image'] = _https(v['image'])
 
+# Icon + Beschreibung je Kategorie (Shop-Filter / evtl. Startseite)
+CAT_DESC = {
+    'schalter': 'Aus-, Wechsel-, Kreuz- & Serienschalter',
+    'multimedia-steckdosen': 'TV-, SAT-, Daten- & Multimedia-Anschlüsse',
+    'telefon-netzwerkdosen': 'Telefon- (RJ11) & Netzwerkdosen (RJ45)',
+    'radio-tv-steckdosen': 'Radio- & TV-Antennensteckdosen',
+    'tv-sat-antennendosen': 'TV-/SAT-Antennendosen',
+    'doppelsteckdosen': '2-fach Schuko-Steckdosen',
+    'dreifachsteckdosen': '3-fach Schuko-Steckdosen',
+    'einfachsteckdosen': 'Einzelne Schuko-Steckdosen',
+    'spritzwassergeschuetzte-steckdosen': 'Spritzwassergeschützt (IP44) für Feuchträume',
+    'usb-lader': 'USB-Ladesteckdosen (Typ A/C)',
+    'dimmer': 'Dreh- & Tastdimmer für LED und Glühlampen',
+    'bewegungsmelder': 'Bewegungs- & Präsenzmelder',
+    'temperaturregler': 'Raumthermostate & Temperaturregler',
+    'jalousieschalter-steuerung': 'Jalousie- & Rollladensteuerung',
+    'funksender-deco-smart': 'Funksender für DECO Smart',
+    'hotel-schalter': 'Hotelcard-Schalter',
+    'hotel-schalter-deco-soft': 'Hotelcard-Schalter (DECO Soft)',
+    'datensteckdosen-einzeln': 'Einzelne Datensteckdosen',
+    'modulare-verbindungsdosen': 'Modulare Verbindungs-/Abzweigdosen',
+    'aufputzdosen': 'Aufputz-Montagedosen',
+    'kabelausgaenge': 'Kabel- & Leitungsauslässe',
+    'zentralstaubsauger-dose': 'Anschlussdose für Zentralstaubsauger',
+    'zubehoer': 'Zubehör & Ersatzteile',
+}
+def cat_icon(name):
+    n = name.lower()
+    if 'rahmen' in n: return '🖼️'
+    if 'bewegungsmelder' in n: return '🚶'
+    if 'dimmer' in n: return '🎛️'
+    if 'temperaturregler' in n: return '🌡️'
+    if 'usb' in n: return '🔋'
+    if 'antennendose' in n or 'radio' in n or 'tv/sat' in n or 'tv-sat' in n: return '📡'
+    if 'telefon' in n or 'netzwerk' in n or 'daten' in n: return '🌐'
+    if 'jalousie' in n: return '🪟'
+    if 'funksender' in n or 'smart' in n: return '📶'
+    if 'hotel' in n: return '🏨'
+    if 'zentralstaubsauger' in n: return '🧹'
+    if 'steckdose' in n: return '🔌'
+    if 'schalter' in n: return '🔘'
+    if 'verbindungsdose' in n or 'aufputzdose' in n or 'kabelausg' in n: return '📦'
+    if 'zubehör' in n or 'zubehoer' in n: return '🧰'
+    return '🔌'
+def cat_desc(slug, name):
+    if slug in CAT_DESC: return CAT_DESC[slug]
+    if name.lower().startswith('rahmen'):
+        rest = name[len('Rahmen'):].strip()
+        return f'Abdeckrahmen – {rest}' if rest else 'Abdeckrahmen'
+    if name.lower().startswith('kombi-rahmen'):
+        return 'Mehrfach-Abdeckrahmen'
+    return f'Karlik – {name}'
+
 out = {
     "brand": {"name": "Karlik", "slug": "karlik"},
-    "categories": [{"name": n, "slug": s} for s, n in sorted(cats.items())],
+    "categories": [{"name": n, "slug": s, "icon": cat_icon(n), "description": cat_desc(s, n)} for s, n in sorted(cats.items())],
     "products": products,
 }
 with open(OUT, "w", encoding="utf-8") as f:

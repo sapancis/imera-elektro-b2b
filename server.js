@@ -160,9 +160,10 @@ app.get('/__karlik', async (req, res) => {
     try { await db.prepare('INSERT INTO brands (name, slug, sort_order) VALUES (?,?,4)').run(cfg.brand.name, cfg.brand.slug); } catch(_){}
     const brand = await db.prepare('SELECT id FROM brands WHERE slug=?').get(cfg.brand.slug);
 
-    // 2) Kategorien
+    // 2) Kategorien (mit Icon + Beschreibung; bestehende nur füllen wenn leer/Standard)
     for (const c of cfg.categories) {
-      try { await db.prepare('INSERT INTO categories (name, slug) VALUES (?,?)').run(c.name, c.slug); } catch(_){}
+      try { await db.prepare('INSERT INTO categories (name, slug, icon, description) VALUES (?,?,?,?)').run(c.name, c.slug, c.icon || null, c.description || null); } catch(_){}
+      try { await db.prepare("UPDATE categories SET icon=?, description=? WHERE slug=? AND (icon IS NULL OR icon='' OR icon='📦') AND (description IS NULL OR description='')").run(c.icon || null, c.description || null, c.slug); } catch(_){}
     }
     const catRows = await db.prepare('SELECT id, slug FROM categories').all();
     const catId = Object.fromEntries(catRows.map(c => [c.slug, c.id]));
