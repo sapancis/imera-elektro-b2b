@@ -41,14 +41,19 @@
         <% } %>
         <h1 class="product-detail-title"><%= product.name %></h1>
         <% if (product.short_description) { %><p class="product-short-desc"><%= product.short_description %></p><% } %>
+        <% const _hasVar = product.has_variants && product.variantsArr && product.variantsArr.length; %>
         <p class="product-detail-meta">
-          <% if (product.sku) { %>Art.-Nr.: <strong><%= product.sku %></strong><% } %>
-          <% if (product.sku) { %> &nbsp;|&nbsp; <% } %>
-          Lagerbestand: <strong class="<%= product.stock > 0 ? 'text-green' : 'text-red' %>"><%= product.stock > 0 ? product.stock + ' Stück verfügbar' : 'Nicht auf Lager' %></strong>
-          <% if (product.min_order_qty > 1) { %> &nbsp;|&nbsp; Min. Bestellung: <strong><%= product.min_order_qty %> Stk.</strong><% } %>
+          <% if (_hasVar) { %>
+            Art.-Nr.: <strong id="variantSku"><%= product.variantsArr[0].sku %></strong>
+            <% if (product.variantsArr[0].ean) { %> &nbsp;|&nbsp; EAN: <strong id="variantEan"><%= product.variantsArr[0].ean %></strong><% } %>
+            &nbsp;|&nbsp; <strong class="text-green">Verfügbar</strong>
+          <% } else { %>
+            <% if (product.sku) { %>Art.-Nr.: <strong><%= product.sku %></strong> &nbsp;|&nbsp; <% } %>
+            Lagerbestand: <strong class="<%= product.stock > 0 ? 'text-green' : 'text-red' %>"><%= product.stock > 0 ? product.stock + ' Stück verfügbar' : 'Nicht auf Lager' %></strong>
+            <% if (product.min_order_qty > 1) { %> &nbsp;|&nbsp; Min. Bestellung: <strong><%= product.min_order_qty %> Stk.</strong><% } %>
+          <% } %>
         </p>
 
-        <% const _hasVar = product.has_variants && product.variantsArr && product.variantsArr.length; %>
         <% if (_hasVar) { %>
         <!-- Farbvarianten (Karlik) -->
         <div class="tier-box">
@@ -60,7 +65,7 @@
               <% for (let vi = 0; vi < product.variantsArr.length; vi++) { const v = product.variantsArr[vi]; %>
               <button type="button" class="variant-swatch <%= vi === 0 ? 'active' : '' %>"
                 data-vid="<%= v.id %>" data-price="<%= v.price %>" data-image="<%= v.image %>"
-                data-color="<%= v.color %>" title="<%= v.color %> – <%= formatEuro(v.price) %>">
+                data-color="<%= v.color %>" data-sku="<%= v.sku %>" data-ean="<%= v.ean || '' %>" title="<%= v.color %> – <%= formatEuro(v.price) %>">
                 <span class="variant-swatch-dot" style="background:<%= colorHex(v.color) %>"></span>
                 <span class="variant-swatch-name"><%= v.color %></span>
               </button>
@@ -373,6 +378,8 @@ document.querySelectorAll('.variant-swatch').forEach(sw => {
     this.classList.add('active');
     selVariant = { id: parseInt(this.dataset.vid), price: parseFloat(this.dataset.price), color: this.dataset.color };
     document.getElementById('variantColorName').textContent = this.dataset.color;
+    const skuEl = document.getElementById('variantSku'); if (skuEl) skuEl.textContent = this.dataset.sku || '';
+    const eanEl = document.getElementById('variantEan'); if (eanEl) eanEl.textContent = this.dataset.ean || '';
     const img = document.getElementById('mainImage');
     if (img && this.dataset.image) img.src = this.dataset.image;
     ['addToCartBtn','sofortKaufenBtn'].forEach(id => { const b = document.getElementById(id); if (b) b.dataset.variantId = this.dataset.vid; });

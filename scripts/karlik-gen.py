@@ -139,9 +139,12 @@ def core_sym(sym):
 
 orig = _find_orig()
 ame_added = 0
+techmap = {}  # SYMBOL -> (DANE TECHNICZNE, Gewicht kg)
 if orig:
     ows = openpyxl.load_workbook(orig, read_only=True, data_only=True)['CENNIK_PRICE LIST_ПРАЙС-ЛИСТ']
     orows = [r for r in ows.iter_rows(min_row=8, values_only=True) if r[1]]
+    for r in orows:
+        techmap[str(r[1])] = (r[33], r[34])
     ame = [r for r in orows if r[18] and 'american' in str(r[18]).lower()]
     agroups = defaultdict(list)
     for r in ame:
@@ -180,6 +183,26 @@ if orig:
             "warn": False, "variants": variants,
         })
         ame_added += 1
+
+# Technische Daten je Produkt aus Original-Liste (Symbol des Default-Variante)
+def build_specs(p):
+    sym = p["variants"][0]["sku"]
+    tech, w = techmap.get(sym, (None, None))
+    specs = [["Serie", f"Karlik {p['series']}"]]
+    if tech:
+        t = str(tech).strip()
+        if t.upper().startswith('IP') and ',' in t:
+            ip, rest = t.split(',', 1)
+            specs.append(["Schutzart", ip.strip()])
+            if rest.strip(): specs.append(["Elektrische Daten", rest.strip()])
+        else:
+            specs.append(["Technische Daten", t])
+    if w:
+        try: specs.append(["Gewicht", f"{round(float(w), 3):g} kg"])
+        except (TypeError, ValueError): pass
+    return specs
+for p in products:
+    p["specs"] = build_specs(p)
 
 # Bilder auf https normalisieren (karlik.pl unterstützt https → kein 301-Redirect, kein Mixed-Content)
 def _https(u):

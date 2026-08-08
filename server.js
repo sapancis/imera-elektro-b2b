@@ -162,12 +162,12 @@ app.get('/__karlik', async (req, res) => {
 
     // 3) Produkte (upsert by sku, INAKTIV/staged, has_variants=1)
     const pStmts = cfg.products.map(p => ({
-      sql: `INSERT INTO products (name, slug, sku, category_id, brand_id, short_description, image, stock, active, has_variants, series)
-            VALUES (?,?,?,?,?,?,?,?,0,1,?)
+      sql: `INSERT INTO products (name, slug, sku, category_id, brand_id, short_description, image, specs, stock, active, has_variants, series)
+            VALUES (?,?,?,?,?,?,?,?,?,0,1,?)
             ON CONFLICT(sku) DO UPDATE SET name=excluded.name, category_id=excluded.category_id,
               brand_id=excluded.brand_id, short_description=excluded.short_description, image=excluded.image,
-              has_variants=1, series=excluded.series`,
-      args: [p.name, p.slug, p.sku, catId[p.category_slug] || null, brand.id, p.short_description, p.image, 999, p.series],
+              specs=excluded.specs, has_variants=1, series=excluded.series`,
+      args: [p.name, p.slug, p.sku, catId[p.category_slug] || null, brand.id, p.short_description, p.image, JSON.stringify(p.specs || []), 999, p.series],
     }));
     await chunk(pStmts);
 
