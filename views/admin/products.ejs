@@ -27,6 +27,20 @@
       <% if (q || kat) { %><a href="/admin/produkte" class="btn-outline btn-sm">Zurücksetzen</a><% } %>
     </form>
 
+    <% if (q || kat || marke) { %>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#F0F6FF;border:1px solid #BFDBFE;border-radius:10px;padding:10px 14px;margin-bottom:1rem;font-size:13px">
+      <span><strong><%= products.length %></strong> Produkt(e) im aktuellen Filter</span>
+      <form action="/admin/produkte/bulk-status" method="POST" style="display:inline" onsubmit="return confirm('Alle <%= products.length %> gefilterten Produkte AKTIVIEREN?')">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="q" value="<%= q||'' %>"><input type="hidden" name="kat" value="<%= kat||'' %>"><input type="hidden" name="marke" value="<%= marke||'' %>"><input type="hidden" name="action" value="activate">
+        <button class="btn-sm btn-blue">✓ Alle aktivieren</button>
+      </form>
+      <form action="/admin/produkte/bulk-status" method="POST" style="display:inline" onsubmit="return confirm('Alle <%= products.length %> gefilterten Produkte DEAKTIVIEREN?')">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="q" value="<%= q||'' %>"><input type="hidden" name="kat" value="<%= kat||'' %>"><input type="hidden" name="marke" value="<%= marke||'' %>"><input type="hidden" name="action" value="deactivate">
+        <button class="btn-sm btn-outline">Alle deaktivieren</button>
+      </form>
+    </div>
+    <% } %>
+
     <% if ((locals.noBrandCount || 0) > 0) { %>
     <div style="background:#FFF0EE;border:1px solid #FECACA;border-radius:10px;padding:12px 16px;margin-bottom:1rem;font-size:14px;color:#C0392B">
       ⚠ <strong><%= noBrandCount %></strong> Produkt<%= noBrandCount > 1 ? 'e' : '' %> <strong>ohne Marke</strong> — diese sind <strong>deaktiviert</strong> und im Shop nicht sichtbar.
@@ -74,7 +88,7 @@
             </td>
             <td data-label="Name / Art.-Nr.">
               <div class="pcell-name">
-                <div><a href="/admin/produkte/<%= p.id %>/bearbeiten" style="font-weight:600;font-size:13px"><%= p.name %></a></div>
+                <div><a href="/admin/produkte/<%= p.id %>/bearbeiten" style="font-weight:600;font-size:13px"><%= p.name %></a><% if (p.variant_count > 0) { %> <span class="badge-small" style="background:#EEF2FF;color:#3730A3;border:1px solid #C7D2FE">🎨 <%= p.variant_count %> Farben</span><% } %></div>
                 <small class="text-gray"><%= p.sku || '–' %></small>
               </div>
             </td>

@@ -136,7 +136,8 @@ router.get('/produkte', async (req, res) => {
     else if (marke) { where.push('b.slug=?'); params.push(marke); }
     const products = await db.prepare(`
       SELECT p.*, c.name as cat_name, b.name as brand_name,
-        (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
+        (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min,
+        (SELECT COUNT(*) FROM product_variants WHERE product_id=p.id) as variant_count
       FROM products p LEFT JOIN categories c ON p.category_id=c.id
       LEFT JOIN brands b ON p.brand_id=b.id
       WHERE ${where.join(' AND ')} ORDER BY p.id DESC
@@ -146,6 +147,23 @@ router.get('/produkte', async (req, res) => {
     const noBrandCount = (await db.prepare('SELECT COUNT(*) as n FROM products WHERE brand_id IS NULL').get()).n;
     res.render('admin/products', { title: 'Produkte', products, categories, brands, noBrandCount, q, kat, marke });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
+});
+
+// Toplu aktive/pasife (marka/kategori/arama filtresine göre)
+router.post('/produkte/bulk-status', async (req, res) => {
+  try {
+    const { q, kat, marke, action } = req.body;
+    const active = action === 'activate' ? 1 : 0;
+    let where = ['1=1']; const params = [];
+    if (q) { where.push('(name LIKE ? OR sku LIKE ?)'); params.push(`%${q}%`, `%${q}%`); }
+    if (kat) { where.push('category_id=(SELECT id FROM categories WHERE slug=?)'); params.push(kat); }
+    if (marke === 'none') where.push('brand_id IS NULL');
+    else if (marke) { where.push('brand_id=(SELECT id FROM brands WHERE slug=?)'); params.push(marke); }
+    const r = await db.prepare(`UPDATE products SET active=? WHERE ${where.join(' AND ')}`).run(active, ...params);
+    flash(req, 'success', `${r.changes || 0} Produkt(e) ${active ? 'aktiviert' : 'deaktiviert'}.`);
+  } catch { flash(req, 'error', 'Serverfehler bei der Massenaktion.'); }
+  const qs = new URLSearchParams(Object.fromEntries(Object.entries({ q: req.body.q, kat: req.body.kat, marke: req.body.marke }).filter(([,v]) => v))).toString();
+  res.redirect('/admin/produkte' + (qs ? '?' + qs : ''));
 });
 
 router.get('/produkte/neu', async (req, res) => {
