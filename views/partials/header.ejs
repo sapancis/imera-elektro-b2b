@@ -36,25 +36,33 @@
     "name": "Imera Elektro",
     "description": "CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt. Direktimport.",
     "url": "https://www.imeragroup.com",
-    "telephone": "+43660851446​7",
+    "telephone": "+436608514467",
     "email": "info@imeragroup.com",
     "logo": "https://www.imeragroup.com/favicon.svg",
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+43660851446​7",
+      "telephone": "+436608514467",
       "contactType": "customer service",
-      "availableLanguage": ["German"],
-      "contactOption": "TollFree"
+      "availableLanguage": ["German"]
     },
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "AT"
     },
+    "areaServed": ["AT", "DE", "CH", "EU"],
     "sameAs": [],
     "priceRange": "€€",
     "currenciesAccepted": "EUR",
-    "paymentAccepted": "Bank Transfer, Invoice"<% if (locals.productJsonLd) { %>,
-    "offers": <%- locals.productJsonLd %><% } %>
+    "paymentAccepted": "Bank Transfer, Invoice"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Imera Elektro",
+    "url": "https://www.imeragroup.com",
+    "inLanguage": "de-AT"
   }
   </script>
   <% } %>

@@ -1,3 +1,6 @@
+# Imera Elektro – alle Suchmaschinen UND KI-/Answer-Engines willkommen (SEO/AEO/GEO).
+# Googlebot, Bingbot, GPTBot, ClaudeBot, OAI-SearchBot, PerplexityBot, Google-Extended
+# u.a. dürfen den öffentlichen Katalog crawlen. Nur private Bereiche sind gesperrt.
 User-agent: *
 Allow: /
 Disallow: /admin/

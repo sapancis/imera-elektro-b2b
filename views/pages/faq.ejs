@@ -13,6 +13,14 @@
         ['Welche Zahlungsmethoden akzeptieren Sie?', 'Aktuell akzeptieren wir Vorauszahlung per Überweisung sowie Zahlung auf Rechnung (für Stammkunden). Wir arbeiten daran, weitere Zahlungsmethoden anzubieten.'],
         ['Kann ich einen Warenkorb speichern und teilen?', 'Ja! Im Warenkorb gibt es die Funktion "Warenkorb speichern & teilen". Sie erhalten einen Link, den Sie z.B. an Ihren Vorgesetzten zur Genehmigung schicken können.'],
       ]; %>
+      <script type="application/ld+json"><%- JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqs.map(([q, a]) => ({
+          "@type": "Question", "name": q,
+          "acceptedAnswer": { "@type": "Answer", "text": a }
+        }))
+      }) %></script>
       <% for (const [q, a] of faqs) { %>
       <div class="faq-item">
         <button class="faq-question" type="button">
