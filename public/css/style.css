@@ -244,7 +244,11 @@ img { max-width: 100%; display: block; }
 .breadcrumb a:hover { color: var(--text); }
 .product-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; margin-bottom: 3rem; }
 .gallery-main { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 0.75rem; aspect-ratio: 1 / 1; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-.gallery-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gallery-main img { width: 100%; height: 100%; object-fit: contain; display: block; padding: 12px; cursor: zoom-in; }
+/* Klick-Zoom (Lightbox) */
+.img-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.88); display: flex; align-items: center; justify-content: center; z-index: 3000; cursor: zoom-out; padding: 2rem; }
+.img-lightbox img { max-width: 96%; max-height: 96%; object-fit: contain; border-radius: 8px; }
+.img-lightbox-hint { position: fixed; bottom: 1.25rem; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.7); font-size: 13px; }
 .gallery-placeholder { font-size: 100px; opacity: 0.15; }
 .gallery-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .gallery-thumb { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 6px; cursor: pointer; overflow: hidden; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; transition: border-color .15s; }

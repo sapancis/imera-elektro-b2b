@@ -113,6 +113,26 @@ document.getElementById('priceListForm')?.addEventListener('submit', function(e)
 // Flash auto-dismiss
 setTimeout(() => { document.querySelector('.flash')?.remove(); }, 5000);
 
+// ─── Produktbild Klick-Zoom (Lightbox) ────────────────────────────────────
+// Hauptbild wird "contain" (uneingezoomt) angezeigt; Klick öffnet Großansicht.
+document.getElementById('mainImage')?.addEventListener('click', function () {
+  const box = document.createElement('div');
+  box.className = 'img-lightbox';
+  const big = document.createElement('img');
+  big.src = this.src;
+  big.alt = this.alt || '';
+  box.appendChild(big);
+  const hint = document.createElement('div');
+  hint.className = 'img-lightbox-hint';
+  hint.textContent = 'Zum Schließen klicken';
+  box.appendChild(hint);
+  box.addEventListener('click', () => box.remove());
+  document.body.appendChild(box);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') document.querySelector('.img-lightbox')?.remove();
+});
+
 // ─── Merken (Wishlist) ────────────────────────────────────────────────────
 document.querySelectorAll('.btn-merken').forEach(btn => {
   btn.addEventListener('click', function() {
