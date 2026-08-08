@@ -359,7 +359,11 @@ const sellAsPack = <%= product.sell_as_pack == 1 ? 'true' : 'false' %>;
 const packSize = <%= product.pack_size || 1 %>;
 const unitLabel = sellAsPack ? 'Paket' : 'Stück';
 const hasVariants = <%= (product.has_variants && product.variantsArr && product.variantsArr.length) ? 'true' : 'false' %>;
-let selVariant = hasVariants ? { id: <%= product.variantsArr[0].id %>, price: <%= product.variantsArr[0].price %>, color: '<%= product.variantsArr[0].color.replace(/'/g,"\\'") %>' } : null;
+<% if (product.has_variants && product.variantsArr && product.variantsArr.length) { %>
+let selVariant = { id: <%= product.variantsArr[0].id %>, price: <%= product.variantsArr[0].price %>, color: '<%= product.variantsArr[0].color.replace(/'/g,"\\'") %>' };
+<% } else { %>
+let selVariant = null;
+<% } %>
 const euro = (n) => Number(n).toFixed(2).replace('.', ',') + '€';
 
 // Farb-Swatch Auswahl
