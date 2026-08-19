@@ -302,6 +302,17 @@ app.use((err, req, res, next) => {
          product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
          sku TEXT UNIQUE, color TEXT, ean TEXT, price REAL NOT NULL,
          image TEXT, sort_order INTEGER DEFAULT 0, active INTEGER DEFAULT 1)`,
+      // ── INDEXE: ohne diese scannen die korrelierten Subqueries (MIN(price),
+      // COUNT variants) je Zeile die ganze Tabelle → Millionen gelesener Zeilen
+      // pro Seitenaufruf → Turso "rows read"-Quota gesprengt. Diese Indexe sind kritisch.
+      'CREATE INDEX IF NOT EXISTS idx_tiers_product ON product_tiers(product_id)',
+      'CREATE INDEX IF NOT EXISTS idx_variants_product ON product_variants(product_id)',
+      'CREATE INDEX IF NOT EXISTS idx_variants_active ON product_variants(product_id, active)',
+      'CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id)',
+      'CREATE INDEX IF NOT EXISTS idx_products_brand ON products(brand_id)',
+      'CREATE INDEX IF NOT EXISTS idx_products_active ON products(active)',
+      'CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug)',
+      'CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id)',
     ]) {
       try { await db.prepare(sql).run(); } catch (_) { /* zaten var */ }
     }
