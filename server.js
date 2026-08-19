@@ -126,6 +126,20 @@ app.locals.vatPercent = Math.round(VAT_RATE * 100);
 app.locals.vatAmount = vatAmount;     // netto → USt-Betrag
 app.locals.grossAmount = grossAmount; // netto → brutto
 
+// ─── GEÇİCİ TEŞHİS: DB bağlantısı ───────────────────────────────────────────
+app.get('/__dbcheck', async (req, res) => {
+  if (req.query.token !== 'imera-de-2026') return res.status(403).send('forbidden');
+  const out = { env_turso_url: !!process.env.TURSO_DATABASE_URL, env_turso_token: !!process.env.TURSO_AUTH_TOKEN };
+  try {
+    const db = require('./database/db');
+    const r = await db.prepare('SELECT COUNT(*) as n FROM products').get();
+    out.ok = true; out.products = r.n;
+  } catch (e) {
+    out.ok = false; out.error = e.message; out.code = e.code; out.stack = (e.stack || '').split('\n').slice(0, 4);
+  }
+  res.json(out);
+});
+
 // ─── Routes ───────────────────────────────────────────────────────────────
 app.use('/', require('./routes/index'));
 app.use('/shop', require('./routes/shop'));
