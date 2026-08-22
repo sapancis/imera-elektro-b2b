@@ -48,9 +48,16 @@
             <% if (product.variantsArr[0].ean) { %> &nbsp;|&nbsp; EAN: <strong id="variantEan"><%= product.variantsArr[0].ean %></strong><% } %>
             &nbsp;|&nbsp; <strong class="text-green">Verfügbar</strong>
           <% } else { %>
+            <% const _pawbol = product.list_price != null; %>
             <% if (product.sku) { %>Art.-Nr.: <strong><%= product.sku %></strong> &nbsp;|&nbsp; <% } %>
-            Lagerbestand: <strong class="<%= product.stock > 0 ? 'text-green' : 'text-red' %>"><%= product.stock > 0 ? product.stock + ' Stück verfügbar' : 'Nicht auf Lager' %></strong>
-            <% if (product.min_order_qty > 1) { %> &nbsp;|&nbsp; Min. Bestellung: <strong><%= product.min_order_qty %> Stk.</strong><% } %>
+            <% if (_pawbol) { %>
+              <strong class="text-green">Verfügbar</strong>
+              <% if (product.units_per_pack > 1) { %> &nbsp;|&nbsp; Verkauft in Gebinden à <strong><%= product.units_per_pack %> <%= product.unit_label || 'Stück' %></strong><% } %>
+              <% if (product.min_order_qty > 1) { %> &nbsp;|&nbsp; Mindestbestellmenge: <strong><%= product.min_order_qty %> <%= product.unit_label || 'Stück' %></strong><% } %>
+            <% } else { %>
+              Lagerbestand: <strong class="<%= product.stock > 0 ? 'text-green' : 'text-red' %>"><%= product.stock > 0 ? product.stock + ' Stück verfügbar' : 'Nicht auf Lager' %></strong>
+              <% if (product.min_order_qty > 1) { %> &nbsp;|&nbsp; Min. Bestellung: <strong><%= product.min_order_qty %> Stk.</strong><% } %>
+            <% } %>
           <% } %>
         </p>
 
@@ -113,9 +120,10 @@
           </div>
 
           <div class="qty-section">
-            <div class="qty-label"><%= _pack ? 'Anzahl Pakete' : 'Bestellmenge eingeben' %></div>
+            <% const _moq = product.min_order_qty > 1 ? product.min_order_qty : 1; %>
+            <div class="qty-label"><%= _pack ? 'Anzahl Pakete' : 'Bestellmenge eingeben' %><% if (_moq > 1) { %> <span style="color:#6B7280;font-weight:400">(min. <%= _moq %>)</span><% } %></div>
             <div class="qty-row">
-              <input type="number" id="detailQty" value="1" min="1" class="qty-input-lg">
+              <input type="number" id="detailQty" value="<%= _moq %>" min="<%= _moq %>" class="qty-input-lg">
               <% if (_pack) { %>
               <button onclick="adjustQty(1)" class="btn-qty-adj">+1</button>
               <button onclick="adjustQty(5)" class="btn-qty-adj">+5</button>

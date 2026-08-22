@@ -646,7 +646,21 @@ router.post('/einstellungen', async (req, res) => {
       }
     }
     try { require('../utils/cache').del('settings_map'); } catch {}
-    flash(req, 'success', 'Einstellungen gespeichert.');
+    // Pawbol-Marge geändert → alle Pawbol-Verkaufspreise neu berechnen (VK = Listenpreis × (1+Marge))
+    let extra = '';
+    if (req.body.pawbol_margin !== undefined) {
+      const margin = parseFloat(req.body.pawbol_margin || '40') / 100;
+      const ps = await db.prepare(`SELECT p.id, p.list_price FROM products p JOIN brands b ON p.brand_id=b.id
+        WHERE b.slug='pawbol' AND p.list_price IS NOT NULL`).all();
+      let n = 0;
+      for (const p of ps) {
+        await db.prepare('UPDATE product_tiers SET price=? WHERE product_id=?')
+          .run(Math.round(p.list_price * (1 + margin) * 100) / 100, p.id);
+        n++;
+      }
+      if (n) extra = ` ${n} Pawbol-Preise neu berechnet (${Math.round(margin*100)}% Marge).`;
+    }
+    flash(req, 'success', 'Einstellungen gespeichert.' + extra);
     res.redirect('/admin/einstellungen');
   } catch (e) {
     console.error('Einstellungen Fehler:', e);

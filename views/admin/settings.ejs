@@ -25,6 +25,10 @@
           <h3>Shop-Einstellungen</h3>
           <div class="form-group"><label>Lieferzeit-Angabe</label><input type="text" name="shipping_info" value="<%= settings.shipping_info || '2-5 Werktage' %>"></div>
           <div class="form-group"><label>Kostenloser Versand ab (€)</label><input type="number" name="free_shipping_threshold" value="<%= settings.free_shipping_threshold || '200' %>"></div>
+          <div class="form-group">
+            <label>Pawbol-Marge (%) <span style="color:#6B7280;font-weight:400">– auf Listenpreis; beim Speichern werden alle Pawbol-Preise neu berechnet</span></label>
+            <input type="number" name="pawbol_margin" value="<%= settings.pawbol_margin || '40' %>" min="0" step="1">
+          </div>
           <div class="form-group"><label>Rechtlicher Hinweis (Footer)</label><input type="text" name="company_legal" value="<%= settings.company_legal || '' %>"></div>
           <div class="form-group"><label>Willkommensrabatt für Neukunden (%)</label><input type="number" name="welcome_discount_percent" value="<%= settings.welcome_discount_percent || '10' %>" min="0" max="100"><small style="color:#6B7280">0 = deaktiviert. Wird als Gutschein bei Registrierung vergeben.</small></div>
         </div>

@@ -140,6 +140,71 @@ app.get('/__dbcheck', async (req, res) => {
   res.json(out);
 });
 
+// ─── GEÇİCİ: Pawbol import (wellenweise, pasif, görselsiz) ──────────────────
+// /__pawbol?token=imera-de-2026            → import (aktif margin ile fiyat)
+// /__pawbol?token=...&activate=1           → tüm Pawbol ürünlerini aktive/pasife
+// /__pawbol?token=...&recompute=1          → margin değişince fiyatları yeniden hesapla
+app.get('/__pawbol', async (req, res) => {
+  if (req.query.token !== 'imera-de-2026') return res.status(403).send('forbidden');
+  try {
+    const db = require('./database/db');
+    const brandRow = await db.prepare("SELECT id FROM brands WHERE slug='pawbol'").get()
+      || (await db.prepare("INSERT INTO brands (name, slug, sort_order) VALUES ('Pawbol','pawbol',7)").run(), await db.prepare("SELECT id FROM brands WHERE slug='pawbol'").get());
+    const marginRow = await db.prepare("SELECT value FROM settings WHERE key='pawbol_margin'").get();
+    const margin = parseFloat(marginRow?.value || '40') / 100;
+    const sell = (lp) => Math.round(lp * (1 + margin) * 100) / 100;
+
+    // activate/deactivate
+    if (req.query.activate === '1' || req.query.deactivate === '1') {
+      const a = req.query.activate === '1' ? 1 : 0;
+      const r = await db.prepare('UPDATE products SET active=? WHERE brand_id=?').run(a, brandRow.id);
+      return res.json({ ok: true, action: a ? 'activated' : 'deactivated', changed: r.changes || 0 });
+    }
+    // recompute prices from list_price × current margin
+    if (req.query.recompute === '1') {
+      const ps = await db.prepare('SELECT id, list_price FROM products WHERE brand_id=? AND list_price IS NOT NULL').all(brandRow.id);
+      let n = 0;
+      for (const p of ps) {
+        await db.prepare('UPDATE product_tiers SET price=? WHERE product_id=?').run(sell(p.list_price), p.id);
+        n++;
+      }
+      return res.json({ ok: true, recomputed: n, margin: margin });
+    }
+
+    const fs = require('fs'), path2 = require('path');
+    const cfg = JSON.parse(fs.readFileSync(path2.join(__dirname, 'scripts/pawbol-import.json'), 'utf8'));
+    const chunk = async (stmts) => { for (let i=0;i<stmts.length;i+=400){ const c=stmts.slice(i,i+400); if(db.batch) await db.batch(c); else for(const s of c) await db.prepare(s.sql).run(...s.args); } };
+
+    for (const c of cfg.categories) { try { await db.prepare('INSERT INTO categories (name, slug) VALUES (?,?)').run(c.name, c.slug); } catch(_){} }
+    const catRows = await db.prepare('SELECT id, slug FROM categories').all();
+    const catId = Object.fromEntries(catRows.map(c => [c.slug, c.id]));
+
+    const pStmts = cfg.products.map(p => ({
+      sql: `INSERT INTO products (name, slug, sku, category_id, brand_id, short_description, specs, list_price, unit_label, units_per_pack, min_order_qty, stock, active, has_variants)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0,0)
+            ON CONFLICT(sku) DO UPDATE SET name=excluded.name, category_id=excluded.category_id, brand_id=excluded.brand_id,
+              short_description=excluded.short_description, specs=excluded.specs, list_price=excluded.list_price,
+              unit_label=excluded.unit_label, units_per_pack=excluded.units_per_pack, min_order_qty=excluded.min_order_qty`,
+      args: [p.name, p.slug, p.sku, catId[p.category_slug] || null, brandRow.id, p.short_description,
+             JSON.stringify(p.specs || []), p.list_price, p.unit_label, p.units_per_pack, p.moq, 999],
+    }));
+    await chunk(pStmts);
+
+    const prodRows = await db.prepare('SELECT id, sku, list_price FROM products WHERE brand_id=?').all(brandRow.id);
+    const byId = {};
+    prodRows.forEach(r => { byId[r.sku] = r; });
+    const ids = prodRows.map(r => r.id);
+    for (let i=0;i<ids.length;i+=300){ const part=ids.slice(i,i+300); await db.prepare(`DELETE FROM product_tiers WHERE product_id IN (${part.map(()=>'?').join(',')})`).run(...part); }
+    const tStmts = prodRows.filter(r => r.list_price != null).map(r => ({
+      sql: 'INSERT INTO product_tiers (product_id, min_qty, max_qty, price) VALUES (?,1,NULL,?)',
+      args: [r.id, sell(r.list_price)],
+    }));
+    await chunk(tStmts);
+
+    res.json({ ok: true, brand: brandRow.id, marginPercent: margin * 100, categories: cfg.categories.length, products: pStmts.length, tiers: tStmts.length });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message, stack: (e.stack||'').split('\n').slice(0,3) }); }
+});
+
 // ─── Routes ───────────────────────────────────────────────────────────────
 app.use('/', require('./routes/index'));
 app.use('/shop', require('./routes/shop'));
@@ -297,6 +362,10 @@ app.use((err, req, res, next) => {
       // Farbvarianten (Karlik)
       'ALTER TABLE products ADD COLUMN has_variants INTEGER DEFAULT 0',
       'ALTER TABLE products ADD COLUMN series TEXT',
+      // Pawbol: Basis-Listenpreis (für globale Marge) + Verkaufseinheit
+      'ALTER TABLE products ADD COLUMN list_price REAL',
+      'ALTER TABLE products ADD COLUMN unit_label TEXT',
+      'ALTER TABLE products ADD COLUMN units_per_pack INTEGER DEFAULT 1',
       `CREATE TABLE IF NOT EXISTS product_variants (
          id INTEGER PRIMARY KEY AUTOINCREMENT,
          product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
@@ -318,7 +387,7 @@ app.use((err, req, res, next) => {
     }
     // Bilinen markaları oluştur (idempotent) — logo/açıklama sonradan admin'den
     const seed = [['Onka', 'onka', 1], ['Tork', 'tork', 2], ['Tracon', 'tracon', 3],
-                  ['Karlik', 'karlik', 4], ['Kopos', 'kopos', 5], ['ETI', 'eti', 6]];
+                  ['Karlik', 'karlik', 4], ['Kopos', 'kopos', 5], ['ETI', 'eti', 6], ['Pawbol', 'pawbol', 7]];
     for (const [name, slug, ord] of seed) {
       try { await db.prepare('INSERT INTO brands (name, slug, sort_order) VALUES (?,?,?)').run(name, slug, ord); } catch (_) { /* var */ }
     }
@@ -342,6 +411,8 @@ app.use((err, req, res, next) => {
         await db.prepare("INSERT INTO settings (key, value) VALUES ('unbranded_deactivated','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
       }
     } catch (_) {}
+    // Pawbol-Marge-Einstellung (falls noch nicht vorhanden)
+    try { await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_margin','40') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
     // CSV-Import-Kategorien: Icon + Beschreibung setzen (nur wenn noch leer → Admin-Edits bleiben erhalten)
     const catMeta = [
       ['netzwerkinstallation', '🛡️', 'Leitungsschutzschalter, FI-Schalter & Sicherungen'],

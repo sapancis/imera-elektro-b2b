@@ -70,7 +70,7 @@ router.get('/', async (req, res) => {
 router.post('/hinzufuegen', async (req, res) => {
   try {
     const productId = parseInt(req.body.product_id);
-    const qty = Math.max(1, parseInt(req.body.qty) || 1);
+    let qty = Math.max(1, parseInt(req.body.qty) || 1);
     const variantId = parseInt(req.body.variant_id);
 
     // ── Farbvariante (Karlik): eigener Warenkorb-Key v<id> ──
@@ -86,10 +86,14 @@ router.post('/hinzufuegen', async (req, res) => {
       return req.session.save(() => res.json({ ok: true, cartCount, message: `"${v.name} – ${v.color}" wurde in den Warenkorb gelegt.` }));
     }
 
-    const product = await db.prepare('SELECT id, name, stock, has_variants FROM products WHERE id=? AND active=1').get(productId);
+    const product = await db.prepare('SELECT id, name, stock, has_variants, min_order_qty FROM products WHERE id=? AND active=1').get(productId);
     if (!product) return res.json({ ok: false, message: 'Produkt nicht gefunden.' });
     // Variantenprodukt ohne Farbwahl → zur Produktseite verweisen
     if (product.has_variants) return res.json({ ok: false, message: 'Bitte wählen Sie zuerst eine Farbe aus.', needsVariant: true });
+    // Mindestbestellmenge (MOQ) erzwingen
+    let moqNote = '';
+    const moq = product.min_order_qty || 1;
+    if (moq > 1 && qty < moq) { qty = moq; moqNote = ` (Mindestbestellmenge ${moq})`; }
 
     // ── Stok kontrolü ────────────────────────────────────────────────
     if (product.stock <= 0) {
@@ -111,19 +115,27 @@ router.post('/hinzufuegen', async (req, res) => {
     req.session.cart[productId] = totalRequested;
     const cartCount = Object.keys(req.session.cart).length;
     req.session.save(() => {
-      res.json({ ok: true, cartCount, message: 'Produkt wurde in den Warenkorb gelegt.' });
+      res.json({ ok: true, cartCount, message: 'Produkt wurde in den Warenkorb gelegt.' + moqNote });
     });
   } catch { res.status(500).json({ ok: false, message: 'Serverfehler.' }); }
 });
 
-router.post('/aktualisieren', (req, res) => {
+router.post('/aktualisieren', async (req, res) => {
   const { product_id, qty } = req.body;
-  const newQty = parseInt(qty);
+  let newQty = parseInt(qty);
   if (!req.session.cart) req.session.cart = {};
 
   if (newQty <= 0) {
     delete req.session.cart[product_id];
   } else {
+    // MOQ erzwingen (nur für einfache Produkte, nicht Varianten-Keys v<id>)
+    if (!String(product_id).startsWith('v')) {
+      try {
+        const p = await db.prepare('SELECT min_order_qty FROM products WHERE id=?').get(product_id);
+        const moq = p?.min_order_qty || 1;
+        if (moq > 1 && newQty < moq) newQty = moq;
+      } catch (_) {}
+    }
     req.session.cart[product_id] = newQty;
   }
   res.redirect('/warenkorb');
