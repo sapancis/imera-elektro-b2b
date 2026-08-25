@@ -3,6 +3,98 @@
 import openpyxl, json, re
 from collections import defaultdict, Counter
 
+# Restliche englische Namen (⚠️-Fälle) nachträglich ins Deutsche übersetzen.
+def translate_en(name):
+    n = ' '.join(str(name).replace('\xa0', ' ').split())
+    low = n.lower()
+    # Farb-/Detail-Klammer am Ende grob entfernen (frame: white; rear: white ...)
+    def strip_parens(s):
+        return re.sub(r'\s*\([^)]*\)\s*$', '', s).strip()
+    # N-gang universal frame (glass effect / round / square)
+    m = re.match(r'(\d+)-gang(\s+(round|square))?\s+universal frame(\s*-\s*glass effect)?', low)
+    if m:
+        parts = [f"{m.group(1)}-fach Universalrahmen"]
+        if m.group(4): parts.append("Glasoptik")
+        if m.group(3) == 'round': parts.append("rund")
+        elif m.group(3) == 'square': parts.append("eckig")
+        return ', '.join(parts)
+    m = re.match(r'modular glass effect frame (\d+) bays', low)
+    if m:
+        return f"Rahmen Glasoptik modular, {m.group(1)} Module"
+    if 'non-standard' in low and 'glass effect frame' in low:
+        return "Rahmen Glasoptik modular (Sondermaß)"
+    # Datendosen
+    if 'telephone socket' in low:
+        rj = re.search(r'(\d+ ?x ?rj\d+)', low)
+        pre = 'Doppel-Telefondose' if low.startswith('double') else 'Telefondose'
+        return f"{pre}{' ' + rj.group(1).upper().replace(' ','') if rj else ''}".strip()
+    if 'computer socket' in low or 'data' in low and 'socket' in low:
+        rj = re.search(r'(\d+ ?x ?rj\d+)', low)
+        pre = 'Doppel-Netzwerkdose' if low.startswith('double') else 'Netzwerkdose'
+        return f"{pre}{' ' + rj.group(1).upper().replace(' ','') if rj else ''}".strip()
+    if 'usb charger' in low:
+        return "USB-Ladegerät"
+    if 'temperature controller' in low or 'temperature regulator' in low:
+        return "Elektronischer Temperaturregler" + (" mit Luftfühler" if 'air sensor' in low else "")
+    if 'splash-proof socket' in low or 'splash proof socket' in low:
+        return "Spritzwassergeschützte Steckdose (Schuko)"
+    m = re.search(r'through socket \((\d+)\s*db\)', low)
+    if 'through socket' in low and ('radio' in low or 'tv' in low):
+        db = m.group(1) if m else ''
+        sat = '/SAT' if 'sat' in low else ''
+        return f"Radio/TV{sat}-Durchgangsdose" + (f" ({db} dB)" if db else "")
+    if 'push button switch' in low or (low.startswith('double push button')):
+        return "Doppeltaster-Mechanismus"
+    if 'push button' in low:
+        return "Taster-Mechanismus"
+    if 'surface mounted box' in low:
+        return "Aufputzdose"
+    if 'non-standard flush-mounted modular junction box' in low:
+        return "UP-Verbindungsdose modular (Sondermaß)"
+    if 'flush-mounted modular junction box' in low:
+        return "UP-Verbindungsdose modular"
+    if 'double hotel switch' in low:
+        return "Doppel-Hotelschalter-Mechanismus"
+    if 'hotel switch' in low:
+        return "Hotelschalter-Mechanismus"
+    if 'antenna' in low and 'socket' in low:
+        return "Antennendose F-Typ (SAT)"
+    if 'loudspeaker socket' in low:
+        return "Lautsprecherdose"
+    if 'central vac' in low and ('mounting box' in low or 'box' in low and 'socket' not in low):
+        return "Montagedose für Zentralstaubsauger-Saugdose"
+    if 'central vac' in low:
+        return "Zentralstaubsauger-Saugdose"
+    if 'electronic dimmer' in low or 'push-rotary' in low:
+        return "Elektronischer Dreh-/Tastdimmer-Mechanismus"
+    if 'rollladen' in low and 'shutter' in low:
+        return "Elektronische Rollladensteuerung"
+    if 'shutter mech' in low or ('roller blind' in low and 'switch' in low):
+        return "Rollladenschalter-Mechanismus"
+    # Steckdosen (mehrfach)
+    if re.match(r'triple socket', low): return "Dreifachsteckdose (Schuko)"
+    if re.match(r'double socket', low): return "Doppelsteckdose (Schuko)"
+    # Schalter + Steckdose Kombis
+    combo = None
+    if 'single pole' in low and 'two-way switch' in low:
+        combo = "Aus-/Wechselschalter"
+    elif low.startswith('two-circuit') or 'two-circuit switch' in low:
+        combo = "Serienschalter"
+    elif low.startswith('two-way') or 'two-way switch' in low:
+        combo = "Wechselschalter"
+    elif low.startswith('single pole') or 'single pole switch' in low:
+        combo = "Ausschalter"
+    if combo and 'socket' in low:
+        return f"{combo} mit Steckdose (Schuko)"
+    if combo:
+        return f"{combo}-Mechanismus"
+    # Reine Rahmen ohne gang-Zahl
+    if 'universal frame' in low:
+        return strip_parens(n).replace('universal frame', 'Universalrahmen').replace('glass effect', 'Glasoptik')
+    return None  # keine Regel → Original beibehalten
+
+ENG_RE = re.compile(r'\b(switch|socket|with|single|pole|earth|cover|frame|without|shutter|two|way|circuit|mechanism|dimmer|hotel|vacuum|vacum|suction|mounting|loudspeaker|antenna|gang|glass effect|non-standard|junction|illumination|backlight)\b', re.I)
+
 SRC = "C:/Users/alisa/Downloads/IMERA_Karlik_Ali_Import.xlsx"
 OUT = "scripts/karlik-import.json"
 
@@ -204,13 +296,23 @@ def build_specs(p):
 for p in products:
     p["specs"] = build_specs(p)
 
-# Bilder auf https normalisieren (karlik.pl unterstützt https → kein 301-Redirect, kein Mixed-Content)
-def _https(u):
-    return u.replace('http://', 'https://', 1) if u and u.startswith('http://') else u
+# Bilder: https normalisieren; ungültige (z.B. "NIE / NO / НЕT") → leer (Platzhalter statt kaputtem Bild)
+def _img(u):
+    u = str(u or '').strip()
+    if u.startswith('http://'): u = u.replace('http://', 'https://', 1)
+    return u if u.startswith('https://') else ''
 for p in products:
-    p['image'] = _https(p['image'])
+    p['image'] = _img(p['image'])
     for v in p['variants']:
-        v['image'] = _https(v['image'])
+        v['image'] = _img(v['image'])
+    # falls Default-Bild leer → erstes Variantenbild mit gültiger URL nehmen
+    if not p['image']:
+        for v in p['variants']:
+            if v['image']: p['image'] = v['image']; break
+    # restliche englische Namen übersetzen
+    if ENG_RE.search(p['name']):
+        t = translate_en(p['name'])
+        if t: p['name'] = t
 
 # Icon + Beschreibung je Kategorie (Shop-Filter / evtl. Startseite)
 CAT_DESC = {
