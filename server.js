@@ -160,6 +160,16 @@ app.get('/__pawbol', async (req, res) => {
       const r = await db.prepare('UPDATE products SET active=? WHERE brand_id=?').run(a, brandRow.id);
       return res.json({ ok: true, action: a ? 'activated' : 'deactivated', changed: r.changes || 0 });
     }
+    // Marge setzen (global) + sofort neu berechnen
+    if (req.query.setmargin !== undefined) {
+      const mp = String(parseFloat(req.query.setmargin) || 0);
+      await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_margin', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(mp);
+      try { require('./utils/cache').del('settings_map'); } catch (_) {}
+      const m2 = parseFloat(mp) / 100;
+      const ps = await db.prepare('SELECT id, list_price FROM products WHERE brand_id=? AND list_price IS NOT NULL').all(brandRow.id);
+      for (const p of ps) await db.prepare('UPDATE product_tiers SET price=? WHERE product_id=?').run(Math.round(p.list_price * (1 + m2) * 100) / 100, p.id);
+      return res.json({ ok: true, marginPercent: parseFloat(mp), recomputed: ps.length });
+    }
     // recompute prices from list_price × current margin
     if (req.query.recompute === '1') {
       const ps = await db.prepare('SELECT id, list_price FROM products WHERE brand_id=? AND list_price IS NOT NULL').all(brandRow.id);

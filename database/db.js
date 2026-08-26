@@ -267,8 +267,8 @@ const defaultSettings = [
   ['free_shipping_threshold', '200'],
   ['company_legal', 'Imera Elektro unterliegt der Regelbesteuerung · UID: ATU82785639 · Alle Preise netto zzgl. 20% MwSt.'],
   ['meta_description', 'CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt. Direktimport. Kabelbinder, Kabelverschraubungen, Reihenklemmen.'],
-  // Pawbol: globale Marge auf Listenpreis (netto). VK = list_price × (1 + %/100)
-  ['pawbol_margin', '40'],
+  // Pawbol: globale Marge auf Listenpreis (netto). VK = list_price × (1 + %/100). 0 = Listenpreis direkt.
+  ['pawbol_margin', '0'],
 ];
 
 const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
