@@ -83,6 +83,13 @@ for r in data:
     if unit: specs.append(["Verkaufseinheit", unit])
     if per_pack > 1: specs.append(["Einheiten pro Gebinde", str(per_pack)])
 
+    # Produktbeschreibung (Pawbol liefert keine Langtexte → aus Name + Kontext bilden)
+    desc = f"{name}. {cat_name} von Pawbol."
+    if per_pack > 1:
+        desc += f" Lieferung im Gebinde à {per_pack} {unit}."
+    if moq > 1:
+        desc += f" Mindestbestellmenge: {moq} {unit}."
+
     products.append({
         "sku": sku, "slug": slug, "name": name,
         "category_slug": cat_slug,
@@ -90,6 +97,7 @@ for r in data:
         "moq": moq, "unit_label": unit, "units_per_pack": per_pack,
         "specs": specs,
         "short_description": f"Pawbol · {cat_name}",
+        "description": desc,
     })
 
 out = {

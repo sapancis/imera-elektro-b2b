@@ -194,7 +194,7 @@
         <div class="tab-grid">
           <div>
             <h2>Produktbeschreibung</h2>
-            <p class="product-description"><%= product.description %></p>
+            <p class="product-description"><%= product.description || product.short_description || product.name %></p>
 
             <% if (product.appsArr.length) { %>
             <h3>Anwendungsbereiche</h3>
