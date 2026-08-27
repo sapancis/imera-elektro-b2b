@@ -90,6 +90,10 @@ for r in data:
     if moq > 1:
         desc += f" Mindestbestellmenge: {moq} {unit}."
 
+    # Bild: nur direkte https-Links (pawbol.pl) — pawbol.eu hat kaputtes SSL → leer
+    img = clean(r[19])
+    image = img if img.startswith('https://') else ''
+
     products.append({
         "sku": sku, "slug": slug, "name": name,
         "category_slug": cat_slug,
@@ -98,6 +102,7 @@ for r in data:
         "specs": specs,
         "short_description": f"Pawbol · {cat_name}",
         "description": desc,
+        "image": image,
     })
 
 out = {

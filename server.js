@@ -190,13 +190,13 @@ app.get('/__pawbol', async (req, res) => {
     const catId = Object.fromEntries(catRows.map(c => [c.slug, c.id]));
 
     const pStmts = cfg.products.map(p => ({
-      sql: `INSERT INTO products (name, slug, sku, category_id, brand_id, short_description, description, specs, list_price, unit_label, units_per_pack, min_order_qty, stock, active, has_variants)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,0,0)
+      sql: `INSERT INTO products (name, slug, sku, category_id, brand_id, short_description, description, specs, list_price, unit_label, units_per_pack, min_order_qty, image, stock, active, has_variants)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,0)
             ON CONFLICT(sku) DO UPDATE SET name=excluded.name, category_id=excluded.category_id, brand_id=excluded.brand_id,
               short_description=excluded.short_description, description=excluded.description, specs=excluded.specs, list_price=excluded.list_price,
-              unit_label=excluded.unit_label, units_per_pack=excluded.units_per_pack, min_order_qty=excluded.min_order_qty`,
+              unit_label=excluded.unit_label, units_per_pack=excluded.units_per_pack, min_order_qty=excluded.min_order_qty, image=excluded.image`,
       args: [p.name, p.slug, p.sku, catId[p.category_slug] || null, brandRow.id, p.short_description, p.description || null,
-             JSON.stringify(p.specs || []), p.list_price, p.unit_label, p.units_per_pack, p.moq, 999],
+             JSON.stringify(p.specs || []), p.list_price, p.unit_label, p.units_per_pack, p.moq, p.image || null, 999],
     }));
     await chunk(pStmts);
 
