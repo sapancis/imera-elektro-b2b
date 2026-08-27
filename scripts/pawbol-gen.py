@@ -38,6 +38,13 @@ def as_int(v, dflt=1):
 def clean(v):
     return str(v).replace('\xa0', ' ').strip() if v is not None else ''
 
+# Zusätzlich per Muster gefundene pawbol.pl-Bilder (für Artikel ohne Link in der Liste)
+GUESSED = {}
+try:
+    GUESSED = json.load(open("scripts/pawbol-guessed-images.json", encoding="utf-8"))
+except Exception:
+    pass
+
 cats, products = {}, []
 slug_used, sku_used = set(), set()
 skipped = 0
@@ -101,6 +108,9 @@ for r in data:
             image = img.replace('http://', 'https://', 1)
         elif 'pawbol.eu' in img:
             image_src = img
+    # kein Link in der Liste, aber per Muster auf pawbol.pl gefunden
+    if not image and not image_src and clean(r[1]) in GUESSED:
+        image = GUESSED[clean(r[1])]
 
     products.append({
         "sku": sku, "slug": slug, "name": name,
