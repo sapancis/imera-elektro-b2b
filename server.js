@@ -160,6 +160,12 @@ app.get('/__pawbol', async (req, res) => {
       const r = await db.prepare('UPDATE products SET active=? WHERE brand_id=?').run(a, brandRow.id);
       return res.json({ ok: true, action: a ? 'activated' : 'deactivated', changed: r.changes || 0 });
     }
+    // Nur Produkte MIT Bild aktivieren, bildlose deaktivieren (Bilder-Policy)
+    if (req.query.imageonly === '1') {
+      const r1 = await db.prepare("UPDATE products SET active=1 WHERE brand_id=? AND image IS NOT NULL AND image!=''").run(brandRow.id);
+      const r0 = await db.prepare("UPDATE products SET active=0 WHERE brand_id=? AND (image IS NULL OR image='')").run(brandRow.id);
+      return res.json({ ok: true, activated: r1.changes || 0, deactivated: r0.changes || 0 });
+    }
     // Marge setzen (global) + sofort neu berechnen
     if (req.query.setmargin !== undefined) {
       const mp = String(parseFloat(req.query.setmargin) || 0);
