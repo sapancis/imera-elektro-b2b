@@ -90,9 +90,17 @@ for r in data:
     if moq > 1:
         desc += f" Mindestbestellmenge: {moq} {unit}."
 
-    # Bild: nur direkte https-Links (pawbol.pl) — pawbol.eu hat kaputtes SSL → leer
+    # Bild:
+    #  - pawbol.pl (http/https): direkt als https-Link (Server unterstützt https)
+    #  - pawbol.eu: kaputtes SSL → nicht direkt nutzbar → image_src für Cloudinary-Download
+    #  - "-" / leer: kein Bild
     img = clean(r[19])
-    image = img if img.startswith('https://') else ''
+    image, image_src = '', ''
+    if img.startswith('http'):
+        if 'pawbol.pl' in img:
+            image = img.replace('http://', 'https://', 1)
+        elif 'pawbol.eu' in img:
+            image_src = img
 
     products.append({
         "sku": sku, "slug": slug, "name": name,
@@ -103,6 +111,7 @@ for r in data:
         "short_description": f"Pawbol · {cat_name}",
         "description": desc,
         "image": image,
+        "image_src": image_src,
     })
 
 out = {

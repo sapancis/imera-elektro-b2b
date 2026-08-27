@@ -160,6 +160,35 @@ app.get('/__pawbol', async (req, res) => {
       const r = await db.prepare('UPDATE products SET active=? WHERE brand_id=?').run(a, brandRow.id);
       return res.json({ ok: true, action: a ? 'activated' : 'deactivated', changed: r.changes || 0 });
     }
+    // pawbol.eu-Bilder (kaputtes SSL) herunterladen → Cloudinary → image setzen + aktiv
+    // Batchweise: /__pawbol?fetchimages=1&limit=40  (mehrfach aufrufen bis remaining=0)
+    if (req.query.fetchimages === '1') {
+      const https = require('https');
+      const { saveUpload } = require('./utils/upload');
+      const map = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'scripts/pawbol-import.json'), 'utf8'));
+      const bySku = {}; for (const p of map.products) if (p.image_src) bySku[p.sku] = p.image_src;
+      const limit = Math.min(parseInt(req.query.limit) || 40, 80);
+      const rows = await db.prepare("SELECT id, sku FROM products WHERE brand_id=? AND (image IS NULL OR image='')").all(brandRow.id);
+      const targets = rows.filter(r => bySku[r.sku]).slice(0, limit);
+      let done = 0, failed = 0;
+      for (const t of targets) {
+        const url = bySku[t.sku].replace('http://', 'https://');
+        try {
+          const buf = await new Promise((resolve, reject) => {
+            const rq = https.get(url, { rejectUnauthorized: false, timeout: 20000 }, r2 => {
+              if (r2.statusCode >= 400) { r2.resume(); return reject(new Error('http ' + r2.statusCode)); }
+              const ch = []; r2.on('data', c => ch.push(c)); r2.on('end', () => resolve(Buffer.concat(ch)));
+            });
+            rq.on('error', reject); rq.on('timeout', () => rq.destroy(new Error('timeout')));
+          });
+          const cloudUrl = await saveUpload({ buffer: buf, originalname: t.sku + '.jpg' }, { folder: 'imera-pawbol', prefix: 'pawbol' });
+          await db.prepare('UPDATE products SET image=?, active=1 WHERE id=?').run(cloudUrl, t.id);
+          done++;
+        } catch (_) { failed++; }
+      }
+      const remaining = rows.filter(r => bySku[r.sku]).length - done;
+      return res.json({ ok: true, done, failed, remaining });
+    }
     // Nur Produkte MIT Bild aktivieren, bildlose deaktivieren (Bilder-Policy)
     if (req.query.imageonly === '1') {
       const r1 = await db.prepare("UPDATE products SET active=1 WHERE brand_id=? AND image IS NOT NULL AND image!=''").run(brandRow.id);
