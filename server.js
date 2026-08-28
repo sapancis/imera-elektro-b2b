@@ -167,27 +167,36 @@ app.get('/__pawbol', async (req, res) => {
       const { saveUpload } = require('./utils/upload');
       const map = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'scripts/pawbol-import.json'), 'utf8'));
       const bySku = {}; for (const p of map.products) if (p.image_src) bySku[p.sku] = p.image_src;
+      const http = require('http');
       const limit = Math.min(parseInt(req.query.limit) || 40, 80);
       const rows = await db.prepare("SELECT id, sku FROM products WHERE brand_id=? AND (image IS NULL OR image='')").all(brandRow.id);
       const targets = rows.filter(r => bySku[r.sku]).slice(0, limit);
-      let done = 0, failed = 0;
+      // Download mit Redirect-Folge (http→https) + SSL-Bypass
+      const download = (url, depth = 0) => new Promise((resolve, reject) => {
+        if (depth > 4) return reject(new Error('too many redirects'));
+        const mod = url.startsWith('https') ? https : http;
+        const rq = mod.get(url, { rejectUnauthorized: false, timeout: 20000, headers: { 'User-Agent': 'Mozilla/5.0' } }, r2 => {
+          if ([301, 302, 303, 307, 308].includes(r2.statusCode) && r2.headers.location) {
+            r2.resume(); const next = r2.headers.location.startsWith('http') ? r2.headers.location : new URL(r2.headers.location, url).href;
+            return resolve(download(next, depth + 1));
+          }
+          if (r2.statusCode >= 400) { r2.resume(); return reject(new Error('http ' + r2.statusCode)); }
+          const ch = []; r2.on('data', c => ch.push(c)); r2.on('end', () => resolve(Buffer.concat(ch)));
+        });
+        rq.on('error', reject); rq.on('timeout', () => rq.destroy(new Error('timeout')));
+      });
+      let done = 0, failed = 0, lastErr = '';
       for (const t of targets) {
-        const url = bySku[t.sku].replace('http://', 'https://');
         try {
-          const buf = await new Promise((resolve, reject) => {
-            const rq = https.get(url, { rejectUnauthorized: false, timeout: 20000 }, r2 => {
-              if (r2.statusCode >= 400) { r2.resume(); return reject(new Error('http ' + r2.statusCode)); }
-              const ch = []; r2.on('data', c => ch.push(c)); r2.on('end', () => resolve(Buffer.concat(ch)));
-            });
-            rq.on('error', reject); rq.on('timeout', () => rq.destroy(new Error('timeout')));
-          });
+          const buf = await download(bySku[t.sku]);
+          if (!buf || buf.length < 500) throw new Error('empty/too small');
           const cloudUrl = await saveUpload({ buffer: buf, originalname: t.sku + '.jpg' }, { folder: 'imera-pawbol', prefix: 'pawbol' });
           await db.prepare('UPDATE products SET image=?, active=1 WHERE id=?').run(cloudUrl, t.id);
           done++;
-        } catch (_) { failed++; }
+        } catch (e) { failed++; lastErr = e.message; }
       }
       const remaining = rows.filter(r => bySku[r.sku]).length - done;
-      return res.json({ ok: true, done, failed, remaining });
+      return res.json({ ok: true, done, failed, remaining, lastErr });
     }
     // Nur Produkte MIT Bild aktivieren, bildlose deaktivieren (Bilder-Policy)
     if (req.query.imageonly === '1') {
