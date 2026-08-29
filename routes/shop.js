@@ -85,15 +85,24 @@ router.get('/', async (req, res) => {
     // Tier'ları TEK sorguda yükle (N+1 yerine)
     await attachTiers(db, products);
 
-    let categories = cache.get('shop_categories');
-    if (!categories) {
-      categories = await db.prepare('SELECT c.*, COUNT(p.id) as cnt FROM categories c LEFT JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1 GROUP BY c.id HAVING cnt > 0 ORDER BY c.sort_order').all();
-      cache.set('shop_categories', categories, 120_000);
+    // Kategori filtresi: marka seçiliyse SADECE o markanın kategorileri + marka-bazlı sayılar
+    let categories;
+    if (marke) {
+      categories = await db.prepare(`SELECT c.*, COUNT(p.id) as cnt FROM categories c
+        JOIN products p ON p.category_id=c.id AND p.active=1
+        JOIN brands b ON p.brand_id=b.id
+        WHERE c.active=1 AND b.slug=? GROUP BY c.id HAVING cnt > 0 ORDER BY cnt DESC, c.name`).all(marke);
+    } else {
+      categories = cache.get('shop_categories');
+      if (!categories) {
+        categories = await db.prepare('SELECT c.*, COUNT(p.id) as cnt FROM categories c LEFT JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1 GROUP BY c.id HAVING cnt > 0 ORDER BY c.sort_order').all();
+        cache.set('shop_categories', categories, 120_000);
+      }
     }
     const totalPages = Math.ceil(total / perPage);
     const sizes = sizesRows.map(r => r.size);
-    // "Alle" sayısı: filtreden bağımsız tüm aktif ürün sayısı (kategori sayılarıyla tutarlı)
-    const allCount = allRow.n;
+    // "Alle" sayısı: marka seçiliyse markanın toplamı, yoksa tüm aktif ürünler
+    const allCount = marke ? categories.reduce((s, c) => s + c.cnt, 0) : allRow.n;
 
     // Marka filtresi aktifse: o markanın kataloglarını da göster ("Katalog anzeigen")
     let activeBrand = null;
