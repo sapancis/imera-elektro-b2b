@@ -128,7 +128,7 @@ app.locals.grossAmount = grossAmount; // netto → brutto
 
 // ─── GEÇİCİ TEŞHİS: DB bağlantısı ───────────────────────────────────────────
 app.get('/__dbcheck', async (req, res) => {
-  if (req.query.token !== 'imera-de-2026') return res.status(403).send('forbidden');
+  if (!process.env.IMPORT_TOKEN || req.query.token !== process.env.IMPORT_TOKEN) return res.status(403).send('forbidden');
   const out = { env_turso_url: !!process.env.TURSO_DATABASE_URL, env_turso_token: !!process.env.TURSO_AUTH_TOKEN };
   try {
     const db = require('./database/db');
@@ -141,11 +141,11 @@ app.get('/__dbcheck', async (req, res) => {
 });
 
 // ─── GEÇİCİ: Pawbol import (wellenweise, pasif, görselsiz) ──────────────────
-// /__pawbol?token=imera-de-2026            → import (aktif margin ile fiyat)
+// /__pawbol?token=<IMPORT_TOKEN>            → import (aktif margin ile fiyat)
 // /__pawbol?token=...&activate=1           → tüm Pawbol ürünlerini aktive/pasife
 // /__pawbol?token=...&recompute=1          → margin değişince fiyatları yeniden hesapla
 app.get('/__pawbol', async (req, res) => {
-  if (req.query.token !== 'imera-de-2026') return res.status(403).send('forbidden');
+  if (!process.env.IMPORT_TOKEN || req.query.token !== process.env.IMPORT_TOKEN) return res.status(403).send('forbidden');
   try {
     const db = require('./database/db');
     const brandRow = await db.prepare("SELECT id FROM brands WHERE slug='pawbol'").get()
@@ -272,9 +272,9 @@ app.use('/vergleich', require('./routes/vergleich'));
 app.use('/', require('./routes/pages'));
 
 // ─── GEÇİCİ: Karlik varyant importu (pasif/taslak) ──────────────────────────
-// /__karlik?token=imera-de-2026  → işi bitince bu blok silinecek.
+// /__karlik?token=<IMPORT_TOKEN>  → işi bitince bu blok silinecek.
 app.get('/__karlik', async (req, res) => {
-  if (req.query.token !== 'imera-de-2026') return res.status(403).send('forbidden');
+  if (!process.env.IMPORT_TOKEN || req.query.token !== process.env.IMPORT_TOKEN) return res.status(403).send('forbidden');
   try {
     const db = require('./database/db');
     const fs = require('fs'), path2 = require('path');
