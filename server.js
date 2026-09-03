@@ -25,15 +25,15 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com'],
+      scriptSrc: ["'self'", "'unsafe-inline'", 'https://www.googletagmanager.com', 'https://www.google-analytics.com', 'https://embed.tawk.to', 'https://*.tawk.to'],
       // Inline event handler'lara (onchange/onclick — filtreler, galeri, sort) izin ver.
       // Helmet varsayılanı script-src-attr 'none' bunları bloklar.
       scriptSrcAttr: ["'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
-      fontSrc: ["'self'", 'fonts.gstatic.com'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com', 'https://*.tawk.to'],
+      fontSrc: ["'self'", 'fonts.gstatic.com', 'https://*.tawk.to'],
       imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
-      connectSrc: ["'self'", 'https://www.google-analytics.com', 'https://region1.google-analytics.com', 'https://api.cloudinary.com'],
-      frameSrc: ["'self'"],
+      connectSrc: ["'self'", 'https://www.google-analytics.com', 'https://region1.google-analytics.com', 'https://*.tawk.to', 'wss://*.tawk.to', 'https://api.cloudinary.com'],
+      frameSrc: ["'self'", 'https://*.tawk.to'],
     },
   },
 }));
@@ -467,8 +467,6 @@ app.use((err, req, res, next) => {
     } catch (_) {}
     // Pawbol-Marge-Einstellung (falls noch nicht vorhanden)
     try { await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_margin','40') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
-    // Tawk.to komplett entfernt → Einstellung löschen (alle Spuren weg)
-    try { await db.prepare("DELETE FROM settings WHERE key='tawkto_property_id'").run(); } catch (_) {}
     // CSV-Import-Kategorien: Icon + Beschreibung setzen (nur wenn noch leer → Admin-Edits bleiben erhalten)
     const catMeta = [
       ['netzwerkinstallation', '🛡️', 'Leitungsschutzschalter, FI-Schalter & Sicherungen'],
