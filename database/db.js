@@ -256,7 +256,6 @@ try { db.exec('ALTER TABLE products ADD COLUMN brand_id INTEGER REFERENCES brand
 const defaultSettings = [
   ['site_name', 'Imera Elektro'],
   ['site_tagline', 'Elektrokomponenten 40-60% unter Marktpreis'],
-  ['tawkto_property_id', ''],
   ['welcome_discount_percent', '10'],
   ['stripe_publishable_key', ''],
   ['google_analytics_id', ''],

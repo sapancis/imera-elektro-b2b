@@ -26,12 +26,11 @@ async function setLocals(req, res, next) {
   res.locals.flash = req.session.flash || null;
   delete req.session.flash;
 
-  // Tawk.to, GA, Social & Merkliste count — settings TEK cache'li sorguda
+  // GA, Social & Merkliste count — settings TEK cache'li sorguda
   try {
     const db = require('../database/db');
     const { settingsMap } = require('../utils/perf');
     const s = await settingsMap(db);
-    res.locals.tawktoId        = s.tawkto_property_id || '';
     res.locals.gaId            = s.google_analytics_id || '';
     res.locals.socialInstagram = s.social_instagram || '';
     res.locals.socialTiktok    = s.social_tiktok || '';
@@ -42,7 +41,7 @@ async function setLocals(req, res, next) {
     } else {
       res.locals.merklisteCount = (req.session.merkliste || []).length;
     }
-  } catch { res.locals.tawktoId = ''; res.locals.merklisteCount = 0; }
+  } catch { res.locals.merklisteCount = 0; }
 
   next();
 }
