@@ -5,11 +5,12 @@
 
     <!-- Sidebar Filter -->
     <aside class="shop-sidebar">
+      <% const _filterActive = !!(filters.marke || filters.kategorie); %>
       <div class="filter-box">
-        <button type="button" class="filter-toggle-btn" id="filterToggle">
+        <button type="button" class="filter-toggle-btn<%= _filterActive ? ' open' : '' %>" id="filterToggle">
           <span>🔍 Filter</span><span class="ft-arrow">▼</span>
         </button>
-        <div class="shop-filter-body" id="filterBody">
+        <div class="shop-filter-body<%= _filterActive ? ' open' : '' %>" id="filterBody">
           <h3 class="filter-desktop-h">Filter</h3>
           <form action="/shop" method="GET" id="filterForm">
             <% if (locals.brands && brands.length) { %>
