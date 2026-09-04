@@ -7,11 +7,18 @@ const { attachTiers } = require('../utils/perf');
 router.get('/', async (req, res) => {
   try {
     const { kategorie, marke, preis, sort = 'popular', page = 1, verfuegbar, groesse } = req.query;
+    const q = (req.query.q || '').trim();
     const perPage = 12;
     const offset = (parseInt(page) - 1) * perPage;
 
     let where = ['p.active=1'];
     let params = [];
+
+    // Produktsuche (Name oder Artikelnummer)
+    if (q) {
+      where.push('(p.name LIKE ? OR p.sku LIKE ?)');
+      params.push(`%${q}%`, `%${q}%`);
+    }
 
     if (kategorie) {
       where.push('c.slug=?');
@@ -53,7 +60,12 @@ router.get('/', async (req, res) => {
       price_desc: '(SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) DESC',
       name_az: 'p.name ASC',
     };
-    const orderBy = orderMap[sort] || orderMap.popular;
+    let orderBy = orderMap[sort] || orderMap.popular;
+    // "Alle Marken"-Ansicht (keine Marke gewählt, Standard-Sortierung): Marken durchmischen,
+    // damit nicht alle Artikel einer Marke am Stück erscheinen. Deterministisch → paginierstabil.
+    if (!marke && (!sort || sort === 'popular')) {
+      orderBy = 'p.featured DESC, ((p.id * 1103515245 + 12345) % 2147483647)';
+    }
     const whereStr = where.join(' AND ');
 
     // Bağımsız sorguları paralel çalıştır (Turso round-trip'lerini azaltır)
@@ -114,14 +126,15 @@ router.get('/', async (req, res) => {
     }
 
     res.render('shop', {
-      title: activeBrand ? `${activeBrand.name} Produkte` : 'Shop',
+      title: q ? `Suche: „${q}“` : (activeBrand ? `${activeBrand.name} Produkte` : 'Shop'),
       products,
       categories,
       brands,
       activeBrand,
       sizes,
       allCount,
-      filters: { kategorie, marke, preis, sort, verfuegbar, groesse },
+      q,
+      filters: { kategorie, marke, preis, sort, verfuegbar, groesse, q },
       pagination: { page: parseInt(page), totalPages, total },
     });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }

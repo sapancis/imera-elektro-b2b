@@ -2280,3 +2280,11 @@ img {
 .variant-swatch-dot { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(0,0,0,.15); flex-shrink: 0; }
 .variant-swatch-name { white-space: nowrap; }
 @media (max-width: 480px) { .variant-swatch-name { font-size: 12px; } }
+
+/* ── Shop-Suche (Header) ─────────────────────────────────────────────────── */
+.shop-search { display: flex; align-items: center; gap: 8px; background: #fff; border: 1.5px solid var(--border); border-radius: 12px; padding: 6px 8px 6px 12px; margin-bottom: 1rem; }
+.shop-search:focus-within { border-color: #34C759; }
+.shop-search-ico { color: #9CA3AF; flex-shrink: 0; }
+.shop-search-input { flex: 1; min-width: 0; border: none; outline: none; font-size: 15px; background: transparent; padding: 6px 0; }
+.shop-search-btn { flex-shrink: 0; background: #1D1D1F; color: #fff; border: none; border-radius: 9px; padding: 9px 18px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.shop-search-btn:hover { background: #000; }

@@ -23,13 +23,18 @@ router.get('/', async (req, res) => {
 
     let homeData = cache.get('home_data');
     if (!homeData) {
+      // "Ausgewählte Produkte": 1 repräsentatives Produkt pro Marke (mit Bild bevorzugt)
       const featured = await db.prepare(`
-        SELECT p.*, c.name as cat_name,
-          (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
-        FROM products p
-        LEFT JOIN categories c ON p.category_id=c.id
-        WHERE p.active=1 AND p.featured=1
-        ORDER BY p.id LIMIT 3
+        SELECT * FROM (
+          SELECT p.*, c.name as cat_name, b.name as brand_name, b.slug as brand_slug,
+            (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min,
+            ROW_NUMBER() OVER (PARTITION BY p.brand_id ORDER BY p.featured DESC, (p.image IS NULL OR p.image=''), p.id) as rn
+          FROM products p
+          LEFT JOIN categories c ON p.category_id=c.id
+          JOIN brands b ON p.brand_id=b.id
+          WHERE p.active=1
+        ) WHERE rn=1
+        ORDER BY (image IS NULL OR image=''), brand_id LIMIT 6
       `).all();
       await attachTiers(db, featured);
       const [statsRow, newProducts] = await Promise.all([
