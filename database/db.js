@@ -255,7 +255,7 @@ try { db.exec('ALTER TABLE products ADD COLUMN brand_id INTEGER REFERENCES brand
 
 const defaultSettings = [
   ['site_name', 'Imera Elektro'],
-  ['site_tagline', 'Elektrokomponenten 40-60% unter Marktpreis'],
+  ['site_tagline', 'Installationsmaterial direkt vom Hersteller'],
   ['tawkto_property_id', ''],
   ['welcome_discount_percent', '10'],
   ['stripe_publishable_key', ''],
@@ -266,7 +266,7 @@ const defaultSettings = [
   ['shipping_info', '2-5 Werktage'],
   ['free_shipping_threshold', '200'],
   ['company_legal', 'Imera Elektro unterliegt der Regelbesteuerung · UID: ATU82785639 · Alle Preise netto zzgl. 20% MwSt.'],
-  ['meta_description', 'CE-zertifizierte Elektrokomponenten 40-60% günstiger als der österreichische Markt. Direktimport. Kabelbinder, Kabelverschraubungen, Reihenklemmen.'],
+  ['meta_description', 'Installationsmaterial & Schaltschrankbau direkt vom Hersteller. CE-konforme Markenprodukte, attraktive Preise für Geschäftskunden in Österreich.'],
   // Pawbol: globale Marge auf Listenpreis (netto). VK = list_price × (1 + %/100). 0 = Listenpreis direkt.
   ['pawbol_margin', '0'],
 ];

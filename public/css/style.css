@@ -76,7 +76,7 @@ img { max-width: 100%; display: block; }
 .btn-outline:hover { background: var(--bg); opacity: 1; }
 .btn-white { background: white; color: var(--black); border-color: var(--border); }
 .btn-white:hover { background: var(--bg); opacity: 1; }
-.btn-outline-sm { display: inline-block; padding: 7px 16px; border: 1.5px solid var(--border-dark); color: var(--black); border-radius: 980px; font-size: 14px; margin-top: 6px; margin-right: 6px; }
+.btn-outline-sm { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 16px; border: 1.5px solid var(--border-dark); color: var(--black); border-radius: 980px; font-size: 14px; margin-top: 6px; margin-right: 6px; }
 .btn-outline-sm:hover { border-color: var(--black); opacity: 1; }
 .btn-sm { padding: 7px 16px; font-size: 13px; border-radius: 980px; }
 .btn-lg { padding: 15px 36px; font-size: 17px; }
@@ -138,6 +138,8 @@ img { max-width: 100%; display: block; }
 
 /* ─── Shop ───────────────────────────────────────────────────────────────── */
 .shop-layout { display: grid; grid-template-columns: 280px 1fr; gap: 2rem; padding-top: 2rem; padding-bottom: 2rem; }
+/* Filter-Box scrollt eigenständig, unabhängig von der Produktliste (Desktop) */
+.shop-sidebar { position: sticky; top: 1rem; align-self: start; max-height: calc(100vh - 2rem); overflow-y: auto; }
 .filter-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; position: sticky; top: 80px; box-shadow: var(--shadow-xs); }
 .filter-box h3 { font-size: 15px; font-weight: 600; margin-bottom: 1rem; }
 .filter-group { margin-bottom: 1.5rem; }
@@ -528,7 +530,7 @@ img { max-width: 100%; display: block; }
 .price-list-input input { flex: 1; padding: 12px 18px; border: none; border-radius: 980px; font-size: 15px; background: rgba(255,255,255,0.12); color: white; }
 .price-list-input input::placeholder { color: rgba(255,255,255,0.45); }
 .price-list-input .btn-green { border-radius: 980px; }
-.footer-cta-note { font-size: 12px; margin-top: 5rem !important; opacity: 0.45; }
+.footer-cta-note { font-size: 11px; margin-top: 1rem !important; opacity: 0.45; }
 .footer-main { background: var(--black-soft); color: white; padding: 3rem 0; }
 .footer-logo { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: white; margin-bottom: 0.5rem; }
 .footer-grid { display: grid; grid-template-columns: 1.5fr repeat(4, 1fr); gap: 2rem; margin-bottom: 2rem; }

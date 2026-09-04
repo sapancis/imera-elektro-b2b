@@ -61,9 +61,9 @@ router.get('/', async (req, res) => {
 
     const settings = await getSettings();
     res.render('index', {
-      title: 'CE-zertifizierte Elektrokomponenten – 40-60% günstiger',
-      metaDesc: 'Kabelbinder, Kabelverschraubungen & Reihenklemmen direkt vom Hersteller. CE-zertifiziert, Direktimport. 40-60% günstiger als der österreichische Markt.',
-      ogTitle: 'Imera Elektro – Elektrokomponenten 40-60% unter Marktpreis',
+      title: 'Installationsmaterial & Schaltschrankbau – Direktimport vom Hersteller',
+      metaDesc: 'Installationsmaterial, Schaltschrankbau & mehr direkt vom Hersteller. CE-konforme Markenprodukte (Onka, Tork, Tracon, Karlik, Pawbol), attraktive Preise für Geschäftskunden in Österreich.',
+      ogTitle: 'Imera Elektro – Direktimport vom Hersteller',
       categories, featured: homeData.featured, newProducts: homeData.newProducts, stats: homeData.stats, brands: homeData.brands, settings,
     });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }

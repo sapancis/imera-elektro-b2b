@@ -441,7 +441,11 @@ app.use((err, req, res, next) => {
     }
     // Bilinen markaları oluştur (idempotent) — logo/açıklama sonradan admin'den
     const seed = [['Onka', 'onka', 1], ['Tork', 'tork', 2], ['Tracon', 'tracon', 3],
-                  ['Karlik', 'karlik', 4], ['Kopos', 'kopos', 5], ['ETI', 'eti', 6], ['Pawbol', 'pawbol', 7]];
+                  ['Karlik', 'karlik', 4], ['Pawbol', 'pawbol', 5]];
+    // Kopos & ETI sind aktuell keine Partner → aus der Markenliste entfernen (nur wenn keine Produkte)
+    for (const slug of ['kopos', 'eti']) {
+      try { await db.prepare("DELETE FROM brands WHERE slug=? AND NOT EXISTS (SELECT 1 FROM products WHERE products.brand_id=brands.id)").run(slug); } catch (_) {}
+    }
     for (const [name, slug, ord] of seed) {
       try { await db.prepare('INSERT INTO brands (name, slug, sort_order) VALUES (?,?,?)').run(name, slug, ord); } catch (_) { /* var */ }
     }

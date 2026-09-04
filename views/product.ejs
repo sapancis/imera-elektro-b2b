@@ -355,7 +355,7 @@
           </a>
           <div class="product-card-body">
             <h3 class="product-name"><a href="/shop/produkt/<%= rp.slug %>"><%= rp.name %></a></h3>
-            <div class="tier-hint"><span class="price-green"><%= formatPrice(rp.tiers[0]?.price) %></span> / Stück</div>
+            <div class="tier-hint"><span class="price-green"><%= formatPrice(rp.tiers[0]?.price) %></span> / <%= rp.sell_as_pack ? 'Paket' : 'Stück' %></div>
           </div>
         </div>
         <% } %>
