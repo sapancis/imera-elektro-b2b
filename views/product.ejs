@@ -348,7 +348,7 @@
         <div class="product-card">
           <a href="/shop/produkt/<%= rp.slug %>" class="product-card-image">
             <% if (rp.image) { %>
-              <img src="<%= rp.image %>" alt="<%= rp.name %>" loading="lazy">
+              <img src="<%= rp.image %>" alt="<%= rp.name %>" loading="lazy" onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement('div'),{className:'product-placeholder',textContent:'📦'}))">
             <% } else { %>
               <div class="product-placeholder">📦</div>
             <% } %>
