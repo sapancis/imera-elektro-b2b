@@ -37,12 +37,21 @@
                 <span class="filter-text">Alle</span>
                 <span class="filter-count">(<%= allCount %>)</span>
               </label>
-              <% for (const cat of categories) { %>
-              <label class="filter-option">
-                <input type="radio" name="kategorie" value="<%= cat.slug %>" <%= filters.kategorie === cat.slug ? 'checked' : '' %> onchange="this.form.submit()">
-                <span class="filter-text"><%= cat.name %></span>
-                <span class="filter-count">(<%= cat.cnt %>)</span>
-              </label>
+              <% for (const grp of (locals.categoryGroups || [])) {
+                   const grpActive = grp.items.some(c => c.slug === filters.kategorie); %>
+              <details class="cat-group"<%= grpActive ? ' open' : '' %>>
+                <summary class="cat-group-summary">
+                  <span class="cat-group-title"><%= grp.icon %> <%= grp.title %></span>
+                  <span class="filter-count">(<%= grp.cnt %>)</span>
+                </summary>
+                <% for (const cat of grp.items) { %>
+                <label class="filter-option filter-option--sub">
+                  <input type="radio" name="kategorie" value="<%= cat.slug %>" <%= filters.kategorie === cat.slug ? 'checked' : '' %> onchange="this.form.submit()">
+                  <span class="filter-text"><%= cat.name %></span>
+                  <span class="filter-count">(<%= cat.cnt %>)</span>
+                </label>
+                <% } %>
+              </details>
               <% } %>
             </div>
 

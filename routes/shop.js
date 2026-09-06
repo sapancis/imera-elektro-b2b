@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../database/db');
 const cache = require('../utils/cache');
 const { attachTiers } = require('../utils/perf');
+const { groupCategories } = require('../config/categoryGroups');
 
 router.get('/', async (req, res) => {
   try {
@@ -111,6 +112,8 @@ router.get('/', async (req, res) => {
         cache.set('shop_categories', categories, 120_000);
       }
     }
+    // E3: Detailkategorien unter Oberkategorien gruppieren (zweistufiger Filter)
+    const categoryGroups = groupCategories(categories);
     const totalPages = Math.ceil(total / perPage);
     const sizes = sizesRows.map(r => r.size);
     // "Alle" sayısı: marka seçiliyse markanın toplamı, yoksa tüm aktif ürünler
@@ -129,6 +132,7 @@ router.get('/', async (req, res) => {
       title: q ? `Suche: „${q}“` : (activeBrand ? `${activeBrand.name} Produkte` : 'Shop'),
       products,
       categories,
+      categoryGroups,
       brands,
       activeBrand,
       sizes,

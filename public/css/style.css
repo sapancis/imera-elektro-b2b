@@ -571,6 +571,18 @@ img { max-width: 100%; display: block; }
 .filter-toggle-btn.open .ft-arrow { transform: rotate(180deg); }
 .shop-filter-body { display: block; }
 
+/* ─── Kategorie-Oberkategorien (E3, zweistufiger Filter) ─────────────────── */
+.cat-group { border-top: 1px solid var(--border); }
+.cat-group:first-of-type { border-top: none; }
+.cat-group-summary { display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; list-style: none; padding: 8px 4px; font-size: 13.5px; font-weight: 600; color: var(--text); user-select: none; }
+.cat-group-summary::-webkit-details-marker { display: none; }
+.cat-group-summary::after { content: '▸'; margin-left: auto; font-size: 11px; color: var(--text-light, #6B7280); transition: transform .18s; }
+.cat-group[open] > .cat-group-summary::after { transform: rotate(90deg); }
+.cat-group-summary:hover { color: var(--primary, #166534); }
+.cat-group-title { display: flex; align-items: center; gap: 6px; }
+.cat-group-summary .filter-count { font-weight: 400; }
+.filter-option--sub { padding-left: 14px; font-size: 13px; }
+
 /* ─── Account Stats ──────────────────────────────────────────────────────── */
 .account-stats { flex-wrap: wrap; }
 .account-stat { flex: 1; min-width: 120px; }
