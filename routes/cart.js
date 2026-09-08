@@ -60,7 +60,7 @@ router.get('/', async (req, res) => {
 
     const freeShippingThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
     const freeShippingThreshold = parseFloat(freeShippingThresholdRow?.value || 1500);
-    const ship = computeShipping(items, { freeThreshold: freeShippingThreshold });
+    const ship = await computeShipping(items, { freeThreshold: freeShippingThreshold, db });
     const shipping = ship.packageShipping;
     const sperrgut = ship.sperrgut;
     const net = subtotal + shipping + sperrgut;

@@ -25,6 +25,10 @@
           <h3>Shop-Einstellungen</h3>
           <div class="form-group"><label>Lieferzeit-Angabe</label><input type="text" name="shipping_info" value="<%= settings.shipping_info || '2-5 Werktage' %>"></div>
           <div class="form-group"><label>Kostenloser Versand ab (€)</label><input type="number" name="free_shipping_threshold" value="<%= settings.free_shipping_threshold || '1500' %>"></div>
+          <div class="form-grid-2">
+            <div class="form-group"><label>Sperrgut-Aufschlag Mast (€ je Stück)</label><input type="number" step="0.01" min="0" name="sperrgut_mast_eur" value="<%= settings.sperrgut_mast_eur || '0' %>"><small style="color:#6B7280">Blitzschutzmast (Kat. Blitzschutzanlage, Name „Mast"). 0 = kein Aufschlag.</small></div>
+            <div class="form-group"><label>Sperrgut-Aufschlag Trommel (€ je Stück)</label><input type="number" step="0.01" min="0" name="sperrgut_trommel_eur" value="<%= settings.sperrgut_trommel_eur || '0' %>"><small style="color:#6B7280">Kabeltrommel (Kat. Verlängerungskabel, Name „Trommel"). 0 = kein Aufschlag.</small></div>
+          </div>
           <div class="form-group">
             <label>Pawbol-Marge (%) <span style="color:#6B7280;font-weight:400">– auf Listenpreis; beim Speichern werden alle Pawbol-Preise neu berechnet</span></label>
             <input type="number" name="pawbol_margin" value="<%= settings.pawbol_margin || '40' %>" min="0" step="1">

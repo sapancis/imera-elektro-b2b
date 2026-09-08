@@ -269,6 +269,9 @@ const defaultSettings = [
   ['shipping_info', '2-5 Werktage'],
   ['free_shipping_threshold', '1500'],
   ['pawbol_min_order', '150'],
+  // Sperrgut-Aufschlag je Gruppe (D1); 0 = noch nicht gesetzt (kein Aufschlag)
+  ['sperrgut_mast_eur', '0'],
+  ['sperrgut_trommel_eur', '0'],
   ['company_legal', 'Imera Elektro unterliegt der Regelbesteuerung · UID: ATU82785639 · Alle Preise netto zzgl. 20% MwSt.'],
   ['meta_description', 'Installationsmaterial & Schaltschrankbau direkt vom Hersteller. CE-konforme Markenprodukte, attraktive Preise für Geschäftskunden in Österreich.'],
   // Pawbol: globale Marge auf Listenpreis (netto). VK = list_price × (1 + %/100). 0 = Listenpreis direkt.

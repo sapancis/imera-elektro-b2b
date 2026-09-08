@@ -68,7 +68,7 @@ router.get('/', async (req, res) => {
     }
     const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
     const freeThreshold = parseFloat(freeThresholdRow?.value || 1500);
-    const ship = computeShipping(items, { freeThreshold });
+    const ship = await computeShipping(items, { freeThreshold, db });
     const shipping = ship.packageShipping;
     const sperrgut = ship.sperrgut;
     const net = subtotal + shipping + sperrgut;
@@ -140,7 +140,7 @@ router.post('/bestellung', async (req, res) => {
 
     const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
     const freeThreshold = parseFloat(freeThresholdRow?.value || 1500);
-    const ship = computeShipping(items, { freeThreshold });
+    const ship = await computeShipping(items, { freeThreshold, db });
     // Sperrgut-Aufschlag wird in die gespeicherten Versandkosten eingerechnet (immer berechnet)
     const shipping = parseFloat((ship.packageShipping + ship.sperrgut).toFixed(2));
     const { discount, coupon } = await applyCoupon(coupon_code, subtotal, req.session.userId || null);

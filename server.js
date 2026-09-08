@@ -524,6 +524,9 @@ app.use((err, req, res, next) => {
     try { await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_min_order','150') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
     // Sperrgut-Aufschlag-Spalte (D1) — auf Turso/alten DBs nachrüsten
     try { await db.prepare('ALTER TABLE products ADD COLUMN sperrgut_surcharge REAL DEFAULT 0').run(); } catch (_) {}
+    // Sperrgut-Aufschlagbeträge je Gruppe (D1) — als Einstellung anlegen (0 = kein Aufschlag)
+    try { await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_mast_eur','0') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
+    try { await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_trommel_eur','0') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
     // C1: Polnische Rest-Begriffe in Pawbol-Produktnamen ins Deutsche (einmalig, per Flag).
     // Produktcodes wie "/Ż" bleiben unangetastet. REPLACE ist idempotent.
     try {

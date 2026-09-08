@@ -645,7 +645,7 @@ router.post('/einstellungen', async (req, res) => {
         await db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run(key, value);
       }
     }
-    try { require('../utils/cache').del('settings_map'); } catch {}
+    try { const c = require('../utils/cache'); c.del('settings_map'); c.del('sperrgut_cfg'); } catch {}
     // Pawbol-Marge geändert → alle Pawbol-Verkaufspreise neu berechnen (VK = Listenpreis × (1+Marge))
     let extra = '';
     if (req.body.pawbol_margin !== undefined) {
