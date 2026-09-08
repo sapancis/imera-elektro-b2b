@@ -157,6 +157,34 @@ app.get('/__dbcheck', async (req, res) => {
   res.json(out);
 });
 
+// ─── GEÇİCİ: Pawbol Nettogewichte (kg) importieren ────────────────────────
+// /__pawbol-weights?token=<IMPORT_TOKEN>  → setzt products.weight_kg per SKU aus
+// scripts/pawbol-weights.json. Idempotent (UPDATE). Iş bitince silinebilir.
+app.get('/__pawbol-weights', async (req, res) => {
+  if (!process.env.IMPORT_TOKEN || req.query.token !== process.env.IMPORT_TOKEN) return res.status(403).send('forbidden');
+  try {
+    const db = require('./database/db');
+    const weights = require('./scripts/pawbol-weights.json');
+    const entries = Object.entries(weights);
+    let updated = 0;
+    const CH = 200;
+    for (let i = 0; i < entries.length; i += CH) {
+      const chunk = entries.slice(i, i + CH);
+      const stmts = chunk.map(([sku, kg]) => ({
+        sql: 'UPDATE products SET weight_kg=? WHERE sku=?',
+        args: [kg, sku],
+      }));
+      const r = await db.batch(stmts);
+      updated += chunk.length;
+      void r;
+    }
+    const withKg = await db.prepare("SELECT COUNT(*) n FROM products p JOIN brands b ON p.brand_id=b.id WHERE b.slug='pawbol' AND p.weight_kg IS NOT NULL").get();
+    res.json({ ok: true, applied: entries.length, updated, pawbol_with_weight: withKg.n });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message, code: e.code });
+  }
+});
+
 // ─── GEÇİCİ: Pawbol import (wellenweise, pasif, görselsiz) ──────────────────
 // /__pawbol?token=<IMPORT_TOKEN>            → import (aktif margin ile fiyat)
 // /__pawbol?token=...&activate=1           → tüm Pawbol ürünlerini aktive/pasife
@@ -524,6 +552,8 @@ app.use((err, req, res, next) => {
     try { await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_min_order','150') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
     // Sperrgut-Aufschlag-Spalte (D1) — auf Turso/alten DBs nachrüsten
     try { await db.prepare('ALTER TABLE products ADD COLUMN sperrgut_surcharge REAL DEFAULT 0').run(); } catch (_) {}
+    // Nettogewicht (kg, numerisch) — für gewichtsbasierten Partnerversand
+    try { await db.prepare('ALTER TABLE products ADD COLUMN weight_kg REAL').run(); } catch (_) {}
     // Sperrgut-Aufschlagbeträge je Gruppe (D1) — anlegen + einmalig Startwerte 16/25 € setzen
     try { await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_mast_eur','16') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
     try { await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_trommel_eur','25') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}

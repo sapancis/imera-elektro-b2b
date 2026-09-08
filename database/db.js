@@ -256,6 +256,9 @@ try { db.exec('ALTER TABLE products ADD COLUMN brand_id INTEGER REFERENCES brand
 // ── Sperrgut-Aufschlag (D1): fixer Versandaufschlag je Artikel, 0 = kein Sperrgut ──
 try { db.exec('ALTER TABLE products ADD COLUMN sperrgut_surcharge REAL DEFAULT 0'); } catch (_) {}
 
+// ── Nettogewicht in kg (numerisch, für gewichtsbasierten Partnerversand) ──
+try { db.exec('ALTER TABLE products ADD COLUMN weight_kg REAL'); } catch (_) {}
+
 const defaultSettings = [
   ['site_name', 'Imera Elektro'],
   ['site_tagline', 'Installationsmaterial direkt vom Hersteller'],
