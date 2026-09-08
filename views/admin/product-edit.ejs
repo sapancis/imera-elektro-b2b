@@ -130,9 +130,9 @@
               </div>
             </div>
             <div class="form-group">
-              <label>Sperrgut-Aufschlag (€ je Stück)</label>
-              <input type="number" step="0.01" min="0" name="sperrgut_surcharge" value="<%= product?.sperrgut_surcharge || '' %>" placeholder="0 = kein Sperrgut, z.B. 25">
-              <small style="color:#6B7280">Fixer Versandaufschlag je Stück; wird im Checkout immer separat berechnet (unabhängig von der Gratis-Versand-Schwelle).</small>
+              <label>Sperrgut-Aufschlag (€, manuell)</label>
+              <input type="number" step="0.01" min="0" name="sperrgut_surcharge" value="<%= product?.sperrgut_surcharge || '' %>" placeholder="0 = Regel greift">
+              <small style="color:#6B7280">Nur Einzelfall-Übersteuerung: fester Aufschlag, wird einmal je Position berechnet. Normalerweise leer lassen – Mast/Trommel laufen automatisch über die Sperrgut-Regel (Einstellungen).</small>
             </div>
           </div>
 

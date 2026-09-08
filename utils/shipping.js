@@ -32,33 +32,41 @@ async function loadSperrgutConfig(db) {
   return cfg;
 }
 
-// Aufschlag je Stück für eine Position (0 = kein Sperrgut).
-function itemSurcharge(item, cfg) {
-  if (!item || !item.product) return 0;
-  const manual = parseFloat(item.product.sperrgut_surcharge);
-  if (manual && manual > 0) return manual; // manuelle Einzel-Übersteuerung
+// Ordnet eine Position einer Sperrgut-Gruppe zu (oder null).
+function matchGroup(item, cfg) {
+  if (!item || !item.product) return null;
   const cid = item.product.category_id;
   const nm = item.product.name || '';
   for (const c of cfg) {
-    if (c.amount > 0 && c.catIds.has(cid) && c.nameIncludes.test(nm)) return c.amount;
+    if (c.amount > 0 && c.catIds.has(cid) && c.nameIncludes.test(nm)) return c;
   }
-  return 0;
+  return null;
 }
 
 /**
  * @param {Array<{product?:object, qty?:number, lineTotal?:number}>} items
  * @param {{freeThreshold?:number, db?:object}} opts  db wird für die Sperrgut-Regeln benötigt
+ *
+ * Sperrgut wird JE GRUPPE nur EINMAL berechnet (unabhängig von der Menge):
+ * ist mindestens ein Mast im Warenkorb → einmal Mast-Aufschlag; ebenso Trommel.
+ * Ein manuell gesetzter products.sperrgut_surcharge > 0 wird je Position einmal
+ * addiert (Escape-Hatch für Einzelfälle außerhalb der Regeln).
  */
 async function computeShipping(items, opts = {}) {
   const freeThreshold = opts.freeThreshold != null ? opts.freeThreshold : 1500;
   const cfg = opts.db ? await loadSperrgutConfig(opts.db) : [];
   let subtotal = 0;
-  let sperrgut = 0;
+  const groupsPresent = new Map(); // group -> amount (einmal)
+  let manualTotal = 0;
   for (const it of (items || [])) {
     subtotal += it.lineTotal || 0;
-    const sur = itemSurcharge(it, cfg);
-    if (sur > 0) sperrgut += sur * (it.qty || 1);
+    const manual = it.product ? parseFloat(it.product.sperrgut_surcharge) : 0;
+    if (manual && manual > 0) { manualTotal += manual; continue; } // manuelle Übersteuerung hat Vorrang
+    const g = matchGroup(it, cfg);
+    if (g) groupsPresent.set(g.group, g.amount);
   }
+  let sperrgut = manualTotal;
+  for (const amt of groupsPresent.values()) sperrgut += amt;
   subtotal = parseFloat(subtotal.toFixed(2));
   sperrgut = parseFloat(sperrgut.toFixed(2));
   const packageShipping = subtotal >= freeThreshold ? 0 : FLAT_PACKAGE;

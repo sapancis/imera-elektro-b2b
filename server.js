@@ -524,9 +524,19 @@ app.use((err, req, res, next) => {
     try { await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_min_order','150') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
     // Sperrgut-Aufschlag-Spalte (D1) — auf Turso/alten DBs nachrüsten
     try { await db.prepare('ALTER TABLE products ADD COLUMN sperrgut_surcharge REAL DEFAULT 0').run(); } catch (_) {}
-    // Sperrgut-Aufschlagbeträge je Gruppe (D1) — als Einstellung anlegen (0 = kein Aufschlag)
-    try { await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_mast_eur','0') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
-    try { await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_trommel_eur','0') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
+    // Sperrgut-Aufschlagbeträge je Gruppe (D1) — anlegen + einmalig Startwerte 16/25 € setzen
+    try { await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_mast_eur','16') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
+    try { await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_trommel_eur','25') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
+    try {
+      const initDone = await db.prepare("SELECT value FROM settings WHERE key='sperrgut_amounts_init'").get();
+      if (!initDone || initDone.value !== '1') {
+        // Startwerte nur setzen, wenn noch der neutrale 0-Wert dasteht (Admin-Änderungen bleiben)
+        await db.prepare("UPDATE settings SET value='16' WHERE key='sperrgut_mast_eur' AND value='0'").run();
+        await db.prepare("UPDATE settings SET value='25' WHERE key='sperrgut_trommel_eur' AND value='0'").run();
+        await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_amounts_init','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
+        try { const c = require('./utils/cache'); c.del('sperrgut_cfg'); } catch (_) {}
+      }
+    } catch (_) {}
     // C1: Polnische Rest-Begriffe in Pawbol-Produktnamen ins Deutsche (einmalig, per Flag).
     // Produktcodes wie "/Ż" bleiben unangetastet. REPLACE ist idempotent.
     try {
