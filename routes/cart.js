@@ -63,13 +63,18 @@ router.get('/', async (req, res) => {
     const ship = await computeShipping(items, { freeThreshold: freeShippingThreshold, db });
     const shipping = ship.packageShipping;
     const sperrgut = ship.sperrgut;
-    const net = subtotal + shipping + sperrgut;
+    const net = subtotal + shipping + sperrgut + ship.pawbolShipping;
     const tax = parseFloat((net * 0.20).toFixed(2));
     const total = parseFloat((net + tax).toFixed(2));
 
     const pawbol = await checkPawbolMin(items);
 
-    res.render('cart', { title: 'Warenkorb', items, subtotal, shipping, sperrgut, tax, total, freeShippingThreshold, ...pawbol });
+    res.render('cart', {
+      title: 'Warenkorb', items, subtotal, shipping, sperrgut, tax, total, freeShippingThreshold,
+      pawbolShipping: ship.pawbolShipping, pawbolAufAnfrage: ship.pawbolAufAnfrage,
+      partnerManualBrands: ship.partnerManualBrands, shipAufAnfrage: ship.aufAnfrage,
+      ...pawbol,
+    });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 

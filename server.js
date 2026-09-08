@@ -564,7 +564,7 @@ app.use((err, req, res, next) => {
         await db.prepare("UPDATE settings SET value='16' WHERE key='sperrgut_mast_eur' AND value='0'").run();
         await db.prepare("UPDATE settings SET value='25' WHERE key='sperrgut_trommel_eur' AND value='0'").run();
         await db.prepare("INSERT INTO settings (key, value) VALUES ('sperrgut_amounts_init','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
-        try { const c = require('./utils/cache'); c.del('sperrgut_cfg'); } catch (_) {}
+        try { const c = require('./utils/cache'); c.del('shipping_cfg'); } catch (_) {}
       }
     } catch (_) {}
     // C1: Polnische Rest-Begriffe in Pawbol-Produktnamen ins Deutsche (einmalig, per Flag).

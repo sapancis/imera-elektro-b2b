@@ -87,6 +87,16 @@
         <div class="summary-row"><span>Sperrgut-Zuschlag</span><span><%= formatEuro(sperrgut) %></span></div>
         <div class="shipping-hint" style="margin-top:-4px">Wird bei sperrigen Artikeln immer separat berechnet (nicht im Gratis-Versand enthalten).</div>
         <% } %>
+        <% if (locals.pawbolShipping && pawbolShipping > 0) { %>
+        <div class="summary-row"><span>Pawbol-Versand (Direktversand)</span><span><%= formatEuro(pawbolShipping) %></span></div>
+        <% } %>
+        <% if (locals.shipAufAnfrage) { %>
+        <div class="cart-pawbol-warn" style="background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF">
+          <strong>ℹ Partnerversand auf Anfrage</strong>
+          <p>Für folgende Position(en) werden die Versandkosten separat mitgeteilt:
+          <%= [ (pawbolAufAnfrage ? 'Pawbol (über 40 kg)' : null), ...(partnerManualBrands||[]) ].filter(Boolean).join(', ') %>.</p>
+        </div>
+        <% } %>
         <div class="summary-row"><span>zzgl. 20% MwSt.</span><span><%= formatEuro(tax) %></span></div>
         <div class="summary-total"><span>Gesamt (inkl. MwSt.)</span><span><%= formatEuro(total) %></span></div>
         <div class="summary-vat">Preise netto; inkl. 20% MwSt.</div>

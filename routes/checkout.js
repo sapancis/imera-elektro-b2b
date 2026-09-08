@@ -71,14 +71,18 @@ router.get('/', async (req, res) => {
     const ship = await computeShipping(items, { freeThreshold, db });
     const shipping = ship.packageShipping;
     const sperrgut = ship.sperrgut;
-    const net = subtotal + shipping + sperrgut;
+    const net = subtotal + shipping + sperrgut + ship.pawbolShipping;
     const tax = vatAmount(net);
     const gross = grossAmount(net);
     const user = req.session.userId ? await db.prepare('SELECT * FROM users WHERE id=?').get(req.session.userId) : null;
     const isStammkunde = user?.stammkunde === 1;
     const stripeKeyRow = await db.prepare("SELECT value FROM settings WHERE key='stripe_publishable_key'").get();
     const stripeKey = stripeKeyRow?.value || '';
-    res.render('checkout', { title: 'Kasse', items, subtotal, shipping, sperrgut, net, tax, gross, user, stripeKey, isStammkunde });
+    res.render('checkout', {
+      title: 'Kasse', items, subtotal, shipping, sperrgut, net, tax, gross, user, stripeKey, isStammkunde,
+      pawbolShipping: ship.pawbolShipping, pawbolAufAnfrage: ship.pawbolAufAnfrage,
+      partnerManualBrands: ship.partnerManualBrands, shipAufAnfrage: ship.aufAnfrage,
+    });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
@@ -141,8 +145,17 @@ router.post('/bestellung', async (req, res) => {
     const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
     const freeThreshold = parseFloat(freeThresholdRow?.value || 1500);
     const ship = await computeShipping(items, { freeThreshold, db });
-    // Sperrgut-Aufschlag wird in die gespeicherten Versandkosten eingerechnet (immer berechnet)
-    const shipping = parseFloat((ship.packageShipping + ship.sperrgut).toFixed(2));
+    // Sperrgut + Pawbol-Partnerversand fließen in die gespeicherten Versandkosten ein.
+    const shipping = parseFloat((ship.packageShipping + ship.sperrgut + ship.pawbolShipping).toFixed(2));
+    // Auf-Anfrage-Positionen sind NICHT im Betrag → als Hinweis in die Bestellnotiz.
+    const anfrageParts = [];
+    if (ship.pawbolAufAnfrage) anfrageParts.push('Pawbol-Versand (Gewicht > 40 kg oder unbekannt)');
+    for (const b of (ship.partnerManualBrands || [])) anfrageParts.push(`${b}-Versand`);
+    let notesFinal = notes || null;
+    if (anfrageParts.length) {
+      const hint = `⚠ Versandkosten auf Anfrage für: ${anfrageParts.join(', ')} – wird separat mitgeteilt.`;
+      notesFinal = notesFinal ? `${notesFinal}\n${hint}` : hint;
+    }
     const { discount, coupon } = await applyCoupon(coupon_code, subtotal, req.session.userId || null);
     const total = Math.max(0, subtotal + shipping - discount);
     const orderNumber = 'IE-' + Date.now();
@@ -152,7 +165,7 @@ router.post('/bestellung', async (req, res) => {
       INSERT INTO orders (order_number, user_id, guest_email, guest_name, guest_company, payment_method, subtotal, shipping, total, notes, shipping_address)
       VALUES (?,?,?,?,?,?,?,?,?,?,?)
     `).run(orderNumber, userId, userId ? null : email, userId ? null : name, userId ? null : company,
-      payment_method || 'transfer', subtotal, shipping, total, notes || null, address);
+      payment_method || 'transfer', subtotal, shipping, total, notesFinal, address);
 
     const orderId = r.lastInsertRowid;
 

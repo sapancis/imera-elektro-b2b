@@ -111,6 +111,12 @@
         <% if (locals.sperrgut && sperrgut > 0) { %>
         <div class="summary-row"><span>Sperrgut-Zuschlag</span><span><%= formatEuro(sperrgut) %></span></div>
         <% } %>
+        <% if (locals.pawbolShipping && pawbolShipping > 0) { %>
+        <div class="summary-row"><span>Pawbol-Versand (Direktversand)</span><span><%= formatEuro(pawbolShipping) %></span></div>
+        <% } %>
+        <% if (locals.shipAufAnfrage) { %>
+        <div class="summary-row" style="color:#1E40AF;font-size:12.5px"><span>Partnerversand auf Anfrage</span><span><%= [ (pawbolAufAnfrage ? 'Pawbol >40kg' : null), ...(partnerManualBrands||[]) ].filter(Boolean).join(', ') %></span></div>
+        <% } %>
         <div class="summary-row" id="discountRow" style="display:none;color:#10B981"><span>Rabatt (<span id="discountLabel"></span>)</span><span id="discountAmt"></span></div>
         <div class="summary-row"><span>zzgl. <%= vatPercent %>% MwSt.</span><span id="taxDisplay"><%= formatEuro(tax) %></span></div>
         <div class="summary-total"><span>Gesamt (inkl. MwSt.)</span><span id="totalDisplay"><%= formatEuro(gross) %></span></div>
@@ -156,7 +162,7 @@ document.getElementById('couponApply')?.addEventListener('click', () => {
       document.getElementById('discountRow').style.display = 'flex';
       document.getElementById('discountLabel').textContent = d.type === 'percent' ? d.value + '%' : d.value.toFixed(2) + '€';
       document.getElementById('discountAmt').textContent = '-' + d.discount.toFixed(2).replace('.', ',') + '€';
-      const newNet = Math.max(0, subtotal + <%= shipping %> + <%= locals.sperrgut || 0 %> - d.discount);
+      const newNet = Math.max(0, subtotal + <%= shipping %> + <%= locals.sperrgut || 0 %> + <%= locals.pawbolShipping || 0 %> - d.discount);
       const newTax = Math.round(newNet * <%= VAT_RATE %> * 100) / 100;
       const newGross = Math.round((newNet + newTax) * 100) / 100;
       document.getElementById('taxDisplay').textContent = newTax.toFixed(2).replace('.', ',') + '€';
