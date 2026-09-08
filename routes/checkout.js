@@ -4,6 +4,9 @@ const db = require('../database/db');
 const { flash } = require('../middleware/auth');
 const { VAT_RATE, vatAmount, grossAmount } = require('../utils/vat');
 const { sendOrderConfirmation, sendAdminOrderNotification } = require('../utils/mailer');
+const { checkPawbolMin } = require('../utils/pawbol');
+
+const euro = (n) => Number(n).toLocaleString('de-AT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '€';
 
 async function calcItemPrice(productId, qty) {
   const tier = await db.prepare(`
@@ -56,8 +59,14 @@ router.get('/', async (req, res) => {
     const cart = req.session.cart || {};
     if (!Object.keys(cart).length) return res.redirect('/warenkorb');
     const { items, subtotal } = await buildOrderItems(cart);
+    // Pawbol-Mindestbestellwert unterschritten → zurück zum Warenkorb (Kasse gesperrt)
+    const pawbolChk = await checkPawbolMin(items);
+    if (pawbolChk.pawbolBlocked) {
+      flash(req, 'error', `Für Pawbol-Artikel gilt ein Mindestbestellwert von ${euro(pawbolChk.pawbolMin)} (netto). Ihr Pawbol-Warenwert beträgt ${euro(pawbolChk.pawbolSubtotal)} – es fehlen noch ${euro(pawbolChk.pawbolShortfall)}.`);
+      return res.redirect('/warenkorb');
+    }
     const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
-    const freeThreshold = parseFloat(freeThresholdRow?.value || 200);
+    const freeThreshold = parseFloat(freeThresholdRow?.value || 1500);
     const shipping = subtotal >= freeThreshold ? 0 : 7.90;
     const net = subtotal + shipping;
     const tax = vatAmount(net);
@@ -119,8 +128,15 @@ router.post('/bestellung', async (req, res) => {
       return res.redirect('/warenkorb');
     }
 
+    // ── Pawbol-Mindestbestellwert (netto) — harte Sperre vor Bestellanlage ──
+    const pawbolChk = await checkPawbolMin(items);
+    if (pawbolChk.pawbolBlocked) {
+      flash(req, 'error', `Für Pawbol-Artikel gilt ein Mindestbestellwert von ${euro(pawbolChk.pawbolMin)} (netto). Ihr Pawbol-Warenwert beträgt ${euro(pawbolChk.pawbolSubtotal)} – es fehlen noch ${euro(pawbolChk.pawbolShortfall)}.`);
+      return res.redirect('/warenkorb');
+    }
+
     const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
-    const freeThreshold = parseFloat(freeThresholdRow?.value || 200);
+    const freeThreshold = parseFloat(freeThresholdRow?.value || 1500);
     const shipping = subtotal >= freeThreshold ? 0 : 7.90;
     const { discount, coupon } = await applyCoupon(coupon_code, subtotal, req.session.userId || null);
     const total = Math.max(0, subtotal + shipping - discount);
@@ -177,7 +193,7 @@ router.post('/stripe-session', async (req, res) => {
     if (!Object.keys(cart).length) return res.json({ ok: false, message: 'Warenkorb ist leer.' });
     const { items, subtotal } = await buildOrderItems(cart);
     const freeThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
-    const freeThreshold = parseFloat(freeThresholdRow?.value || 200);
+    const freeThreshold = parseFloat(freeThresholdRow?.value || 1500);
     const shipping = subtotal >= freeThreshold ? 0 : 7.90;
 
     const lineItems = items.map(item => ({

@@ -496,6 +496,15 @@ app.use((err, req, res, next) => {
         "WHERE key='company_legal' AND value LIKE '%Kleinunternehmer%'"
       ).run();
     } catch (_) {}
+    // Kostenloser Versand: Schwelle 200 € → 1500 € (nur wenn noch alter Standard 200,
+    // damit spätere Admin-Änderungen erhalten bleiben). Zeile existiert ggf. noch nicht → anlegen.
+    try {
+      await db.prepare("INSERT INTO settings (key, value) VALUES ('free_shipping_threshold','1500') ON CONFLICT(key) DO NOTHING").run();
+      await db.prepare("UPDATE settings SET value='1500' WHERE key='free_shipping_threshold' AND value='200'").run();
+      try { require('./utils/cache').del('settings_map'); } catch (_) {}
+    } catch (_) {}
+    // Pawbol: Mindestbestellwert je Marke (E: 150 € netto) — als Einstellung hinterlegen
+    try { await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_min_order','150') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
   } catch (e) { console.error('Schema Migration:', e.message); }
 })();
 

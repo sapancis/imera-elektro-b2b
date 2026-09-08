@@ -86,7 +86,15 @@
         <div class="summary-row"><span>zzgl. 20% MwSt.</span><span><%= formatEuro(tax) %></span></div>
         <div class="summary-total"><span>Gesamt (inkl. MwSt.)</span><span><%= formatEuro(total) %></span></div>
         <div class="summary-vat">Preise netto; inkl. 20% MwSt.</div>
+        <% if (locals.pawbolBlocked) { %>
+        <div class="cart-pawbol-warn">
+          <strong>⚠ Mindestbestellwert Pawbol nicht erreicht</strong>
+          <p>Für Pawbol-Artikel gilt ein Mindestbestellwert von <%= formatEuro(pawbolMin) %> (netto). Ihr Pawbol-Warenwert: <strong><%= formatEuro(pawbolSubtotal) %></strong> — es fehlen noch <strong><%= formatEuro(pawbolShortfall) %></strong>.</p>
+        </div>
+        <span class="btn-green btn-full btn-disabled" aria-disabled="true" title="Pawbol-Mindestbestellwert nicht erreicht">Zur Kasse →</span>
+        <% } else { %>
         <a href="/kasse" class="btn-green btn-full">Zur Kasse →</a>
+        <% } %>
         <div class="payment-icons">
           <span>💳 Überweisung</span><span>📄 Auf Rechnung</span>
         </div>

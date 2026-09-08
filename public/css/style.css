@@ -82,6 +82,10 @@ img { max-width: 100%; display: block; }
 .btn-lg { padding: 15px 36px; font-size: 17px; }
 .btn-full { width: 100%; display: block; text-align: center; }
 .btn-disabled, button:disabled { opacity: 0.4; cursor: not-allowed; }
+a.btn-disabled, span.btn-disabled { pointer-events: none; display: inline-block; text-align: center; }
+.cart-pawbol-warn { background: #FEF3C7; border: 1px solid #FCD34D; color: #92400E; border-radius: var(--radius); padding: 10px 12px; margin: 0.75rem 0; font-size: 13px; line-height: 1.5; }
+.cart-pawbol-warn strong { color: #92400E; }
+.cart-pawbol-warn p { margin: 4px 0 0; }
 .btn-primary.btn-sm { background: var(--black); color: white; border-color: var(--black); }
 
 /* ─── Hero ───────────────────────────────────────────────────────────────── */
