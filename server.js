@@ -109,6 +109,20 @@ app.locals.orderStatusClass = (s) => ({ pending: 'warning', processing: 'info', 
 try { app.locals.mainInlineJs = require('fs').readFileSync(path.join(__dirname, 'public/js/main.js'), 'utf8'); }
 catch (_) { app.locals.mainInlineJs = ''; }
 app.locals.savings = (our, mktMax) => mktMax > our ? Math.round((1 - our / mktMax) * 100) : 0;
+// Liefer-Badge (A2): Partnerware (Tracon/Karlik/Pawbol) = ca. 1 Woche,
+// sonst Lagerware = 1–2 Werktage. Ist ein Artikel nicht auf Lager (stock<=0),
+// gibt die vorhandene "Ausverkauft"-Anzeige die Info → hier kein Badge.
+const PARTNER_BRANDS = new Set(['tracon', 'karlik', 'pawbol']);
+app.locals.lieferBadge = (brandSlug, stock) => {
+  // Partnerware: Verfügbarkeit hängt am Partner, nicht am eigenen Lagerbestand → immer 1 Woche
+  if (brandSlug && PARTNER_BRANDS.has(String(brandSlug).toLowerCase())) {
+    return { text: 'Partnerware · Lieferung ca. 1 Woche', cls: 'lb-partner' };
+  }
+  // Lagerware: nur bei vorhandenem Bestand ein Lieferversprechen; sonst zeigt die
+  // vorhandene "Ausverkauft/Nicht auf Lager"-Anzeige den Status (Q4).
+  if (typeof stock === 'number' && stock <= 0) return null;
+  return { text: 'Auf Lager · Lieferung 1–2 Werktage', cls: 'lb-lager' };
+};
 // Farb-Swatch: deutscher Farbname -> Hex (Fallback grau)
 const COLOR_HEX = {
   'Weiß':'#F5F5F0','Mattweiß':'#EDEDE8','Beige':'#D8C7A8','Creme':'#EFE6CE',
