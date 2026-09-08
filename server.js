@@ -522,6 +522,33 @@ app.use((err, req, res, next) => {
     } catch (_) {}
     // Pawbol: Mindestbestellwert je Marke (E: 150 € netto) — als Einstellung hinterlegen
     try { await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_min_order','150') ON CONFLICT(key) DO NOTHING").run(); } catch (_) {}
+    // C1: Polnische Rest-Begriffe in Pawbol-Produktnamen ins Deutsche (einmalig, per Flag).
+    // Produktcodes wie "/Ż" bleiben unangetastet. REPLACE ist idempotent.
+    try {
+      const done = await db.prepare("SELECT value FROM settings WHERE key='pawbol_names_de'").get();
+      if (!done || done.value !== '1') {
+        const pb = await db.prepare("SELECT id FROM brands WHERE slug='pawbol'").get();
+        if (pb) {
+          const repl = [
+            ['torowa', 'polig'],          // 12-torowa -> 12-polig
+            ['BIAŁE', 'weiß'],
+            ['czerwony', 'rot'],
+            ['zielony', 'grün'],
+            ['niebiesko', 'blau'],        // "niebiesko - gelb" -> "blau - gelb"
+            ['sześciokątny', 'sechskantig'],
+            ['krążek', 'Ring'],           // krążek 25kg -> Ring 25kg
+            ['z aufkrętką', 'mit Mutter'],
+          ];
+          for (const [from, to] of repl) {
+            try {
+              await db.prepare('UPDATE products SET name=REPLACE(name, ?, ?) WHERE brand_id=? AND name LIKE ?')
+                .run(from, to, pb.id, '%' + from + '%');
+            } catch (_) {}
+          }
+        }
+        await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_names_de','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
+      }
+    } catch (_) {}
   } catch (e) { console.error('Schema Migration:', e.message); }
 })();
 
