@@ -83,6 +83,10 @@
           <div class="shipping-bar"><div class="shipping-bar-fill" style="width:<%= Math.min(100, subtotal/freeShippingThreshold*100) %>%"></div></div>
         </div>
         <% } %>
+        <% if (locals.sperrgut && sperrgut > 0) { %>
+        <div class="summary-row"><span>Sperrgut-Zuschlag</span><span><%= formatEuro(sperrgut) %></span></div>
+        <div class="shipping-hint" style="margin-top:-4px">Wird bei sperrigen Artikeln immer separat berechnet (nicht im Gratis-Versand enthalten).</div>
+        <% } %>
         <div class="summary-row"><span>zzgl. 20% MwSt.</span><span><%= formatEuro(tax) %></span></div>
         <div class="summary-total"><span>Gesamt (inkl. MwSt.)</span><span><%= formatEuro(total) %></span></div>
         <div class="summary-vat">Preise netto; inkl. 20% MwSt.</div>

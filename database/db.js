@@ -253,6 +253,9 @@ try { db.exec('ALTER TABLE order_items ADD COLUMN pack_size INTEGER DEFAULT 1');
 // ── Marka kolonu (eski DB'lerde yoksa ekle) ──
 try { db.exec('ALTER TABLE products ADD COLUMN brand_id INTEGER REFERENCES brands(id)'); } catch (_) {}
 
+// ── Sperrgut-Aufschlag (D1): fixer Versandaufschlag je Artikel, 0 = kein Sperrgut ──
+try { db.exec('ALTER TABLE products ADD COLUMN sperrgut_surcharge REAL DEFAULT 0'); } catch (_) {}
+
 const defaultSettings = [
   ['site_name', 'Imera Elektro'],
   ['site_tagline', 'Installationsmaterial direkt vom Hersteller'],

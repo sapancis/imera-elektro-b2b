@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
 const { checkPawbolMin } = require('../utils/pawbol');
+const { computeShipping } = require('../utils/shipping');
 const crypto = require('crypto');
 const multer = require('multer');
 const csvUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 1024 * 1024 } });
@@ -59,14 +60,16 @@ router.get('/', async (req, res) => {
 
     const freeShippingThresholdRow = await db.prepare("SELECT value FROM settings WHERE key='free_shipping_threshold'").get();
     const freeShippingThreshold = parseFloat(freeShippingThresholdRow?.value || 1500);
-    const shipping = subtotal >= freeShippingThreshold ? 0 : 7.90;
-    const net = subtotal + shipping;
+    const ship = computeShipping(items, { freeThreshold: freeShippingThreshold });
+    const shipping = ship.packageShipping;
+    const sperrgut = ship.sperrgut;
+    const net = subtotal + shipping + sperrgut;
     const tax = parseFloat((net * 0.20).toFixed(2));
     const total = parseFloat((net + tax).toFixed(2));
 
     const pawbol = await checkPawbolMin(items);
 
-    res.render('cart', { title: 'Warenkorb', items, subtotal, shipping, tax, total, freeShippingThreshold, ...pawbol });
+    res.render('cart', { title: 'Warenkorb', items, subtotal, shipping, sperrgut, tax, total, freeShippingThreshold, ...pawbol });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 

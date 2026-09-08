@@ -129,6 +129,11 @@
                 <input type="text" name="dimensions" value="<%= product?.dimensions || '' %>" placeholder="z.B. 30 × 20 × 10 cm">
               </div>
             </div>
+            <div class="form-group">
+              <label>Sperrgut-Aufschlag (€ je Stück)</label>
+              <input type="number" step="0.01" min="0" name="sperrgut_surcharge" value="<%= product?.sperrgut_surcharge || '' %>" placeholder="0 = kein Sperrgut, z.B. 25">
+              <small style="color:#6B7280">Fixer Versandaufschlag je Stück; wird im Checkout immer separat berechnet (unabhängig von der Gratis-Versand-Schwelle).</small>
+            </div>
           </div>
 
           <!-- 4. Preise -->
