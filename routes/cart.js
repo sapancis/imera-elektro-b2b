@@ -28,7 +28,8 @@ router.get('/', async (req, res) => {
     for (const [key, qty] of Object.entries(cart)) {
       if (String(key).startsWith('v')) {
         // Farbvariante
-        const v = await db.prepare(`SELECT pv.*, p.name as pname, p.slug as pslug
+        const v = await db.prepare(`SELECT pv.*, p.name as pname, p.slug as pslug,
+            p.brand_id as pbrand, p.category_id as pcat, p.weight_kg as pweight, p.sperrgut_surcharge as psperr
           FROM product_variants pv JOIN products p ON p.id=pv.product_id
           WHERE pv.id=? AND pv.active=1 AND p.active=1`).get(parseInt(String(key).slice(1)));
         if (!v) { staleKeys.push(key); continue; }
@@ -36,7 +37,9 @@ router.get('/', async (req, res) => {
         const lineTotal = unitPrice * qty;
         subtotal += lineTotal;
         items.push({
-          product: { id: v.product_id, name: v.pname, slug: v.pslug, image: v.image, sku: v.sku, stock: 999 },
+          // brand_id/category_id/weight_kg/sperrgut_surcharge werden für die Versandlogik benötigt
+          product: { id: v.product_id, name: v.pname, slug: v.pslug, image: v.image, sku: v.sku, stock: 999,
+            brand_id: v.pbrand, category_id: v.pcat, weight_kg: v.pweight, sperrgut_surcharge: v.psperr },
           variantColor: v.color, cartKey: key, qty, unitPrice, lineTotal, tiers: [], nextTier: null,
         });
         continue;

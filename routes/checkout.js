@@ -23,12 +23,15 @@ async function buildOrderItems(cart) {
   let subtotal = 0;
   for (const [key, qty] of Object.entries(cart)) {
     if (String(key).startsWith('v')) {
-      const v = await db.prepare(`SELECT pv.*, p.name as pname FROM product_variants pv
+      const v = await db.prepare(`SELECT pv.*, p.name as pname,
+          p.brand_id as pbrand, p.category_id as pcat, p.weight_kg as pweight, p.sperrgut_surcharge as psperr
+        FROM product_variants pv
         JOIN products p ON p.id=pv.product_id WHERE pv.id=? AND pv.active=1 AND p.active=1`).get(parseInt(String(key).slice(1)));
       if (!v) continue;
       subtotal += v.price * qty;
       items.push({
-        product: { id: v.product_id, name: `${v.pname} – ${v.color}`, sku: v.sku, sell_as_pack: 0, pack_size: 1 },
+        product: { id: v.product_id, name: `${v.pname} – ${v.color}`, sku: v.sku, sell_as_pack: 0, pack_size: 1,
+          brand_id: v.pbrand, category_id: v.pcat, weight_kg: v.pweight, sperrgut_surcharge: v.psperr },
         qty, unitPrice: v.price, lineTotal: v.price * qty, isVariant: true,
       });
       continue;
