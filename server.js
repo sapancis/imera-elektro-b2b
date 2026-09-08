@@ -123,6 +123,9 @@ app.locals.lieferBadge = (brandSlug, stock) => {
   if (typeof stock === 'number' && stock <= 0) return null;
   return { text: 'Auf Lager · Lieferung 1–2 Werktage', cls: 'lb-lager' };
 };
+// A5: Partnerware wird direkt vom Hersteller (EU) an den Kunden versendet,
+// nicht aus dem AT-Lager → Herkunftsangabe markenabhängig.
+app.locals.isPartnerBrand = (brandSlug) => !!(brandSlug && PARTNER_BRANDS.has(String(brandSlug).toLowerCase()));
 // Farb-Swatch: deutscher Farbname -> Hex (Fallback grau)
 const COLOR_HEX = {
   'Weiß':'#F5F5F0','Mattweiß':'#EDEDE8','Beige':'#D8C7A8','Creme':'#EFE6CE',

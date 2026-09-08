@@ -170,7 +170,7 @@
         </div>
 
         <div class="trust-row">
-          <div class="trust-item"><span>✓</span><small>CE-zertifiziert</small></div>
+          <div class="trust-item"><span>✓</span><small>CE-konform</small></div>
           <div class="trust-item"><span>🚚</span><small><%= product.delivery_time || '2–5 Tage Lieferzeit' %></small></div>
           <div class="trust-item"><span>↩</span><small>14 Tage Rückgabe</small></div>
           <% if (product.weight) { %><div class="trust-item"><span>⚖</span><small><%= product.weight %></small></div><% } %>
@@ -210,9 +210,13 @@
               <h3>Warum bei uns kaufen?</h3>
               <ul class="why-list">
                 <li>✓ Direktimport vom Hersteller</li>
-                <li>✓ 40-60% günstiger als Markt</li>
-                <li>✓ CE-zertifizierte Qualität</li>
-                <li>✓ Schnelle Lieferung aus AT</li>
+                <li>✓ Attraktive Preise für Geschäftskunden</li>
+                <li>✓ CE-konforme Markenprodukte</li>
+                <% if (isPartnerBrand(product.brand_slug)) { %>
+                <li>✓ Direktversand vom Hersteller (EU-weit)</li>
+                <% } else { %>
+                <li>✓ Schnelle Lieferung aus Österreich</li>
+                <% } %>
                 <li>✓ Persönlicher Support</li>
               </ul>
             </div>
@@ -252,10 +256,10 @@
       <div class="tab-content" id="tab-why" style="display:none">
         <div class="why-content">
           <h2>Direktimport = Ihr Vorteil</h2>
-          <p>Durch unseren direkten Import von CE-zertifizierten Herstellern sparen wir Zwischenhändlermargen ein und geben die Ersparnis vollständig an Sie weiter. Gleiche Qualität, deutlich bessere Preise.</p>
+          <p>Durch den direkten Import von unseren Herstellerpartnern kalkulieren wir schlank und geben den Vorteil an Sie weiter. Gleiche Qualität, faire Preise.</p>
           <div class="comparison-logos">
-            <div><strong>Direkt vom Hersteller:</strong> ohne Zwischenhändler</div>
-            <div><strong>Ihr Vorteil:</strong> 40–60% günstiger als der übliche Großhandel</div>
+            <div><strong>Direkt vom Hersteller:</strong> kurze Lieferkette</div>
+            <div><strong>Ihr Vorteil:</strong> attraktive Preise für Geschäftskunden</div>
           </div>
         </div>
       </div>
