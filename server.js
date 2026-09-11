@@ -609,6 +609,26 @@ app.use((err, req, res, next) => {
         await db.prepare("INSERT INTO settings (key, value) VALUES ('karlik_mini_activated','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
       }
     } catch (_) {}
+    // Karlik: englische Produktnamen ins Deutsche (SKU-basiert aus scripts/karlik-names-de.json).
+    // NUR Umbenennung, KEINE Aktivierung. Einmalig per Flag, in Batches.
+    try {
+      const done = await db.prepare("SELECT value FROM settings WHERE key='karlik_names_de'").get();
+      if (!done || done.value !== '1') {
+        let names = {};
+        try { names = require('./scripts/karlik-names-de.json'); } catch (_) {}
+        const entries = Object.entries(names);
+        for (let i = 0; i < entries.length; i += 100) {
+          const chunk = entries.slice(i, i + 100);
+          try {
+            await db.batch(chunk.map(([sku, name]) => ({
+              sql: 'UPDATE products SET name=? WHERE sku=? AND brand_id=(SELECT id FROM brands WHERE slug=?)',
+              args: [name, sku, 'karlik'],
+            })));
+          } catch (_) {}
+        }
+        await db.prepare("INSERT INTO settings (key, value) VALUES ('karlik_names_de','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
+      }
+    } catch (_) {}
   } catch (e) { console.error('Schema Migration:', e.message); }
 })();
 
