@@ -594,6 +594,21 @@ app.use((err, req, res, next) => {
         await db.prepare("INSERT INTO settings (key, value) VALUES ('pawbol_names_de','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
       }
     } catch (_) {}
+    // Karlik MINI-Serie (5 Top-Farben, Kundennachfrage): englische Namen ins Deutsche
+    // + aktivieren. Einmalig per Flag; Varianten (Farben) sind bereits aktiv.
+    try {
+      const done = await db.prepare("SELECT value FROM settings WHERE key='karlik_mini_activated'").get();
+      if (!done || done.value !== '1') {
+        const mini = [
+          ['DPU-1-MINI', 'MINI Aufputzgehäuse, 1-fach, „C"-Element'],
+          ['DPU-2-MINI', 'MINI Aufputzgehäuse für Mehrfachrahmen, „H"-Modul'],
+        ];
+        for (const [sku, name] of mini) {
+          try { await db.prepare("UPDATE products SET name=?, active=1 WHERE sku=?").run(name, sku); } catch (_) {}
+        }
+        await db.prepare("INSERT INTO settings (key, value) VALUES ('karlik_mini_activated','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
+      }
+    } catch (_) {}
   } catch (e) { console.error('Schema Migration:', e.message); }
 })();
 
