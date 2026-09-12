@@ -157,6 +157,21 @@ app.get('/__dbcheck', async (req, res) => {
   res.json(out);
 });
 
+// ─── GEÇİCİ: Alle Produkte MIT Bild aktivieren (bildlose bleiben inaktiv) ──
+// /__activate-imaged?token=<IMPORT_TOKEN>  → active=1 für alle Produkte mit Marke
+// UND Bild (schließt bildlose Pawbol (806) + markenlose bewusst aus).
+app.get('/__activate-imaged', async (req, res) => {
+  if (!process.env.IMPORT_TOKEN || req.query.token !== process.env.IMPORT_TOKEN) return res.status(403).send('forbidden');
+  try {
+    const db = require('./database/db');
+    const r = await db.prepare("UPDATE products SET active=1 WHERE active=0 AND brand_id IS NOT NULL AND image IS NOT NULL AND image!=''").run();
+    const byBrand = await db.prepare("SELECT b.name, COUNT(*) n FROM products p JOIN brands b ON p.brand_id=b.id WHERE p.active=1 GROUP BY b.id ORDER BY n DESC").all();
+    res.json({ ok: true, activated: r.changes || 0, active_by_brand: byBrand });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message, code: e.code });
+  }
+});
+
 // ─── GEÇİCİ: Pawbol Nettogewichte (kg) importieren ────────────────────────
 // /__pawbol-weights?token=<IMPORT_TOKEN>  → setzt products.weight_kg per SKU aus
 // scripts/pawbol-weights.json. Idempotent (UPDATE). Iş bitince silinebilir.
