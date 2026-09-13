@@ -4,7 +4,19 @@ const db = require('../database/db');
 const { flash } = require('../middleware/auth');
 const { sendContactNotification } = require('../utils/mailer');
 
-router.get('/ueber-uns', (req, res) => res.render('pages/about', { title: 'Über uns' }));
+router.get('/ueber-uns', async (req, res) => {
+  let brands = [];
+  try {
+    brands = await db.prepare(`
+      SELECT b.name, b.slug, b.logo
+      FROM brands b
+      WHERE b.active=1
+        AND EXISTS (SELECT 1 FROM products p WHERE p.brand_id=b.id AND p.active=1)
+      ORDER BY b.sort_order, b.name
+    `).all();
+  } catch (_) {}
+  res.render('pages/about', { title: 'Über uns', brands });
+});
 router.get('/faq', (req, res) => res.render('pages/faq', { title: 'FAQ' }));
 router.get('/impressum', (req, res) => res.render('pages/impressum', { title: 'Impressum' }));
 router.get('/agb', (req, res) => res.render('pages/agb', { title: 'AGB' }));

@@ -11,6 +11,8 @@
   h1 { font-size: 26px !important; }
   h2 { font-size: 20px !important; }
 }
+.about-brands { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border, #E5E7EB); }
+.about-brands h2 { margin-bottom: 0.5rem; }
 </style>
 <main>
   <div class="container page-content">
@@ -76,6 +78,21 @@
         </div>
       </div>
     </div>
+
+    <% if (locals.brands && brands.length) { %>
+    <section class="about-brands">
+      <h2>Unsere Partnermarken</h2>
+      <p style="color:var(--text-muted);max-width:640px">Wir arbeiten direkt mit ausgewählten Herstellern zusammen. Entdecken Sie das Sortiment je Marke:</p>
+      <div class="brand-logo-grid" style="margin-top:1rem">
+        <% for (const b of brands) { %>
+        <a href="/marken/<%= b.slug %>" class="brand-logo-item" title="<%= b.name %> Produkte ansehen">
+          <% if (b.logo) { %><img src="<%= b.logo %>" alt="<%= b.name %>" loading="lazy"><% } else { %><span style="font-weight:700;color:var(--primary,#166534)"><%= b.name %></span><% } %>
+        </a>
+        <% } %>
+      </div>
+      <div style="margin-top:1.25rem"><a href="/marken" class="btn-outline btn-sm">Alle Marken ansehen →</a></div>
+    </section>
+    <% } %>
   </div>
 </main>
 <%- include('../partials/footer') %>
