@@ -13,6 +13,17 @@
 }
 .about-brands { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border, #E5E7EB); }
 .about-brands h2 { margin-bottom: 0.5rem; }
+.brand-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; margin-top: 1.25rem; }
+.brand-card { display: flex; flex-direction: column; border: 1px solid var(--border, #E5E7EB); border-radius: 14px; overflow: hidden; background: var(--bg-card, #fff); text-decoration: none; color: inherit; transition: box-shadow .18s, transform .18s, border-color .18s; }
+.brand-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.08); transform: translateY(-2px); border-color: #BBF7D0; }
+.brand-card-logo { height: 84px; display: flex; align-items: center; justify-content: center; padding: 14px; background: #F9FAFB; border-bottom: 1px solid var(--border, #E5E7EB); }
+.brand-card-logo img { max-height: 56px; max-width: 100%; width: auto; object-fit: contain; }
+.brand-card-name { font-size: 20px; font-weight: 800; letter-spacing: .5px; color: #166534; }
+.brand-card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; }
+.brand-card-body strong { font-size: 15px; }
+.brand-card-body p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-muted, #6B7280); }
+.brand-card-link { margin-top: 8px; font-size: 13px; font-weight: 700; color: #166534; }
+@media (max-width: 768px) { .brand-card-grid { grid-template-columns: 1fr 1fr; gap: 12px; } .brand-card-logo { height: 68px; } }
 </style>
 <main>
   <div class="container page-content">
@@ -79,18 +90,32 @@
       </div>
     </div>
 
-    <% if (locals.brands && brands.length) { %>
+    <% if (locals.brands && brands.length) {
+      const brandInfo = {
+        onka:   'Reihenklemmen, Kabelverschraubungen & Verbindungstechnik.',
+        tork:   'Kabelbinder, Befestigungs- & Installationszubehör.',
+        tracon: 'Leitungsschutzschalter, Verteilung & Industriekomponenten.',
+        karlik: 'Schalter, Steckdosen & Rahmen in vielen Designs und Farben.',
+        pawbol: 'Installationsdosen, Verteilergehäuse & Installationsmaterial.',
+      }; %>
     <section class="about-brands">
       <h2>Unsere Partnermarken</h2>
-      <p style="color:var(--text-muted);max-width:640px">Wir arbeiten direkt mit ausgewählten Herstellern zusammen. Entdecken Sie das Sortiment je Marke:</p>
-      <div class="brand-logo-grid" style="margin-top:1rem">
+      <p style="color:var(--text-muted);max-width:640px">Wir importieren direkt von ausgewählten Herstellern. Entdecken Sie das Sortiment je Marke:</p>
+      <div class="brand-card-grid">
         <% for (const b of brands) { %>
-        <a href="/marken/<%= b.slug %>" class="brand-logo-item" title="<%= b.name %> Produkte ansehen">
-          <% if (b.logo) { %><img src="<%= b.logo %>" alt="<%= b.name %>" loading="lazy"><% } else { %><span style="font-weight:700;color:var(--primary,#166534)"><%= b.name %></span><% } %>
+        <a href="/marken/<%= b.slug %>" class="brand-card" title="<%= b.name %> Produkte ansehen">
+          <div class="brand-card-logo">
+            <% if (b.logo) { %><img src="<%= b.logo %>" alt="<%= b.name %> Logo" loading="lazy"><% } else { %><span class="brand-card-name"><%= b.name %></span><% } %>
+          </div>
+          <div class="brand-card-body">
+            <strong><%= b.name %></strong>
+            <p><%= b.description || brandInfo[b.slug] || 'Qualitätsprodukte direkt vom Hersteller.' %></p>
+            <span class="brand-card-link">Zum Sortiment →</span>
+          </div>
         </a>
         <% } %>
       </div>
-      <div style="margin-top:1.25rem"><a href="/marken" class="btn-outline btn-sm">Alle Marken ansehen →</a></div>
+      <div style="margin-top:1.5rem"><a href="/marken" class="btn-outline btn-sm">Alle Marken ansehen →</a></div>
     </section>
     <% } %>
   </div>
