@@ -5,7 +5,7 @@
 <%- include('../partials/admin-nav') %>
 <div class="admin-main">
   <div class="admin-topbar">
-    <div class="admin-page-title">📦 Produkte (<%= products.length %>)</div>
+    <div class="admin-page-title">📦 Produkte (<%= summary.total %>)</div>
     <div class="admin-topbar-right">
       <a href="/admin/kategorien" class="btn-outline btn-sm">Kategorien</a>
       <a href="/admin/produkte/neu" class="btn-blue btn-sm">+ Neues Produkt</a>
@@ -29,12 +29,12 @@
 
     <% if (q || kat || marke) { %>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#F0F6FF;border:1px solid #BFDBFE;border-radius:10px;padding:10px 14px;margin-bottom:1rem;font-size:13px">
-      <span><strong><%= products.length %></strong> Produkt(e) im aktuellen Filter</span>
-      <form action="/admin/produkte/bulk-status" method="POST" style="display:inline" onsubmit="return confirm('Alle <%= products.length %> gefilterten Produkte AKTIVIEREN?')">
+      <span><strong><%= summary.total %></strong> Produkt(e) im aktuellen Filter</span>
+      <form action="/admin/produkte/bulk-status" method="POST" style="display:inline" onsubmit="return confirm('Alle <%= summary.total %> gefilterten Produkte AKTIVIEREN?')">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="q" value="<%= q||'' %>"><input type="hidden" name="kat" value="<%= kat||'' %>"><input type="hidden" name="marke" value="<%= marke||'' %>"><input type="hidden" name="action" value="activate">
         <button class="btn-sm btn-blue">✓ Alle aktivieren</button>
       </form>
-      <form action="/admin/produkte/bulk-status" method="POST" style="display:inline" onsubmit="return confirm('Alle <%= products.length %> gefilterten Produkte DEAKTIVIEREN?')">
+      <form action="/admin/produkte/bulk-status" method="POST" style="display:inline" onsubmit="return confirm('Alle <%= summary.total %> gefilterten Produkte DEAKTIVIEREN?')">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="q" value="<%= q||'' %>"><input type="hidden" name="kat" value="<%= kat||'' %>"><input type="hidden" name="marke" value="<%= marke||'' %>"><input type="hidden" name="action" value="deactivate">
         <button class="btn-sm btn-outline">Alle deaktivieren</button>
       </form>
@@ -51,13 +51,13 @@
     <!-- Stock summary -->
     <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
       <div style="background:#E8F8EE;border:1px solid #A7F3D0;border-radius:10px;padding:8px 16px;font-size:13px;color:#065F46">
-        ✓ <strong><%= products.filter(p=>p.stock>10).length %></strong> gut auf Lager
+        ✓ <strong><%= summary.stockGood %></strong> gut auf Lager
       </div>
       <div style="background:#FEF9E7;border:1px solid #FDE68A;border-radius:10px;padding:8px 16px;font-size:13px;color:#7D5A00">
-        ⚡ <strong><%= products.filter(p=>p.stock>0&&p.stock<=10).length %></strong> niedriger Bestand (≤10)
+        ⚡ <strong><%= summary.stockLow %></strong> niedriger Bestand (≤10)
       </div>
       <div style="background:#FFF0EE;border:1px solid #FECACA;border-radius:10px;padding:8px 16px;font-size:13px;color:#C0392B">
-        ✕ <strong><%= products.filter(p=>p.stock===0).length %></strong> nicht auf Lager
+        ✕ <strong><%= summary.stockZero %></strong> nicht auf Lager
       </div>
     </div>
 
@@ -127,6 +127,14 @@
         </tbody>
       </table>
       </div>
+      <% if (pagination.totalPages > 1) {
+        const pageUrl = (n) => '/admin/produkte?' + new URLSearchParams({ ...(q ? { q } : {}), ...(kat ? { kat } : {}), ...(marke ? { marke } : {}), page: n }).toString(); %>
+      <nav style="display:flex;gap:8px;align-items:center;justify-content:center;padding:1rem;font-size:13px;color:#6B7280">
+        <% if (pagination.page > 1) { %><a href="<%= pageUrl(pagination.page - 1) %>" class="btn-outline btn-sm">← Zurück</a><% } %>
+        <span>Seite <strong><%= pagination.page %></strong> von <%= pagination.totalPages %></span>
+        <% if (pagination.page < pagination.totalPages) { %><a href="<%= pageUrl(pagination.page + 1) %>" class="btn-outline btn-sm">Weiter →</a><% } %>
+      </nav>
+      <% } %>
     </div>
   </div>
 </div>

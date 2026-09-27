@@ -31,13 +31,10 @@ function handleUpload(req, res, next) {
       return res.redirect(req.get('referer') || '/admin/produkte');
     }
     // CSRF doğrulaması (artık req.body._csrf parse edildi)
-    const token = req.body && req.body._csrf;
-    const tokens = req.session.csrfTokens || [];
-    if (!token || !tokens.includes(token)) {
+    if (!req.verifyCsrf(req.body && req.body._csrf)) {
       flash(req, 'error', 'Sicherheitstoken abgelaufen. Bitte Seite neu laden und erneut versuchen.');
       return res.redirect(req.get('referer') || '/admin/produkte');
     }
-    req.session.csrfTokens = tokens.filter(t => t !== token);
     next();
   });
 }
@@ -55,10 +52,7 @@ const csvUpload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } });
 function handleCsvUpload(req, res, next) {
   csvUpload.single('csv')(req, res, (err) => {
     if (err) { flash(req, 'error', 'CSV-Upload Fehler: ' + (err.message || err.code)); return res.redirect('/admin/import'); }
-    const token = req.body && req.body._csrf;
-    const tokens = req.session.csrfTokens || [];
-    if (!token || !tokens.includes(token)) { flash(req, 'error', 'Sicherheitstoken abgelaufen. Bitte neu laden.'); return res.redirect('/admin/import'); }
-    req.session.csrfTokens = tokens.filter(t => t !== token);
+    if (!req.verifyCsrf(req.body && req.body._csrf)) { flash(req, 'error', 'Sicherheitstoken abgelaufen. Bitte neu laden.'); return res.redirect('/admin/import'); }
     next();
   });
 }
@@ -140,18 +134,40 @@ router.get('/produkte', async (req, res) => {
     if (kat) { where.push('c.slug=?'); params.push(kat); }
     if (marke === 'none') where.push('p.brand_id IS NULL');
     else if (marke) { where.push('b.slug=?'); params.push(marke); }
-    const products = await db.prepare(`
-      SELECT p.*, c.name as cat_name, b.name as brand_name,
-        (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min,
-        (SELECT COUNT(*) FROM product_variants WHERE product_id=p.id) as variant_count
-      FROM products p LEFT JOIN categories c ON p.category_id=c.id
-      LEFT JOIN brands b ON p.brand_id=b.id
-      WHERE ${where.join(' AND ')} ORDER BY p.id DESC
-    `).all(...params);
+    // Sayfalı liste: eskiden ~5k ürünün tamamı + satır başı 2 alt sorgu çekiliyordu.
+    const perPage = 50;
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const fromWhere = `FROM products p LEFT JOIN categories c ON p.category_id=c.id
+      LEFT JOIN brands b ON p.brand_id=b.id WHERE ${where.join(' AND ')}`;
+    const [summary, products] = await Promise.all([
+      db.prepare(`SELECT COUNT(*) as total,
+          COALESCE(SUM(p.stock>10),0) as stockGood,
+          COALESCE(SUM(p.stock>0 AND p.stock<=10),0) as stockLow,
+          COALESCE(SUM(p.stock=0),0) as stockZero
+        ${fromWhere}`).get(...params),
+      db.prepare(`SELECT p.*, c.name as cat_name, b.name as brand_name
+        ${fromWhere} ORDER BY p.id DESC LIMIT ? OFFSET ?`).all(...params, perPage, (page - 1) * perPage),
+    ]);
+    // Preis + Variantenanzahl nur für die 50 angezeigten Produkte, je 1 Abfrage
+    if (products.length) {
+      const ids = products.map(p => p.id);
+      const ph = ids.map(() => '?').join(',');
+      const [prices, variants] = await Promise.all([
+        db.prepare(`SELECT product_id, MIN(price) as m FROM product_tiers WHERE product_id IN (${ph}) GROUP BY product_id`).all(...ids),
+        db.prepare(`SELECT product_id, COUNT(*) as n FROM product_variants WHERE product_id IN (${ph}) GROUP BY product_id`).all(...ids),
+      ]);
+      const priceMap = Object.fromEntries(prices.map(r => [r.product_id, r.m]));
+      const variantMap = Object.fromEntries(variants.map(r => [r.product_id, r.n]));
+      for (const p of products) {
+        p.price_min = priceMap[p.id] ?? null;
+        p.variant_count = variantMap[p.id] || 0;
+      }
+    }
+    const pagination = { page, perPage, total: summary.total, totalPages: Math.max(Math.ceil(summary.total / perPage), 1) };
     const categories = await db.prepare('SELECT * FROM categories WHERE active=1').all();
     const brands = await db.prepare('SELECT * FROM brands WHERE active=1 ORDER BY sort_order, name').all();
     const noBrandCount = (await db.prepare('SELECT COUNT(*) as n FROM products WHERE brand_id IS NULL').get()).n;
-    res.render('admin/products', { title: 'Produkte', products, categories, brands, noBrandCount, q, kat, marke });
+    res.render('admin/products', { title: 'Produkte', products, summary, pagination, categories, brands, noBrandCount, q, kat, marke });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 
@@ -328,10 +344,7 @@ function afterMulter(mw) {
   return (req, res, next) => mw(req, res, (err) => {
     const back = req.get('referer') || '/admin/marken';
     if (err) { flash(req, 'error', err.message || 'Upload-Fehler.'); return res.redirect(back); }
-    const token = req.body && req.body._csrf;
-    const tokens = req.session.csrfTokens || [];
-    if (!token || !tokens.includes(token)) { flash(req, 'error', 'Sicherheitstoken abgelaufen. Bitte neu laden.'); return res.redirect(back); }
-    req.session.csrfTokens = tokens.filter(t => t !== token);
+    if (!req.verifyCsrf(req.body && req.body._csrf)) { flash(req, 'error', 'Sicherheitstoken abgelaufen. Bitte neu laden.'); return res.redirect(back); }
     next();
   });
 }

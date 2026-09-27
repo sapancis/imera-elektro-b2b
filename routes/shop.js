@@ -69,7 +69,7 @@ router.get('/', async (req, res) => {
     // "Alle Marken"-Ansicht (keine Marke gewählt, Standard-Sortierung): Marken durchmischen,
     // damit nicht alle Artikel einer Marke am Stück erscheinen. Deterministisch → paginierstabil.
     if (!marke && (!sort || sort === 'popular')) {
-      orderBy = 'p.featured DESC, ((p.id * 1103515245 + 12345) % 2147483647)';
+      orderBy = 'p.featured DESC, p.shuffle_key'; // idx_products_shop → nur die Seite wird gelesen
     }
     const whereStr = where.join(' AND ');
 
@@ -89,16 +89,19 @@ router.get('/', async (req, res) => {
     // fiyatlar sayfadaki 12 ürün için attachTiers ile geliyor.
     // Filtre+sayfa kombinasyonu başına sonuç cache'i (botlar aynı URL'leri tekrar tarıyor;
     // her istek tüm ürün tablosunu taramasın).
+    // Toplam sayı yalnızca filtreye bağlı → sayfa/sıralamadan bağımsız 10 dk cache.
+    // Liste: filtre+sıralama+sayfa başına 5 dk cache (botlar aynı URL'leri tekrar tarıyor).
+    const countKey = 'shop_count:' + JSON.stringify([whereStr, params]);
     const listKey = 'shop_list:' + JSON.stringify([whereStr, params, orderBy, perPage, offset]);
-    const { total, products } = await cache.memo(listKey, SHOP_LIST_TTL, async () => {
-      const [totalRow, rows] = await Promise.all([
-        db.prepare(`
-          SELECT COUNT(*) as cnt FROM products p
-          LEFT JOIN categories c ON p.category_id=c.id
-          LEFT JOIN brands b ON p.brand_id=b.id
-          WHERE ${whereStr}
-        `).get(...params),
-        db.prepare(`
+    const [totalRow, products] = await Promise.all([
+      cache.memo(countKey, SHOP_STATIC_TTL, () => db.prepare(`
+        SELECT COUNT(*) as cnt FROM products p
+        LEFT JOIN categories c ON p.category_id=c.id
+        LEFT JOIN brands b ON p.brand_id=b.id
+        WHERE ${whereStr}
+      `).get(...params)),
+      cache.memo(listKey, SHOP_LIST_TTL, async () => {
+        const rows = await db.prepare(`
           SELECT p.*, c.name as cat_name, c.slug as cat_slug, b.name as brand_name, b.slug as brand_slug
           FROM products p
           LEFT JOIN categories c ON p.category_id=c.id
@@ -106,12 +109,12 @@ router.get('/', async (req, res) => {
           WHERE ${whereStr}
           ORDER BY ${orderBy}
           LIMIT ? OFFSET ?
-        `).all(...params, perPage, offset),
-      ]);
-      // Tier'ları TEK sorguda yükle (N+1 yerine)
-      await attachTiers(db, rows);
-      return { total: totalRow.cnt, products: rows };
-    });
+        `).all(...params, perPage, offset);
+        // Tier'ları TEK sorguda yükle (N+1 yerine)
+        return attachTiers(db, rows);
+      }),
+    ]);
+    const total = totalRow.cnt;
 
     // Kategori filtresi: marka seçiliyse SADECE o markanın kategorileri + marka-bazlı sayılar
     let categories;

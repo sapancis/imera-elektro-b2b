@@ -319,6 +319,9 @@ app.get('/__pawbol', async (req, res) => {
   } catch (e) { res.status(500).json({ ok: false, error: e.message, stack: (e.stack||'').split('\n').slice(0,3) }); }
 });
 
+// ─── Schema/Indexe sicherstellen, bevor Seiten-Abfragen laufen ────────────
+app.use((req, res, next) => { ensureSchemaOnce().then(() => next(), () => next()); });
+
 // ─── Routes ───────────────────────────────────────────────────────────────
 app.use('/', require('./routes/index'));
 app.use('/shop', require('./routes/shop'));
@@ -454,11 +457,30 @@ app.use((err, req, res, next) => {
   }
 })();
 
-// ─── Auto-Migration: yeni tablo/kolonlar (Turso'da yoksa ekle) ───────────────
-// Kalıcı sunucuda (Hostinger) açılışta güvenilir çalışır; zaten varsa hata yutulur.
-(async function ensureSchema() {
-  try {
-    const db = require('./database/db');
+// ─── Auto-Migration: yeni tablo/kolonlar/indexe (Turso'da yoksa ekle) ─────────
+// Läuft NUR, wenn settings.schema_version != SCHEMA_VERSION (sonst 1 Abfrage je
+// Cold Start statt ~50). Bei Schemaänderungen hier SCHEMA_VERSION erhöhen.
+const SCHEMA_VERSION = '2';
+let schemaPromise;
+function ensureSchemaOnce() {
+  if (!schemaPromise) {
+    schemaPromise = (async () => {
+      const db = require('./database/db');
+      const row = await db.prepare("SELECT value FROM settings WHERE key='schema_version'").get();
+      if (row && row.value === SCHEMA_VERSION) return;
+      await migrateSchema(db);
+      await db.prepare("INSERT INTO settings (key, value) VALUES ('schema_version', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(SCHEMA_VERSION);
+      console.log('✓ Schema-Migration v' + SCHEMA_VERSION);
+    })().catch((e) => {
+      console.error('Schema Migration:', e.message);
+      schemaPromise = null; // nächster Request versucht es erneut
+    });
+  }
+  return schemaPromise;
+}
+
+async function migrateSchema(db) {
+  {
     for (const sql of [
       'ALTER TABLE products ADD COLUMN sell_as_pack INTEGER DEFAULT 0',
       'ALTER TABLE products ADD COLUMN pack_size INTEGER DEFAULT 1',
@@ -486,19 +508,41 @@ app.use((err, req, res, next) => {
          product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
          sku TEXT UNIQUE, color TEXT, ean TEXT, price REAL NOT NULL,
          image TEXT, sort_order INTEGER DEFAULT 0, active INTEGER DEFAULT 1)`,
-      // ── INDEXE: ohne diese scannen die korrelierten Subqueries (MIN(price),
-      // COUNT variants) je Zeile die ganze Tabelle → Millionen gelesener Zeilen
-      // pro Seitenaufruf → Turso "rows read"-Quota gesprengt. Diese Indexe sind kritisch.
+      // Shop-Standardsortierung ("Marken durchmischen"): fester Mischschlüssel statt
+      // Ausdruck im ORDER BY → per Index sortierbar (sonst Vollscan je Seitenaufruf).
+      'ALTER TABLE products ADD COLUMN shuffle_key INTEGER',
+    ]) {
+      try { await db.prepare(sql).run(); } catch (_) { /* zaten var */ }
+    }
+    await db.prepare('UPDATE products SET shuffle_key=(id * 1103515245 + 12345) % 2147483647 WHERE shuffle_key IS NULL').run();
+    await db.prepare(`CREATE TRIGGER IF NOT EXISTS trg_products_shuffle AFTER INSERT ON products
+      WHEN NEW.shuffle_key IS NULL BEGIN
+        UPDATE products SET shuffle_key=(NEW.id * 1103515245 + 12345) % 2147483647 WHERE id=NEW.id;
+      END`).run();
+    // ── INDEXE: ohne diese scannen Listen/Subqueries je Aufruf die ganze Tabelle →
+    // Turso "rows read"-Quota gesprengt. Fehler werden NICHT verschluckt: schlägt einer
+    // fehl, wird die Schema-Version nicht gesetzt und beim nächsten Start erneut versucht.
+    for (const sql of [
       'CREATE INDEX IF NOT EXISTS idx_tiers_product ON product_tiers(product_id)',
       'CREATE INDEX IF NOT EXISTS idx_variants_product ON product_variants(product_id)',
       'CREATE INDEX IF NOT EXISTS idx_variants_active ON product_variants(product_id, active)',
       'CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id)',
       'CREATE INDEX IF NOT EXISTS idx_products_brand ON products(brand_id)',
       'CREATE INDEX IF NOT EXISTS idx_products_active ON products(active)',
-      'CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug)',
-      'CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id)',
+      'CREATE INDEX IF NOT EXISTS idx_products_shop ON products(active, featured DESC, shuffle_key)',
+      'CREATE INDEX IF NOT EXISTS idx_products_stock ON products(active, stock)',
+      'CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id)',
+      'CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status)',
+      'CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id)',
     ]) {
-      try { await db.prepare(sql).run(); } catch (_) { /* zaten var */ }
+      await db.prepare(sql).run();
+    }
+    // reviews/sessions existieren ggf. nicht in jeder DB (lokal: FileStore) → optional
+    for (const sql of [
+      'CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id)',
+      'CREATE INDEX IF NOT EXISTS idx_sessions_expired ON sessions(expired_at)',
+    ]) {
+      try { await db.prepare(sql).run(); } catch (e) { console.error('Index:', e.message); }
     }
     // Bilinen markaları oluştur (idempotent) — logo/açıklama sonradan admin'den
     const seed = [['Onka', 'onka', 1], ['Tork', 'tork', 2], ['Tracon', 'tracon', 3],
@@ -645,8 +689,8 @@ app.use((err, req, res, next) => {
         await db.prepare("INSERT INTO settings (key, value) VALUES ('karlik_names_de','1') ON CONFLICT(key) DO UPDATE SET value='1'").run();
       }
     } catch (_) {}
-  } catch (e) { console.error('Schema Migration:', e.message); }
-})();
+  }
+}
 
 // Not: Katalog migration artık /__migrate-catalog endpoint'i ile çalışıyor
 // (serverless'ta module-load arka plan işi donduğu için istek içinde await edilir).
