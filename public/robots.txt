@@ -10,5 +10,12 @@ Disallow: /kasse
 Disallow: /api/
 Disallow: /merkliste
 Disallow: /vergleich
+Disallow: /shop/api/
+# Filter-/Sortier-Kombinationen nicht crawlen (unendlich viele URLs, gleiche Produkte)
+Disallow: /shop?*sort=
+Disallow: /shop?*preis=
+Disallow: /shop?*verfuegbar=
+Disallow: /shop?*groesse=
+Disallow: /shop?*q=
 
 Sitemap: https://www.imeragroup.com/sitemap.xml

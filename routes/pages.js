@@ -1,19 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
+const cache = require('../utils/cache');
+const { attachTiers } = require('../utils/perf');
 const { flash } = require('../middleware/auth');
+
+const PAGE_TTL = 10 * 60_000;
 const { sendContactNotification } = require('../utils/mailer');
 
 router.get('/ueber-uns', async (req, res) => {
   let brands = [];
   try {
-    brands = await db.prepare(`
+    brands = await cache.memo('about_brands', PAGE_TTL, () => db.prepare(`
       SELECT b.name, b.slug, b.logo
       FROM brands b
       WHERE b.active=1
         AND EXISTS (SELECT 1 FROM products p WHERE p.brand_id=b.id AND p.active=1)
       ORDER BY b.sort_order, b.name
-    `).all();
+    `).all());
   } catch (_) {}
   res.render('pages/about', { title: 'Über uns', brands });
 });
@@ -26,9 +30,9 @@ router.get('/widerruf', (req, res) => res.render('pages/widerruf', { title: 'Wid
 // ─── Markenseiten (tek şablon → yeni marka otomatik sayfa) ───────────────────
 router.get('/marken', async (req, res) => {
   try {
-    const brands = await db.prepare(`SELECT b.*, COUNT(p.id) as cnt FROM brands b
+    const brands = await cache.memo('brands_page', PAGE_TTL, () => db.prepare(`SELECT b.*, COUNT(p.id) as cnt FROM brands b
       LEFT JOIN products p ON p.brand_id=b.id AND p.active=1
-      WHERE b.active=1 GROUP BY b.id ORDER BY b.sort_order, b.name`).all();
+      WHERE b.active=1 GROUP BY b.id ORDER BY b.sort_order, b.name`).all());
     res.render('pages/brands', {
       title: 'Marken & Hersteller',
       brands,
@@ -64,21 +68,28 @@ router.get('/marken/:slug', async (req, res) => {
     const activeKat = (req.query.kategorie || '').trim();
     const katFilter = activeKat ? ' AND c.slug=?' : '';
     const katParam  = activeKat ? [activeKat] : [];
-    const [products, catalogs, totalRow, brandCats] = await Promise.all([
-      db.prepare(`SELECT p.*, c.name as cat_name, c.slug as cat_slug,
-           (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
-         FROM products p LEFT JOIN categories c ON p.category_id=c.id
-         WHERE p.brand_id=? AND p.active=1${katFilter} ORDER BY p.featured DESC, p.name LIMIT 24`).all(brand.id, ...katParam),
-      db.prepare('SELECT * FROM brand_catalogs WHERE brand_id=? ORDER BY sort_order, id').all(brand.id),
-      db.prepare(`SELECT COUNT(*) as n FROM products p LEFT JOIN categories c ON p.category_id=c.id
-         WHERE p.brand_id=? AND p.active=1${katFilter}`).get(brand.id, ...katParam),
-      // Kategorien, die diese Marke tatsächlich hat (für Filter-Chips)
-      db.prepare(`SELECT c.name, c.slug, COUNT(*) as cnt
-         FROM products p JOIN categories c ON p.category_id=c.id
-         WHERE p.brand_id=? AND p.active=1
-         GROUP BY c.id ORDER BY c.sort_order, c.name`).all(brand.id),
-    ]);
-    const allTotalRow = await db.prepare('SELECT COUNT(*) as n FROM products WHERE brand_id=? AND active=1').get(brand.id);
+    const { products, catalogs, totalRow, brandCats, allTotalRow } = await cache.memo(
+      `brand_page:${brand.id}:${activeKat}`, PAGE_TTL, async () => {
+        const [products, catalogs, totalRow, brandCats, allTotalRow] = await Promise.all([
+          db.prepare(`SELECT p.*, c.name as cat_name, c.slug as cat_slug
+             FROM products p LEFT JOIN categories c ON p.category_id=c.id
+             WHERE p.brand_id=? AND p.active=1${katFilter} ORDER BY p.featured DESC, p.name LIMIT 24`).all(brand.id, ...katParam),
+          db.prepare('SELECT * FROM brand_catalogs WHERE brand_id=? ORDER BY sort_order, id').all(brand.id),
+          db.prepare(`SELECT COUNT(*) as n FROM products p LEFT JOIN categories c ON p.category_id=c.id
+             WHERE p.brand_id=? AND p.active=1${katFilter}`).get(brand.id, ...katParam),
+          // Kategorien, die diese Marke tatsächlich hat (für Filter-Chips)
+          db.prepare(`SELECT c.name, c.slug, COUNT(*) as cnt
+             FROM products p JOIN categories c ON p.category_id=c.id
+             WHERE p.brand_id=? AND p.active=1
+             GROUP BY c.id ORDER BY c.sort_order, c.name`).all(brand.id),
+          db.prepare('SELECT COUNT(*) as n FROM products WHERE brand_id=? AND active=1').get(brand.id),
+        ]);
+        // MIN(price) alt sorgusu sıralamadan önce markanın TÜM ürünleri için çalışırdı;
+        // yalnızca gösterilen 24 ürünün fiyatını tek sorguda al.
+        await attachTiers(db, products);
+        for (const p of products) p.price_min = p.tiers.length ? Math.min(...p.tiers.map(t => t.price)) : null;
+        return { products, catalogs, totalRow, brandCats, allTotalRow };
+      });
     res.render('pages/brand', {
       title: `${brand.name} Produkte kaufen – Großhandel`,
       brand, products, catalogs, total: totalRow.n, totalAll: allTotalRow.n, brandCats, activeKat,

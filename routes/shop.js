@@ -5,12 +5,16 @@ const cache = require('../utils/cache');
 const { attachTiers } = require('../utils/perf');
 const { groupCategories } = require('../config/categoryGroups');
 
+// Turso "rows read" kotası: liste sorguları tüm products tablosunu tarar → cache şart.
+const SHOP_STATIC_TTL = 10 * 60_000;
+const SHOP_LIST_TTL = 5 * 60_000;
+
 router.get('/', async (req, res) => {
   try {
     const { kategorie, marke, preis, sort = 'popular', page = 1, verfuegbar, groesse } = req.query;
     const q = (req.query.q || '').trim();
     const perPage = 12;
-    const offset = (parseInt(page) - 1) * perPage;
+    const offset = (Math.max(parseInt(page) || 1, 1) - 1) * perPage;
 
     let where = ['p.active=1'];
     let params = [];
@@ -69,48 +73,57 @@ router.get('/', async (req, res) => {
     }
     const whereStr = where.join(' AND ');
 
-    // Bağımsız sorguları paralel çalıştır (Turso round-trip'lerini azaltır)
-    const [totalRow, products, sizesRows, allRow, brands] = await Promise.all([
-      db.prepare(`
-        SELECT COUNT(*) as cnt FROM products p
-        LEFT JOIN categories c ON p.category_id=c.id
-        LEFT JOIN brands b ON p.brand_id=b.id
-        WHERE ${whereStr}
-      `).get(...params),
-      db.prepare(`
-        SELECT p.*, c.name as cat_name, c.slug as cat_slug, b.name as brand_name, b.slug as brand_slug,
-          (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min
-        FROM products p
-        LEFT JOIN categories c ON p.category_id=c.id
-        LEFT JOIN brands b ON p.brand_id=b.id
-        WHERE ${whereStr}
-        ORDER BY ${orderBy}
-        LIMIT ? OFFSET ?
-      `).all(...params, perPage, offset),
-      db.prepare("SELECT DISTINCT size FROM products WHERE active=1 AND size IS NOT NULL AND size != '' ORDER BY size").all(),
-      db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get(),
-      db.prepare(`SELECT b.*, COUNT(p.id) as cnt FROM brands b
-                  LEFT JOIN products p ON p.brand_id=b.id AND p.active=1
-                  WHERE b.active=1 GROUP BY b.id HAVING cnt > 0 ORDER BY b.sort_order, b.name`).all(),
+    // Filtreden bağımsız, her istekte aynı olan sorgular → 10 dk cache
+    const [sizesRows, allRow, brands] = await Promise.all([
+      cache.memo('shop_sizes', SHOP_STATIC_TTL, () =>
+        db.prepare("SELECT DISTINCT size FROM products WHERE active=1 AND size IS NOT NULL AND size != '' ORDER BY size").all()),
+      cache.memo('shop_all_count', SHOP_STATIC_TTL, () =>
+        db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get()),
+      cache.memo('shop_brands', SHOP_STATIC_TTL, () =>
+        db.prepare(`SELECT b.*, COUNT(p.id) as cnt FROM brands b
+                    LEFT JOIN products p ON p.brand_id=b.id AND p.active=1
+                    WHERE b.active=1 GROUP BY b.id HAVING cnt > 0 ORDER BY b.sort_order, b.name`).all()),
     ]);
-    const total = totalRow.cnt;
 
-    // Tier'ları TEK sorguda yükle (N+1 yerine)
-    await attachTiers(db, products);
+    // Liste sorgusunda MIN(price) alt sorgusu yok (yalnızca fiyat sıralamasında ORDER BY'da):
+    // fiyatlar sayfadaki 12 ürün için attachTiers ile geliyor.
+    // Filtre+sayfa kombinasyonu başına sonuç cache'i (botlar aynı URL'leri tekrar tarıyor;
+    // her istek tüm ürün tablosunu taramasın).
+    const listKey = 'shop_list:' + JSON.stringify([whereStr, params, orderBy, perPage, offset]);
+    const { total, products } = await cache.memo(listKey, SHOP_LIST_TTL, async () => {
+      const [totalRow, rows] = await Promise.all([
+        db.prepare(`
+          SELECT COUNT(*) as cnt FROM products p
+          LEFT JOIN categories c ON p.category_id=c.id
+          LEFT JOIN brands b ON p.brand_id=b.id
+          WHERE ${whereStr}
+        `).get(...params),
+        db.prepare(`
+          SELECT p.*, c.name as cat_name, c.slug as cat_slug, b.name as brand_name, b.slug as brand_slug
+          FROM products p
+          LEFT JOIN categories c ON p.category_id=c.id
+          LEFT JOIN brands b ON p.brand_id=b.id
+          WHERE ${whereStr}
+          ORDER BY ${orderBy}
+          LIMIT ? OFFSET ?
+        `).all(...params, perPage, offset),
+      ]);
+      // Tier'ları TEK sorguda yükle (N+1 yerine)
+      await attachTiers(db, rows);
+      return { total: totalRow.cnt, products: rows };
+    });
 
     // Kategori filtresi: marka seçiliyse SADECE o markanın kategorileri + marka-bazlı sayılar
     let categories;
     if (marke) {
-      categories = await db.prepare(`SELECT c.*, COUNT(p.id) as cnt FROM categories c
-        JOIN products p ON p.category_id=c.id AND p.active=1
-        JOIN brands b ON p.brand_id=b.id
-        WHERE c.active=1 AND b.slug=? GROUP BY c.id HAVING cnt > 0 ORDER BY cnt DESC, c.name`).all(marke);
+      categories = await cache.memo('shop_categories:' + marke, SHOP_STATIC_TTL, () =>
+        db.prepare(`SELECT c.*, COUNT(p.id) as cnt FROM categories c
+          JOIN products p ON p.category_id=c.id AND p.active=1
+          JOIN brands b ON p.brand_id=b.id
+          WHERE c.active=1 AND b.slug=? GROUP BY c.id HAVING cnt > 0 ORDER BY cnt DESC, c.name`).all(marke));
     } else {
-      categories = cache.get('shop_categories');
-      if (!categories) {
-        categories = await db.prepare('SELECT c.*, COUNT(p.id) as cnt FROM categories c LEFT JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1 GROUP BY c.id HAVING cnt > 0 ORDER BY c.sort_order').all();
-        cache.set('shop_categories', categories, 120_000);
-      }
+      categories = await cache.memo('shop_categories', SHOP_STATIC_TTL, () =>
+        db.prepare('SELECT c.*, COUNT(p.id) as cnt FROM categories c LEFT JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1 GROUP BY c.id HAVING cnt > 0 ORDER BY c.sort_order').all());
     }
     // E3: Detailkategorien unter Oberkategorien gruppieren (zweistufiger Filter)
     const categoryGroups = groupCategories(categories);

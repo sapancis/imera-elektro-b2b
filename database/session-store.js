@@ -17,7 +17,9 @@ class TursoSessionStore extends session.Store {
           sid TEXT PRIMARY KEY,
           sess TEXT NOT NULL,
           expired_at INTEGER NOT NULL
-        )
+        );
+        -- Cleanup (expired_at < ?) index'siz tüm sessions tablosunu tarıyordu
+        CREATE INDEX IF NOT EXISTS idx_sessions_expired ON sessions(expired_at);
       `);
     } catch (e) { /* tablo zaten varsa sorun değil */ }
   }

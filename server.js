@@ -439,8 +439,9 @@ app.use((err, req, res, next) => {
 (async function autoSeed() {
   try {
     const db = require('./database/db');
-    const countRow = await db.prepare('SELECT COUNT(*) as n FROM products WHERE active=1').get();
-    if (countRow.n === 0) {
+    // COUNT(*) her cold start'ta tüm aktif ürünleri okuyordu; varlık kontrolü 1 satır yeter
+    const anyRow = await db.prepare('SELECT 1 FROM products WHERE active=1 LIMIT 1').get();
+    if (!anyRow) {
       console.log('⏳ Keine Produkte gefunden — starte automatisches Seeding...');
       try {
         await require('./scripts/seed-products');
