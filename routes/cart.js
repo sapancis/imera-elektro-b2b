@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
+const cache = require('../utils/cache');
 const { checkPawbolMin } = require('../utils/pawbol');
 const { computeShipping } = require('../utils/shipping');
 const crypto = require('crypto');
@@ -187,15 +188,17 @@ router.get('/laden/:token', async (req, res) => {
 router.get('/schnellsuche', async (req, res) => {
   try {
     const q = (req.query.q || '').trim();
-    if (!q) return res.json([]);
-    const results = await db.prepare(`
+    // LIKE '%…%' kann keinen Index nutzen → 1-Zeichen-Suchen (Tippen) nicht an die DB,
+    // gleiche Begriffe 5 min aus dem Cache
+    if (q.length < 2) return res.json([]);
+    const results = await cache.memo('schnellsuche:' + q, 5 * 60_000, () => db.prepare(`
       SELECT id, name, sku,
         (SELECT MIN(price) FROM product_tiers WHERE product_id=products.id) as price_min,
         stock
       FROM products
       WHERE active=1 AND (sku LIKE ? OR name LIKE ?)
       LIMIT 8
-    `).all(`%${q}%`, `%${q}%`);
+    `).all(`%${q}%`, `%${q}%`));
     res.json(results);
   } catch { res.status(500).json([]); }
 });
