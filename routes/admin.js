@@ -43,6 +43,12 @@ function handleUpload(req, res, next) {
 }
 
 router.use(requireAdmin);
+// Admin değişiklikleri (ürün/marka/ayar) mağaza cache'ini beklemeden yansısın.
+// Serverless'ta yalnızca bu instance temizlenir; diğerleri TTL (≤10 dk) ile yenilenir.
+router.use((req, res, next) => {
+  if (req.method !== 'GET') require('../utils/cache').clear();
+  next();
+});
 
 // ─── Toplu CSV Import ────────────────────────────────────────────────────────
 const csvUpload = multer({ storage, limits: { fileSize: 25 * 1024 * 1024 } });

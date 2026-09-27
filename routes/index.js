@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
         WHERE c.active=1 AND EXISTS (SELECT 1 FROM products p WHERE p.category_id=c.id AND p.active=1)
         ORDER BY (c.description IS NOT NULL AND c.description != '') DESC, c.sort_order, pcount DESC
         LIMIT 12`).all();
-      cache.set('categories', categories, 120_000);
+      cache.set('categories', categories, 10 * 60_000);
     }
 
     let homeData = cache.get('home_data');
@@ -27,7 +27,6 @@ router.get('/', async (req, res) => {
       const featured = await db.prepare(`
         SELECT * FROM (
           SELECT p.*, c.name as cat_name, b.name as brand_name, b.slug as brand_slug,
-            (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min,
             ROW_NUMBER() OVER (PARTITION BY p.brand_id ORDER BY p.featured DESC, (p.image IS NULL OR p.image=''), p.id) as rn
           FROM products p
           LEFT JOIN categories c ON p.category_id=c.id
@@ -43,7 +42,6 @@ router.get('/', async (req, res) => {
         db.prepare(`
           SELECT * FROM (
             SELECT p.*, c.name as cat_name,
-              (SELECT MIN(price) FROM product_tiers WHERE product_id=p.id) as price_min,
               ROW_NUMBER() OVER (PARTITION BY p.category_id ORDER BY (p.image IS NULL), p.id DESC) as rn
             FROM products p
             LEFT JOIN categories c ON p.category_id=c.id
@@ -60,8 +58,13 @@ router.get('/', async (req, res) => {
           AND EXISTS (SELECT 1 FROM products p WHERE p.brand_id=b.id AND p.active=1)
         ORDER BY b.sort_order, b.name
       `).all();
+      // Fiyatlar yalnızca gösterilen ürünler için (window sorgusunda satır başı MIN alt sorgusu yok)
+      await attachTiers(db, newProducts);
+      for (const p of [...featured, ...newProducts]) {
+        p.price_min = p.tiers.length ? Math.min(...p.tiers.map(t => t.price)) : null;
+      }
       homeData = { featured, newProducts, stats: { products: statsRow.n }, brands };
-      cache.set('home_data', homeData, 120_000);
+      cache.set('home_data', homeData, 10 * 60_000);
     }
 
     const settings = await getSettings();
@@ -90,9 +93,12 @@ router.get('/sitemap.xml', async (req, res) => {
       { url: '/faq',        priority: '0.5', freq: 'monthly'},
     ];
 
-    const products = await db.prepare('SELECT slug, updated_at FROM products WHERE active=1').all();
-    const cats     = await db.prepare('SELECT DISTINCT c.slug FROM categories c JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1').all();
-    const brands   = await db.prepare('SELECT slug FROM brands WHERE active=1').all();
+    // Botlar sitemap'i sık çeker; her seferinde tüm ürünleri okumasın → 1 saat cache
+    const { products, cats, brands } = await cache.memo('sitemap_rows', 60 * 60_000, async () => ({
+      products: await db.prepare('SELECT slug, updated_at FROM products WHERE active=1').all(),
+      cats:     await db.prepare('SELECT DISTINCT c.slug FROM categories c JOIN products p ON p.category_id=c.id AND p.active=1 WHERE c.active=1').all(),
+      brands:   await db.prepare('SELECT slug FROM brands WHERE active=1').all(),
+    }));
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;

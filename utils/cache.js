@@ -5,6 +5,7 @@
 // ama warm instance'larda DB çağrısı sayısını ciddi oranda azaltır
 
 const store = new Map();
+const MAX_ENTRIES = 500; // botların ürettiği sınırsız URL kombinasyonu belleği şişirmesin
 
 function get(key) {
   const entry = store.get(key);
@@ -14,10 +15,23 @@ function get(key) {
 }
 
 function set(key, value, ttlMs = 60_000) {
+  store.delete(key);
+  if (store.size >= MAX_ENTRIES) store.delete(store.keys().next().value); // en eski girdi
   store.set(key, { value, expires: Date.now() + ttlMs });
 }
 
 function del(key) { store.delete(key); }
 function clear() { store.clear(); }
 
-module.exports = { get, set, del, clear };
+// Sonucu cache'le; aynı anda gelen istekler aynı Promise'i paylaşır
+// (N paralel istek = 1 DB sorgusu). Hata olursa cache'e yazılmaz.
+function memo(key, ttlMs, fn) {
+  const hit = get(key);
+  if (hit) return hit;
+  const p = Promise.resolve().then(fn);
+  set(key, p, ttlMs);
+  p.catch(() => del(key));
+  return p;
+}
+
+module.exports = { get, set, del, clear, memo };
