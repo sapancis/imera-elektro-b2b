@@ -27,8 +27,26 @@ function cli(prefix) {
 const src = cli('SRC');
 const dest = cli('DEST');
 
-const CHUNK = 500;
+const CHUNK = 300;
 const q = (s) => '"' + String(s).replace(/"/g, '""') + '"';
+
+// Ağ kopmalarına (fetch failed / timeout) karşı yeniden deneme (artan bekleme).
+async function withRetry(fn, label) {
+  let lastErr;
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    try { return await fn(); }
+    catch (e) {
+      lastErr = e;
+      const msg = e && e.message || String(e);
+      // Kalıcı hatalarda (yetki/SQL) boşa bekleme
+      if (/401|403|unauthoriz|SQLITE_|constraint|syntax/i.test(msg)) throw e;
+      const wait = Math.min(1000 * 2 ** (attempt - 1), 15000);
+      console.error(`  … ${label} denemesi ${attempt} başarısız (${msg}) — ${wait}ms sonra tekrar`);
+      await new Promise(r => setTimeout(r, wait));
+    }
+  }
+  throw lastErr;
+}
 
 async function main() {
   // 1) Kaynaktan şema objelerini al (tablo → index → trigger sırası önemli)
@@ -64,7 +82,7 @@ async function main() {
     if (type === 'trigger') return sql.replace(/^CREATE TRIGGER\s+/i, 'CREATE TRIGGER IF NOT EXISTS ');
     return sql;
   };
-  for (const t of tables) await dest.execute(idemp(t.sql, 'table'));
+  for (const t of tables) await withRetry(() => dest.execute(idemp(t.sql, 'table')), 'tablo ' + t.name);
   console.log('Tablolar oluşturuldu.');
 
   // 3) Veriyi kopyala.
@@ -82,7 +100,7 @@ async function main() {
     const colsRes = await src.execute(`PRAGMA table_info(${q(t.name)})`);
     const cols = colsRes.rows.map(r => r.name);
     const colList = cols.map(q).join(',');
-    const all = await src.execute(`SELECT ${colList} FROM ${q(t.name)}`);
+    const all = await withRetry(() => src.execute(`SELECT ${colList} FROM ${q(t.name)}`), 'okuma ' + t.name);
     let done = 0;
     for (let i = 0; i < all.rows.length; i += CHUNK) {
       const slice = all.rows.slice(i, i + CHUNK);
@@ -91,20 +109,20 @@ async function main() {
         'PRAGMA foreign_keys=OFF;\nBEGIN;\n' +
         `INSERT OR REPLACE INTO ${q(t.name)} (${colList}) VALUES\n${values};\n` +
         'COMMIT;';
-      await dest.executeMultiple(script);
+      await withRetry(() => dest.executeMultiple(script), `${t.name} [${i}-${i+slice.length}]`);
       done += slice.length;
     }
     console.log(`  ${t.name}: ${done} satır`);
   }
 
   // 4) Index + trigger'ları oluştur
-  for (const o of others) { try { await dest.execute(idemp(o.sql, o.type)); } catch (e) { console.error('  (atlandı)', o.name, e.message); } }
+  for (const o of others) { try { await withRetry(() => dest.execute(idemp(o.sql, o.type)), o.type + ' ' + o.name); } catch (e) { console.error('  (atlandı)', o.name, e.message); } }
   try { await dest.execute('PRAGMA foreign_keys=ON'); } catch (_) {}
 
   // 5) Doğrulama: hedef satır sayıları
   const verify = {};
   for (const t of tables) {
-    const c = await dest.execute(`SELECT COUNT(*) n FROM ${q(t.name)}`);
+    const c = await withRetry(() => dest.execute(`SELECT COUNT(*) n FROM ${q(t.name)}`), 'verify ' + t.name);
     verify[t.name] = Number(c.rows[0].n);
   }
   console.log('\nHedef satır sayıları:', JSON.stringify(verify));
