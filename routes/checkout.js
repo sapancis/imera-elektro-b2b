@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
+const { BANK_HOLDER, BANK_IBAN } = require('../config/bank');
 const { flash } = require('../middleware/auth');
 const { VAT_RATE, vatAmount, grossAmount } = require('../utils/vat');
 const { sendOrderConfirmation, sendAdminOrderNotification } = require('../utils/mailer');
@@ -255,7 +256,7 @@ router.get('/bestaetigung', async (req, res) => {
     if (!orderNumber && !req.query.stripe) return res.redirect('/');
     const order = orderNumber ? await db.prepare('SELECT * FROM orders WHERE order_number=?').get(orderNumber) : null;
     const items = order ? await db.prepare('SELECT * FROM order_items WHERE order_id=?').all(order.id) : [];
-    res.render('confirmation', { title: 'Bestellung bestätigt', order, items, bankIban: process.env.BANK_IBAN || '' });
+    res.render('confirmation', { title: 'Bestellung bestätigt', order, items, bankIban: BANK_IBAN, bankHolder: BANK_HOLDER });
   } catch { res.status(500).render('error', { title: 'Fehler', message: 'Serverfehler.', code: 500 }); }
 });
 

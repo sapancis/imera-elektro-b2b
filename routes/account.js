@@ -5,6 +5,7 @@ const PDFDocument = require('pdfkit');
 const db = require('../database/db');
 const { requireAuth, flash } = require('../middleware/auth');
 const { VAT_RATE, vatAmount, grossAmount } = require('../utils/vat');
+const { BANK_HOLDER, BANK_IBAN } = require('../config/bank');
 
 router.get('/', requireAuth, async (req, res) => {
   try {
@@ -186,7 +187,7 @@ router.get('/bestellungen/:number/rechnung.pdf', requireAuth, async (req, res) =
       doc.moveDown().fontSize(8).fillColor(black).font('Helvetica-Bold')
         .text('Bitte überweisen Sie den Betrag auf folgendes Konto:', 50, y+28);
       doc.font('Helvetica').fillColor(gray)
-        .text('IBAN: AT12 3456 7890 1234 5678  ·  BIC: BKAUATWW  ·  Verwendungszweck: ' + order.order_number, 50, y+42, { width: 495 });
+        .text(`Empfänger: ${BANK_HOLDER}  ·  IBAN: ${BANK_IBAN}  ·  Verwendungszweck: ` + order.order_number, 50, y+42, { width: 495 });
     }
 
     doc.end();

@@ -13,7 +13,7 @@
         <h3>💳 Zahlungsinformationen (Überweisung)</h3>
         <p>Bitte überweisen Sie den Betrag innerhalb von <strong>7 Tagen</strong> auf folgendes Konto:</p>
         <div class="bank-details">
-          <div><strong>Empfänger:</strong> Imera Elektro</div>
+          <div><strong>Empfänger:</strong> <%= bankHolder %></div>
           <div><strong>IBAN:</strong> <%= bankIban || 'Wird per E-Mail mitgeteilt' %></div>
           <div><strong>Betrag:</strong> <span style="color:#34C759;font-weight:700"><%= formatEuro(grossAmount(order.total)) %></span> <span style="color:#6E6E73;font-weight:400">(inkl. 20% MwSt.)</span></div>
           <div><strong>Verwendungszweck:</strong> <span style="font-family:monospace;background:#F5F5F7;padding:2px 8px;border-radius:4px"><%= order.order_number %></span></div>
