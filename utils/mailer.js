@@ -4,6 +4,7 @@
  */
 const nodemailer = require('nodemailer');
 const { VAT_RATE, vatAmount, grossAmount } = require('./vat');
+const { BANK_HOLDER, BANK_IBAN } = require('../config/bank');
 
 function createTransport() {
   // .env'den SMTP ayarları okunur
@@ -51,8 +52,8 @@ async function sendOrderConfirmation({ order, items, customerEmail, customerName
     <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:16px;margin-top:20px">
       <h3 style="margin:0 0 10px;color:#166534;font-size:15px">Bankverbindung für Ihre Überweisung</h3>
       <table style="font-size:14px;color:#166534">
-        <tr><td style="padding:2px 12px 2px 0;font-weight:600">Empfänger:</td><td>Imera Elektro</td></tr>
-        <tr><td style="padding:2px 12px 2px 0;font-weight:600">IBAN:</td><td>${process.env.BANK_IBAN || 'Bitte beim Support erfragen'}</td></tr>
+        <tr><td style="padding:2px 12px 2px 0;font-weight:600">Empfänger:</td><td>${BANK_HOLDER}</td></tr>
+        <tr><td style="padding:2px 12px 2px 0;font-weight:600">IBAN:</td><td>${BANK_IBAN}</td></tr>
         <tr><td style="padding:2px 12px 2px 0;font-weight:600">Verwendungszweck:</td><td>${order.order_number}</td></tr>
         <tr><td style="padding:2px 12px 2px 0;font-weight:600">Betrag:</td><td>${fmt2(grossAmount(order.total))} <span style="font-weight:400">(inkl. ${Math.round(VAT_RATE*100)}% MwSt.)</span></td></tr>
       </table>
