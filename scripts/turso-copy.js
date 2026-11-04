@@ -67,21 +67,31 @@ async function main() {
   for (const t of tables) await dest.execute(idemp(t.sql, 'table'));
   console.log('Tablolar oluşturuldu.');
 
-  // 3) Veriyi kopyala (tablo başına, chunk'lı batch)
+  // 3) Veriyi kopyala.
+  // Turso uzaktan bağlantıda `PRAGMA foreign_keys=OFF` tek execute'ta kalıcı olmuyor;
+  // bu yüzden `turso .dump` restore gibi: TEK script içinde (executeMultiple) önce
+  // PRAGMA OFF, sonra BEGIN/INSERT.../COMMIT çalıştırıyoruz → FK zorlanmaz, sıra dert değil.
+  const lit = (v) => {
+    if (v === null || v === undefined) return 'NULL';
+    if (typeof v === 'number' || typeof v === 'bigint') return String(v);
+    if (typeof v === 'boolean') return v ? '1' : '0';
+    if (v instanceof Uint8Array || Buffer.isBuffer(v)) return "X'" + Buffer.from(v).toString('hex') + "'";
+    return "'" + String(v).replace(/'/g, "''") + "'";
+  };
   for (const t of tables) {
     const colsRes = await src.execute(`PRAGMA table_info(${q(t.name)})`);
     const cols = colsRes.rows.map(r => r.name);
     const colList = cols.map(q).join(',');
-    const ph = '(' + cols.map(() => '?').join(',') + ')';
     const all = await src.execute(`SELECT ${colList} FROM ${q(t.name)}`);
     let done = 0;
     for (let i = 0; i < all.rows.length; i += CHUNK) {
       const slice = all.rows.slice(i, i + CHUNK);
-      const stmts = slice.map(row => ({
-        sql: `INSERT OR REPLACE INTO ${q(t.name)} (${colList}) VALUES ${ph}`,
-        args: cols.map(c => row[c]),
-      }));
-      await dest.batch(stmts);
+      const values = slice.map(row => '(' + cols.map(c => lit(row[c])).join(',') + ')').join(',\n');
+      const script =
+        'PRAGMA foreign_keys=OFF;\nBEGIN;\n' +
+        `INSERT OR REPLACE INTO ${q(t.name)} (${colList}) VALUES\n${values};\n` +
+        'COMMIT;';
+      await dest.executeMultiple(script);
       done += slice.length;
     }
     console.log(`  ${t.name}: ${done} satır`);
